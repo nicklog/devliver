@@ -16,7 +16,7 @@ Your private composer repository.
 
 Go in the project directory.
 
-Run `php bin/composer install` and follow instructions.
+Run `php bin/composer install --no-dev --optimize-autoloader` and follow instructions.
 
 ### 4. Database
 
