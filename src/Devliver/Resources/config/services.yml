@@ -1,0 +1,105 @@
+parameters:
+    devliver_version: "1.0.0 Alpha 1"
+
+    devliver_dir:           '%kernel.project_dir%/var/devliver'
+
+    devliver_package_dir:   '%devliver_dir%/package'
+    devliver_dist_dir:      '%devliver_dir%/dist'
+    devliver_composer_dir:  '%devliver_dir%/composer'
+
+    composer_home:          '%devliver_composer_dir%/home'
+    composer_cache_dir:     '%devliver_composer_dir%/cache'
+
+services:
+
+    # synchronization
+    devliver.package_synchronization:
+        class: Shapecode\Devliver\Service\PackageSynchronization
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@router'
+            - '@devliver.composer_factory'
+            - '%devliver_package_dir%'
+
+    devliver.repository_synchronization:
+        class: Shapecode\Devliver\Service\RepositorySynchronization
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@devliver.package_synchronization'
+            - '@devliver.composer_factory'
+
+    devliver.dist_synchronization:
+        class: Shapecode\Devliver\Service\DistSynchronization
+        public: true
+        arguments:
+            - '@router'
+            - '@devliver.composer_config'
+            - '@devliver.repository_synchronization'
+            - '@devliver.package_synchronization'
+            - '%devliver_dist_dir%'
+
+    # composer
+    devliver.composer_factory:
+        class: Shapecode\Devliver\Composer\ComposerFactory
+        public: true
+        arguments:
+            - '@doctrine'
+
+    devliver.composer_config:
+        class: Composer\Config
+        factory: 'devliver.composer_factory:create'
+        public: true
+
+    # event listener
+    devliver.event_listener.composer:
+        class: Shapecode\Devliver\EventListener\ComposerListener
+        arguments:
+            - '%composer_home%'
+            - '%composer_cache_dir%'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    devliver.event_listener.fos_user:
+        class: Shapecode\Devliver\EventListener\FosUserListener
+        arguments:
+            - '@router'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # twig
+    devliver.twig_extension.devliver:
+        class: Shapecode\Devliver\Twig\Extension\DevliverExtension
+        arguments:
+            - '@router'
+            - '%devliver_version%'
+        tags:
+            - { name: twig.extension }
+
+    # command
+    devliver.console_command.packages_update:
+        class: Shapecode\Devliver\Command\PackagesUpdateCommand
+        arguments:
+            - '@devliver.repository_synchronization'
+        tags:
+            - { name: console.command }
+
+    # menu
+    devliver.menu_builder:
+        class: \Shapecode\Devliver\Menu\Builder
+        arguments:
+            - "@translator"
+            - "@knp_menu.factory"
+
+    devliver.main_menu_left:
+        class: Knp\Menu\MenuItem
+        factory: ["@devliver.menu_builder", mainMenu]
+        tags:
+            - { name: knp_menu.menu, alias: main_left }
+
+    devliver.main_menu_right:
+        class: Knp\Menu\MenuItem
+        factory: ["@devliver.menu_builder", rightNavbar]
+        tags:
+            - { name: knp_menu.menu, alias: main_right }

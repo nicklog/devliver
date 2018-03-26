@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}"/>
+
+    {% block stylesheets %}
+        {#<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">#}
+        <link rel="stylesheet" href="https://bootswatch.com/4/lumen/bootstrap.css">
+        <link rel="stylesheet" href="{{ asset('bundles/devliver/css/sticky-footer-navbar.css') }}">
+    {% endblock %}
+
+    <title>{% block title %}Devliver{% endblock %}</title>
+</head>
+<body>
+
+{% include '@Devliver/_Partials/header.html.twig' %}
+
+<main role="main" class="container">
+
+    {% block pageHeaderWrapper %}
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mt-3 mb-4 pb-2 border-bottom">
+
+            {% block pageTitleWrapper %}
+                <h1 class="h2">
+                    {% block pageTitle %}
+                        {{ pageTitle|default('') }}
+                    {% endblock %}
+                </h1>
+            {% endblock %}
+
+            {% block pageActionsWrapper %}
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    {% block pageActionsGroup %}
+                        <div class="btn-group">
+                            {% block pageActions %}
+                            {% endblock %}
+                        </div>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+    {% endblock %}
+
+    {% spaceless %}
+        <div class="content-area flash-messages">
+            {% for type, flashMessages in app.flashes %}
+                {% for flashMessage in flashMessages %}
+                    <div class="alert alert-{{ type }}">{{ flashMessage }}</div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endspaceless %}
+
+    {% block content %}{% endblock %}
+</main>
+
+{% include '@Devliver/_Partials/footer.html.twig' %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+{% endblock %}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    {% block post_js %}{% endblock %}
+
+</script>
+{% block javascripts_post %}{% endblock %}
+</body>
+</html>

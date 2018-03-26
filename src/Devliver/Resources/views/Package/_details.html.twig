@@ -1,0 +1,76 @@
+{% set adapter = package_adapter(version) %}
+
+{% if info.description is defined and info.description is not null %}
+    <div>
+        <p class="lead">{{ info.description }}</p>
+    </div>
+{% endif %}
+
+<div class="border-top border-bottom py-2">
+    <div class="row" style="font-weight: bold">
+        <div class="col-md-6">
+            {{ info.prettyVersion }}
+            {% if adapter.alias is not null %}
+                / {{ adapter.alias }}
+            {% endif %}
+        </div>
+        <div class="col-md-6 text-right">{{ info.releaseDate|date("r") }}</div>
+    </div>
+</div>
+
+<div class="border-bottom py-2">
+    <div>
+        <i class="fas fa-bookmark fa-fw"></i> {{ info.sourceReference }}
+    </div>
+    <div>
+        <i class="fas fa-copyright fa-fw"></i> {{ info.license ? info.license|join(', ') : 'Unknown' }}
+    </div>
+    <div>
+        <i class="fas fa-users fa-fw"></i>
+        {% for author in info.authors %}
+            <span class="pr-1">
+                        {% if author.homepage is defined and author.homepage is not empty %}
+                            <a href="{{ author.homepage }}" target="_blank">{{ author.name }}</a>
+                        {% else %}
+                            {{ author.name }}
+                        {% endif %}
+                {% if author.email is defined and author.email is not empty %} &lt;<a href="mailto:{{ author.email }}">{{ author.email }}</a>&gt;{% endif %}
+                ;</span>
+        {% endfor %}
+    </div>
+    <div>
+        <i class="fas fa-hashtag fa-fw"></i>
+        {% for keyword in info.keywords %}
+            <a href="https://packagist.org/search/?tags={{ keyword }}" target="_blank">#{{ keyword }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="row mt-3">
+    {% for type in ["requires", "devRequires", "suggests", "provides", "conflicts", "replaces"] %}
+        <div class="col-md-6">
+            <div class="card mb-2">
+                <div class="card-header py-1 px-2">{{ ('package_link.' ~ type)|trans }}</div>
+                {% if attribute(info, type)|length > 0 %}
+                    <ul class="list-group list-group-flush">
+                        {% for name, version in attribute(info, type) %}
+                            {% if type != 'suggests' %}{% set version  = version.prettyConstraint %}{% endif %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-2">
+                                <a href="https://packagist.org/packages/{{ name }}" target="_blank">
+                                    {{ name }}
+                                </a>
+                                <span class="badge badge-primary badge-pill">
+                                    {{ version  == 'self.version' ? version.version : version }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="card-body py-1 px-2">
+                        n/a
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

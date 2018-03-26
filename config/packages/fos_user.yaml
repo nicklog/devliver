@@ -1,0 +1,15 @@
+fos_user:
+    db_driver: orm
+    user_class: Shapecode\Devliver\Entity\User
+    firewall_name: main
+
+    from_email:
+        address:        webmaster@example.com
+        sender_name:    Admin
+
+    group:
+        group_class: Shapecode\Devliver\Entity\UserGroup
+        group_manager: sonata.user.orm.group_manager
+
+    service:
+        user_manager: sonata.user.orm.user_manager

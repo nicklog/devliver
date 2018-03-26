@@ -1,0 +1,94 @@
+{
+    "license": "proprietary",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Shapecode\\Devliver\\": "src/Devliver/",
+            "App\\": "src/App/"
+        }
+    },
+    "require": {
+        "php": "~7.0",
+
+        "symfony/flex": "^1.0",
+
+        "symfony/framework-bundle": "~3.4",
+        "symfony/twig-bundle": "~3.4",
+        "symfony/monolog-bundle": "^3.2",
+        "symfony/swiftmailer-bundle": "^3.2",
+
+        "symfony/polyfill-apcu": "~1.0",
+        "symfony/filesystem": "~3.4",
+        "symfony/lock": "~3.4",
+        "symfony/finder": "~3.4",
+        "symfony/asset": "~3.4",
+        "symfony/lts": "~3.0",
+        "symfony/form": "~3.4",
+        "symfony/security-bundle": "~3.4",
+        "symfony/translation": "~3.4",
+        "symfony/validator": "~3.4",
+        "symfony/console": "~3.4",
+        "symfony/stopwatch": "~3.4",
+        "symfony/debug-bundle": "~3.4",
+        "symfony/web-profiler-bundle": "~3.4",
+
+        "symfony/apache-pack": "^1.0",
+
+        "sensio/framework-extra-bundle": "^5.1",
+
+        "sonata-project/admin-bundle": "~3.9",
+        "sonata-project/doctrine-orm-admin-bundle": "~3.4",
+        "sonata-project/user-bundle": "~4.1",
+
+        "doctrine/doctrine-bundle": "~1.6",
+        "doctrine/orm": "~2.5",
+
+        "incenteev/composer-parameter-handler": "~2.0",
+        "twig/twig": "~1.0|~2.0",
+        "composer/composer": "~1.0",
+        "erusev/parsedown": "~1.0",
+        "knplabs/knp-paginator-bundle": "^2.7",
+        "ornicar/gravatar-bundle": "^1.2",
+        "knplabs/knp-menu-bundle": "^2.0"
+    },
+    "require-dev": {
+        "symfony/dotenv": "~3.4"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@symfony-scripts",
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@symfony-scripts",
+            "@auto-scripts"
+        ],
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "symfony-scripts": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+        ]
+    },
+    "config": {
+        "bin-dir": "bin",
+        "secure-http": false,
+        "preferred-install": {
+            "*": "dist"
+        }
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": "true"
+        },
+        "incenteev-parameters": {
+            "file": "config/parameters.yml"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

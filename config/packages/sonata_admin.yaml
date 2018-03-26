@@ -1,0 +1,11 @@
+sonata_admin:
+    title: 'Devliver'
+    title_logo: "https://use.fontawesome.com/releases/v5.0.8/svgs/solid/cubes.svg"
+    dashboard:
+        blocks:
+            - { type: sonata.admin.block.admin_list, position: left }
+
+sonata_block:
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts: [admin]

@@ -4,11 +4,11 @@ Your private composer repository.
 
 ##  Installation Instruction
 
-### 1. Download the project from github
+### 1. Download
 
-[Releases](https://github.com/shapecode/devliver/releases)
+... the project from [github.com](https://github.com/shapecode/devliver/releases)
 
-### 2. Unzip on your Server
+### 2. Extract
 
 `unzip release.zip -d devliver/`
 
@@ -18,7 +18,7 @@ Go in the project directory.
 
 Run `php bin/composer install` and follow instructions.
 
-### 4. Database structure
+### 4. Database
 
 Update your database structure.
  
@@ -26,7 +26,7 @@ Update your database structure.
 bin/console doctrine:schema:update --force
 ```
 
-#### 5. Create user
+#### 5. User
 
 Create an admin user.
 

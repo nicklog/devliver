@@ -1,0 +1,12 @@
+/.web-server-pid
+/build/
+/phpunit.xml
+/public/repo/
+/config/parameters.yml
+
+###> symfony/framework-bundle ###
+.env
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###

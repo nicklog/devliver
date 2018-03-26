@@ -1,0 +1,132 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-cube fa-fw"></i> {{ package.name }}
+{% endblock %}
+
+{% block pageActions %}
+    <a href="{{ path('devliver_package_update', { package: package.id }) }}" data-toggle="tooltip" title="{{ 'action.update'|trans }}" class="btn btn-info"><i class="fas fa-sync fa-fw"></i></a>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="mb-3">
+                <i class="fas fa-download"></i> <span class="pl-2">composer require {{ package.name }}</span>
+            </div>
+
+            {% for version in versions %}
+                <div class="package-details" id="details_{{ (version.prettyVersion ~ version.sourceReference)|sha1 }}" {% if version != info %}style="display: none"{% endif %}>
+                    {% include '@Devliver/Package/_details.html.twig' with { info: version } %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            {% if info.authors and info.authors|length > 0 %}
+                <p class="authors">
+                    {% for author in info.authors %}
+                        {% if author.email is defined and author.email is not empty %}
+                            {%- if author.homepage is defined and author.homepage is not empty -%}
+                                <a href="{{ author.homepage }}" target="_blank">
+                            {%- endif -%}
+                            <img src="{{ gravatar(author.email, 50) }}" title="{{ author.name }}"/>
+                        {% endif -%}
+                        {%- if author.homepage is defined and author.homepage is not empty -%}
+                            </a>
+                        {%- endif -%}
+                    {% endfor %}
+                </p>
+            {% endif %}
+
+            <p>
+                {{ info.sourceUrl }}
+            </p>
+
+            <div class="card mb-3">
+                <div class="card-header py-1 px-2">Infos</div>
+                <div class="list-group list-group-flush">
+                    {% if info.homepage %}
+                        <a href="{{ info.homepage }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                            <i class="fas fa-home fa-fw"></i>
+                            Homepage
+                        </a>
+                    {% endif %}
+                    {% if info.support.source is defined %}
+                        <a href="{{ info.support.source }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                            <i class="fas fa-code fa-fw"></i>
+                            Releases
+                        </a>
+                    {% endif %}
+                    {% if info.support.issues is defined %}
+                        <a href="{{ info.support.issues }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                            <i class="fas fa-exclamation-circle fa-fw"></i>
+                            Issues
+                        </a>
+                    {% endif %}
+                    {% if info.support.irc is defined %}
+                        <a href="{{ info.support.irc }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                            <i class="fas fa-comments fa-fw"></i>
+                            IRC
+                        </a>
+                    {% endif %}
+                    {% if info.support.forum is defined %}
+                        <a href="{{ info.support.forum }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                            <i class="fas fa-wpforms fa-fw"></i>Forum
+                        </a>
+                    {% endif %}
+                    {% if info.support.wiki is defined %}
+                        <a href="{{ info.support.wiki }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                            <i class="fas fa-book fa-fw"></i>
+                            Wiki
+                        </a>
+                    {% endif %}
+                    {% if info.type is defined %}
+                        <a href="#" class="list-group-item list-group-item-action py-1 px-2">
+                            <i class="fas fa-tag fa-fw"></i>
+                            {{ info.type }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header py-1 px-2">Versions</div>
+                <ul class="list-group list-group-flush">
+                    {% for version in versions %}
+                        {% set adapter = package_adapter(version) %}
+                        <li class="list-group-item py-1 px-2 clearfix">
+                            <div class="float-left">
+                                <a href="#" class="package-link" data-toggle="tooltip" title="{{ version.prettyVersion }}" data-package="details_{{ (version.prettyVersion ~ version.sourceReference)|sha1 }}">
+                                    {{ version.prettyVersion|truncate(40) }}
+
+                                    {% if adapter.alias is not null %}
+                                        / {{ adapter.alias }}
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="float-right">
+                                <a href="{{ package_download_url(version) }}" data-toggle="tooltip" title="Download"><i class="fas fa-download"></i></a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(function () {
+            $('.package-link').on('click', function (e) {
+                e.preventDefault();
+
+                $('.package-details').hide();
+                $('#' + $(this).data('package')).show();
+            })
+        });
+    </script>
+{% endblock %}
+

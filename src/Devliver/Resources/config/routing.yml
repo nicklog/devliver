@@ -1,0 +1,9 @@
+devliver:
+    resource: "@DevliverBundle/Controller"
+    type: annotation
+
+remove_trailing_slash:
+    path: /{url}
+    controller: Shapecode\Devliver\Controller\RedirectingController::removeTrailingSlash
+    requirements:
+        url: .*/$

@@ -1,0 +1,7 @@
+sonata_user:
+    security_acl: true
+    manager_type: orm
+
+    class:
+        user: Shapecode\Devliver\Entity\User
+        group: Shapecode\Devliver\Entity\UserGroup

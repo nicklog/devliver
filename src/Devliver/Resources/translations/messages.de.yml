@@ -1,0 +1,50 @@
+package_link:
+    requires: requires
+    devRequires: requires (dev)
+    suggests: suggests
+    provides: provides
+    conflicts: conflicts
+    replaces: replaces
+
+security:
+    login:
+        page_header: Anmeldung
+        headline: Anmelden
+
+profile:
+    change_password:
+        page_header: Passwort ändern
+
+repository:
+    list:
+        page_header: Repositories
+    add:
+        page_header: Repositories hinzufügen
+    edit:
+        page_header: Repository bearbeiten
+    singular: Repository
+    plural: Repositories
+    add_repositories: Repositories hinzufügen
+
+package:
+    list:
+        page_header: Pakete
+
+    view:
+
+    singular: Paket
+    plural: Pakete
+
+action:
+    update_all: Alles aktualisieren
+    update: Aktualisieren
+    edit: Bearbeiten
+    remove: Löschen
+    cancel: Abbrechen
+
+menu:
+    repositories: Repositories
+    packages: Packages
+    usage: Anleitung
+    change_password: Passwort ändern
+    logout: Abmelden
