@@ -1,4 +1,5 @@
-/.web-server-pid
+.web-server-pid
+.idea/
 build/
 phpunit.xml
 parameters.yml

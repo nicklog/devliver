@@ -86,7 +86,7 @@
             "allow-contrib": "true"
         },
         "incenteev-parameters": {
-            "file": "config/parameters.yml"
+            "file": "parameters.yml"
         }
     },
     "minimum-stability": "dev",
