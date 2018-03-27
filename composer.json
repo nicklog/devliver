@@ -59,24 +59,23 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "@symfony-scripts",
+            "@parameter-scripts",
             "@auto-scripts"
         ],
         "post-update-cmd": [
-            "@symfony-scripts",
+            "@parameter-scripts",
             "@auto-scripts"
         ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd"
         },
-        "symfony-scripts": [
+        "parameter-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
         ]
     },
     "config": {
         "bin-dir": "bin",
-        "secure-http": false,
         "preferred-install": {
             "*": "dist"
         }
