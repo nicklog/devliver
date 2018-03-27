@@ -57,9 +57,10 @@ security:
             anonymous:          true
 
     access_control:
-        # Admin login page needs to be accessed without credential
         - { path: ^/repo/, role: ROLE_REPO }
+
         - { path: ^/packages.json, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
@@ -71,10 +72,5 @@ security:
         - { path: ^/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
-        - { path: ^/repo/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
-
-        # Secured part of the site
-        # This config requires being logged for the whole site and having the admin role for the admin part.
-        # Change these rules to adapt them to your needs
         - { path: ^/admin/, role: [ROLE_ADMIN, ROLE_SONATA_ADMIN] }
         - { path: ^/.*, role: ROLE_MANAGER }
