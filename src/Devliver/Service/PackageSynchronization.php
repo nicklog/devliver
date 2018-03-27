@@ -165,7 +165,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
     }
 
     /**
-     * @param array $packages
+     * @param array|CompletePackage[] $packages
      */
     protected function dumpPackageJson(array $packages)
     {
@@ -182,6 +182,11 @@ class PackageSynchronization implements PackageSynchronizationInterface
             if ($package instanceof AliasPackage) {
                 continue;
             }
+
+            $distUrl = $this->getComposerDistUrl($package->getPrettyName(), $package->getPrettyVersion(), $package->getSourceReference(), 'zip');
+            $package->setDistUrl($distUrl);
+            $package->setDistType('zip');
+            $package->setDistReference($package->getSourceReference());
 
             $data[$package->getPrettyName()]['__normalized_name'] = $package->getName();
             $data[$package->getPrettyName()][$package->getPrettyVersion()] = $this->dumper->dump($package);
