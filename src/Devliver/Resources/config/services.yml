@@ -1,5 +1,5 @@
 parameters:
-    devliver_version: "1.0.0 Alpha 1"
+    devliver_version: "1.0.0 Alpha 2"
 
     devliver_dir:           '%kernel.project_dir%/var/devliver'
 
