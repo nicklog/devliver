@@ -4,7 +4,6 @@ namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Repo;
-use Shapecode\Devliver\Form\Type\Forms\FilterType;
 use Shapecode\Devliver\Form\Type\Forms\RepoMultipleType;
 use Shapecode\Devliver\Form\Type\Forms\RepoType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -38,17 +37,13 @@ class RepoController extends Controller
 
         $sort = $request->query->get('sort', 'p.id');
         $direction = $request->query->get('direction', 'asc');
+        $filter = $request->query->get('filter');
 
         $qb->orderBy($sort, $direction);
 
-        $filter = $this->get('form.factory')->createNamed('filter', FilterType::class);
-        $filter->handleRequest($request);
-
-        if ($filter->isSubmitted() && $filter->isValid()) {
-            $name = $filter->getData()['name'];
-
+        if (!empty($filter)) {
             $qb->andWhere($qb->expr()->like('p.url', ':filter'));
-            $qb->setParameter('filter', '%' . $name . '%');
+            $qb->setParameter('filter', '%' . $filter . '%');
         }
 
         $paginator = $this->get('knp_paginator');
@@ -56,7 +51,6 @@ class RepoController extends Controller
 
         return $this->render('@Devliver/Repo/list.html.twig', [
             'pagination' => $pagination,
-            'filter'     => $filter->createView()
         ]);
     }
 

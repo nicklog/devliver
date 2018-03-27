@@ -5,7 +5,6 @@ namespace Shapecode\Devliver\Controller;
 use Composer\Package\CompletePackage;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Form\Type\Forms\FilterType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,17 +37,13 @@ class PackageController extends Controller
 
         $sort = $request->query->get('sort', 'p.id');
         $direction = $request->query->get('direction', 'asc');
+        $filter = $request->query->get('filter');
 
         $qb->orderBy($sort, $direction);
 
-        $filter = $this->get('form.factory')->createNamed('filter', FilterType::class);
-        $filter->handleRequest($request);
-
-        if ($filter->isSubmitted() && $filter->isValid()) {
-            $name = $filter->getData()['name'];
-
+        if (!empty($filter)) {
             $qb->andWhere($qb->expr()->like('p.name', ':filter'));
-            $qb->setParameter('filter', '%' . $name . '%');
+            $qb->setParameter('filter', '%' . $filter . '%');
         }
 
         $paginator = $this->get('knp_paginator');
@@ -56,7 +51,6 @@ class PackageController extends Controller
 
         return $this->render('@Devliver/Package/list.html.twig', [
             'pagination' => $pagination,
-            'filter'     => $filter->createView()
         ]);
     }
 

@@ -9,12 +9,24 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row mb-3">
+        <div class="col-md-8">
             {{ knp_pagination_render(pagination) }}
         </div>
-        <div class="col-md-6">
-            {{ form(filter) }}
+        <div class="col-md-4">
+            <form method="get">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupPrepend"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                        <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger">Reset</a>
+                    </div>
+
+                </div>
+            </form>
         </div>
     </div>
 
