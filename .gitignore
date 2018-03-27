@@ -1,7 +1,7 @@
 /.web-server-pid
 build/
 phpunit.xml
-config/parameters.yml
+parameters.yml
 
 ###> symfony/framework-bundle ###
 .env
