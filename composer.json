@@ -16,6 +16,9 @@
         "symfony/twig-bundle": "~3.4",
         "symfony/monolog-bundle": "^3.2",
         "symfony/swiftmailer-bundle": "^3.2",
+        "symfony/debug-bundle": "~3.4",
+        "symfony/web-profiler-bundle": "~3.4",
+        "symfony/security-bundle": "~3.4",
 
         "symfony/polyfill-apcu": "~1.0",
         "symfony/filesystem": "~3.4",
@@ -24,13 +27,11 @@
         "symfony/asset": "~3.4",
         "symfony/lts": "~3.0",
         "symfony/form": "~3.4",
-        "symfony/security-bundle": "~3.4",
         "symfony/translation": "~3.4",
         "symfony/validator": "~3.4",
         "symfony/console": "~3.4",
         "symfony/stopwatch": "~3.4",
-        "symfony/debug-bundle": "~3.4",
-        "symfony/web-profiler-bundle": "~3.4",
+        "symfony/dotenv": "~3.4",
 
         "symfony/apache-pack": "^1.0",
 
@@ -50,9 +51,6 @@
         "knplabs/knp-paginator-bundle": "^2.7",
         "ornicar/gravatar-bundle": "^1.2",
         "knplabs/knp-menu-bundle": "^2.0"
-    },
-    "require-dev": {
-        "symfony/dotenv": "~3.4"
     },
     "conflict": {
         "symfony/symfony": "*"
