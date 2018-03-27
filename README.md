@@ -60,7 +60,7 @@ Done ;) Go on!
 Login into your terminal and run following commands.
 
 ```bash
-rm -rf bin/ config/ public/ src/ templates/ translations/
+rm -rf bin/ config/ public/ src/ templates/ translations/ var/cache/
 unzip release.zip -d ./
 php bin/composer install --no-dev --optimize-autoloader
 php bin/console doctrine:schema:update --force
