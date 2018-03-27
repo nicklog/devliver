@@ -14,6 +14,7 @@ use Composer\Package\Archiver\ArchiveManager;
 use Composer\Package\Loader\ArrayLoader;
 use Composer\Package\PackageInterface;
 use Composer\Util\ComposerMirror;
+use Shapecode\Devliver\Model\PackageAdapter;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -212,10 +213,12 @@ class DistSynchronization implements DistSynchronizationInterface
     {
         $targetDir = $this->distDir . DistSynchronizationInterface::DIST_FORMAT;
 
+        $adapter = new PackageAdapter($package);
+
         $name = $package->getName();
         $ref = $package->getDistReference() ?: $package->getSourceReference();
         $type = $package->getDistType() ?: $this->format;
-        $version = $package->getVersion();
+        $version = $adapter->getVersionName();
 
         return ComposerMirror::processUrl($targetDir, $name, $version, $ref, $type);
     }

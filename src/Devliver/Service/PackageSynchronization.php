@@ -8,11 +8,11 @@ use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
 use Composer\Package\Dumper\ArrayDumper;
 use Composer\Package\Loader\ArrayLoader;
-use Composer\Util\ComposerMirror;
 use Shapecode\Devliver\Composer\ComposerFactory;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Repo;
+use Shapecode\Devliver\Model\PackageAdapter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -183,7 +183,8 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 continue;
             }
 
-            $distUrl = $this->getComposerDistUrl($package->getPrettyName(), $package->getPrettyVersion(), $package->getSourceReference(), 'zip');
+            $distUrl = $this->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
+
             $package->setDistUrl($distUrl);
             $package->setDistType('zip');
             $package->setDistReference($package->getSourceReference());
@@ -262,13 +263,12 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
     /**
      * @param                       $package
-     * @param                       $version
      * @param                       $ref
      * @param                       $type
      *
      * @return string
      */
-    protected function getComposerDistUrl($package, $version, $ref, $type)
+    protected function getComposerDistUrl($package, $ref, $type = 'zip')
     {
         $distUrl = $this->router->generate('devliver_repository_dist', [
             'vendor'  => 'PACK',
@@ -278,11 +278,11 @@ class PackageSynchronization implements PackageSynchronizationInterface
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $distUrl = str_replace(
-            ['PACK/AGE', 'VERSION', 'REF', 'TYPE'],
-            ['%package%', '%version%', '%reference%', '%type%'],
+            ['PACK/AGE', 'REF', 'TYPE'],
+            [$package, $ref, $type],
             $distUrl
         );
 
-        return ComposerMirror::processUrl($distUrl, $package, $version, $ref, $type);
+        return $distUrl;
     }
 }
