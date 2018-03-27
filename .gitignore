@@ -1,11 +1,11 @@
 /.web-server-pid
-/build/
-/phpunit.xml
-/config/parameters.yml
+build/
+phpunit.xml
+config/parameters.yml
 
 ###> symfony/framework-bundle ###
 .env
-/public/bundles/
-/var/
+public/bundles/
+var/
 /vendor/
 ###< symfony/framework-bundle ###
