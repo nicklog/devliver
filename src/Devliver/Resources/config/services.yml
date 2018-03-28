@@ -1,5 +1,5 @@
 parameters:
-    devliver_version: "1.0.0 Alpha 1"
+    devliver_version: "1.0.0 Alpha 2"
 
     devliver_dir:           '%kernel.project_dir%/var/devliver'
 
@@ -68,15 +68,32 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    devliver.event_listener.release_checker:
+        class: Shapecode\Devliver\EventListener\ReleaseCheckerListener
+        arguments:
+            - '@session.flash_bag'
+            - '@security.authorization_checker'
+            - '@security.token_storage'
+            - '@devliver.github_release'
+        tags:
+            - { name: kernel.event_subscriber }
+
     # twig
     devliver.twig_extension.devliver:
         class: Shapecode\Devliver\Twig\Extension\DevliverExtension
         arguments:
             - '@router'
-            - '%devliver_version%'
-            - '@Github\Client'
+            - '@devliver.github_release'
         tags:
             - { name: twig.extension }
+
+    # service
+    devliver.github_release:
+        class: Shapecode\Devliver\Service\GitHubRelease
+        arguments:
+            - '@Github\Client'
+            - '@cache.app'
+            - '%devliver_version%'
 
     # command
     devliver.console_command.packages_update:

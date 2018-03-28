@@ -48,7 +48,7 @@
         <div class="content-area flash-messages">
             {% for type, flashMessages in app.flashes %}
                 {% for flashMessage in flashMessages %}
-                    <div class="alert alert-{{ type }}">{{ flashMessage }}</div>
+                    <div class="alert alert-{{ type }}">{{ flashMessage|raw }}</div>
                 {% endfor %}
             {% endfor %}
         </div>
