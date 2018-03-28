@@ -287,9 +287,6 @@
     "symfony/lock": {
         "version": "v3.4.6"
     },
-    "symfony/lts": {
-        "version": "v3"
-    },
     "symfony/monolog-bridge": {
         "version": "v3.4.6"
     },
@@ -317,13 +314,7 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.7.0"
     },
-    "symfony/polyfill-php56": {
-        "version": "v1.7.0"
-    },
-    "symfony/polyfill-php70": {
-        "version": "v1.7.0"
-    },
-    "symfony/polyfill-util": {
+    "symfony/polyfill-php72": {
         "version": "v1.7.0"
     },
     "symfony/process": {

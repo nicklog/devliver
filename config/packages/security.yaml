@@ -11,9 +11,6 @@ security:
     encoders:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
-    acl:
-        connection: default
-
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username

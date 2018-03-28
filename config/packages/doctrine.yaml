@@ -7,17 +7,15 @@ parameters:
 
 doctrine:
     dbal:
-        # configure these for your database server
-        driver: 'pdo_mysql'
+        driver:         'pdo_mysql'
         server_version: '10.1'
-        charset: utf8mb4
+        charset:        'utf8mb4'
 
-        host: '%database_host%'
-        port: '%database_port%'
-        dbname: '%database_name%'
-        user: '%database_user%'
-        password: '%database_password%'
-        charset: UTF8
+        host:           '%database_host%'
+        port:           '%database_port%'
+        dbname:         '%database_name%'
+        user:           '%database_user%'
+        password:       '%database_password%'
 
         types:
             json: Sonata\Doctrine\Types\JsonType

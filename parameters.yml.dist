@@ -17,4 +17,4 @@ parameters:
 
     devliver_scheme: https
     devliver_host: example.com
-    devliver_base_url: null
+    devliver_base_url: ""

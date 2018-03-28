@@ -1,9 +1,10 @@
 framework:
     #esi: ~
-    translator: { fallbacks: ['%locale%', 'en'] }
+    default_locale: '%locale%'
+    translator:
+        fallbacks: ['en']
     secret: '%env(APP_SECRET)%'
     router:
-#        resource: '%kernel.project_dir%/app/config/routing.yml'
         strict_requirements: ~
     form: ~
     templating:
@@ -11,10 +12,8 @@ framework:
     csrf_protection: ~
     validation: { enable_annotations: true }
     #serializer: { enable_annotations: true }
-    default_locale: '%locale%'
     trusted_hosts: ~
     session:
-        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id: ~
     fragments: ~
     http_method_override: true
@@ -22,16 +21,4 @@ framework:
     php_errors:
         log: true
     cache:
-        # Put the unique name of your app here: the prefix seed
-        # is used to compute stable namespaces for cache keys.
         prefix_seed: shapecode/devliver
-
-        # The app cache caches to the filesystem by default.
-        # Other options include:
-
-        # Redis
-        #app: cache.adapter.redis
-        #default_redis_provider: redis://localhost
-
-        # APCu (not recommended with heavy random-write workloads as memory fragmentation can cause perf issues)
-        #app: cache.adapter.apcu

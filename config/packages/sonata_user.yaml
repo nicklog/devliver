@@ -1,5 +1,5 @@
 sonata_user:
-    security_acl: true
+    security_acl: false
     manager_type: orm
 
     class:
