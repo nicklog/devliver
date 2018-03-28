@@ -47,6 +47,8 @@
         "twig/twig": "~1.0|~2.0",
         "composer/composer": "~1.0",
         "erusev/parsedown": "~1.0",
+        "knplabs/github-api": "~2.8",
+        "php-http/guzzle6-adapter": "~1.1",
         "knplabs/knp-paginator-bundle": "^2.7",
         "ornicar/gravatar-bundle": "^1.2",
         "knplabs/knp-menu-bundle": "^2.0"

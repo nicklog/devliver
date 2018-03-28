@@ -3,6 +3,7 @@
 namespace Shapecode\Devliver\Twig\Extension;
 
 use Composer\Package\CompletePackageInterface;
+use Github\Client as GithubClient;
 use Shapecode\Devliver\Model\PackageAdapter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
@@ -25,14 +26,19 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     /** @var UrlGeneratorInterface */
     protected $router;
 
+    /** @var GithubClient */
+    protected $github;
+
     /**
      * @param UrlGeneratorInterface $router
      * @param                       $currentVersion
+     * @param GithubClient          $github
      */
-    public function __construct(UrlGeneratorInterface $router, $currentVersion)
+    public function __construct(UrlGeneratorInterface $router, $currentVersion, GithubClient $github)
     {
         $this->router = $router;
         $this->currentVersion = $currentVersion;
+        $this->github = $github;
     }
 
     /**
@@ -89,8 +95,13 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
      */
     public function getGlobals()
     {
+        $client = $this->github;
+
+        $latest = $client->api('repo')->releases()->all('shapecode', 'devliver')[0];
+
         return [
-            'devliver_version' => $this->currentVersion
+            'current_release' => $this->currentVersion,
+            'latest_release'  => $latest,
         ];
     }
 
