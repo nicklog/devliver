@@ -24,6 +24,9 @@ class GitHubRelease
     /** @var */
     protected $currentRelease;
 
+    /** @var array */
+    protected $releases;
+
     /**
      * @param Client            $client
      * @param AdapterInterface  $cache
@@ -61,18 +64,24 @@ class GitHubRelease
      */
     public function getAllReleases()
     {
+        if (!is_null($this->releases)) {
+            return $this->releases;
+        }
+
         $cachedReleases = $this->cache->getItem('devliver_releases');
 
         if ($cachedReleases->isHit()) {
-            return $cachedReleases->get();
+            $releases = $cachedReleases->get();
+        } else {
+            $releases = $this->client->api('repo')->releases()->all('shapecode', 'devliver');
+
+            $cachedReleases->set($releases);
+            $cachedReleases->expiresAfter(86400);
+
+            $this->cache->save($cachedReleases);
         }
 
-        $releases = $this->client->api('repo')->releases()->all('shapecode', 'devliver');
-
-        $cachedReleases->set($releases);
-        $cachedReleases->expiresAfter(86400);
-
-        $this->cache->save($cachedReleases);
+        $this->releases = $releases;
 
         return $releases;
     }
