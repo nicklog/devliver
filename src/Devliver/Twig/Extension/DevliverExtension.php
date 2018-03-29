@@ -26,14 +26,18 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     /** @var GitHubRelease */
     protected $github;
 
+    /** @var string */
+    protected $currentRelease;
+
     /**
      * @param UrlGeneratorInterface $router
      * @param GitHubRelease         $github
      */
-    public function __construct(UrlGeneratorInterface $router, GitHubRelease $github)
+    public function __construct(UrlGeneratorInterface $router, GitHubRelease $github, $currentRelease)
     {
         $this->router = $router;
         $this->github = $github;
+        $this->currentRelease = $currentRelease;
     }
 
     /**
@@ -91,8 +95,9 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     public function getGlobals()
     {
         return [
-            'current_release' => $this->github->getCurrentRelease(),
-            'latest_release'  => $this->github->getLatestRelease(),
+            'current_release_legacy' => $this->currentRelease,
+            'current_release'        => $this->github->getCurrentRelease(),
+            'latest_release'         => $this->github->getLatestRelease(),
         ];
     }
 

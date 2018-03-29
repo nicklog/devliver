@@ -4,7 +4,11 @@
             Devliver
         </a>
         {% if is_granted('ROLE_USER') %}
-            v{{ current_release.name }}
+            {% if current_release is not null %}
+                v{{ current_release.name }}
+            {% else %}
+                v{{ current_release_legacy }}
+            {% endif %}
         {% endif %}
         -
         <a href="https://github.com/shapecode/devliver" target="_blank">Contribute</a>

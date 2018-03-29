@@ -59,6 +59,8 @@ class GitHubRelease
                 return $release;
             }
         }
+
+        return null;
     }
 
     /**
