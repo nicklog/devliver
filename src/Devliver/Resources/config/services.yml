@@ -94,6 +94,13 @@ services:
         tags:
             - { name: console.command }
 
+    devliver.console_command.self_update:
+        class: Shapecode\Devliver\Command\SelfUpdateCommand
+        arguments:
+            - '@devliver.github_release'
+        tags:
+            - { name: console.command }
+
     # menu
     devliver.menu_builder:
         class: \Shapecode\Devliver\Menu\Builder
