@@ -83,7 +83,7 @@ class Builder
     {
         $menu = $this->factory->createItem('root', [
             'childrenAttributes' => [
-                'class' => 'navbar-nav ml-auto'
+                'class' => 'navbar-nav'
             ]
         ]);
 

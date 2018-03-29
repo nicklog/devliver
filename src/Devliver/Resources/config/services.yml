@@ -1,5 +1,5 @@
 parameters:
-    devliver_version: "1.0.0 Alpha 2"
+    devliver_version: "1.0.0 Alpha 1"
 
     devliver_dir:           '%kernel.project_dir%/var/devliver'
 
@@ -65,16 +65,6 @@ services:
         class: Shapecode\Devliver\EventListener\FosUserListener
         arguments:
             - '@router'
-        tags:
-            - { name: kernel.event_subscriber }
-
-    devliver.event_listener.release_checker:
-        class: Shapecode\Devliver\EventListener\ReleaseCheckerListener
-        arguments:
-            - '@session.flash_bag'
-            - '@security.authorization_checker'
-            - '@security.token_storage'
-            - '@devliver.github_release'
         tags:
             - { name: kernel.event_subscriber }
 

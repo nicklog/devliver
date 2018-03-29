@@ -44,7 +44,9 @@ class GitHubRelease
      */
     public function getLatestRelease()
     {
-        return $this->getAllReleases()[0];
+        $releases = $this->getAllReleases();
+
+        return $releases[0];
     }
 
     /**

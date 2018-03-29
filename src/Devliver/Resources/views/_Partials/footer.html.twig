@@ -1,18 +1,12 @@
 <footer class="footer">
     <div class="container">
-        <nav class="nav">
-            <a class="nav-link" href="https://github.com/shapecode/devliver" target="_blank">
-                Devliver
-                {% if is_granted('ROLE_USER') %}
-                    v{{ current_release.name }}
-                {% endif %}
-            </a>
-            {% if latest_release.id != current_release.id and is_granted('ROLE_USER') %}
-                <a class="nav-link" href="{{ latest_release.html_url }}" target="_blank">
-                    New version available: {{ latest_release.name }}
-                </a>
-            {% endif %}
-            <a class="nav-link" href="https://github.com/shapecode/devliver" target="_blank">Contribute</a>
-        </nav>
+        <a href="https://github.com/shapecode/devliver" target="_blank">
+            Devliver
+        </a>
+        {% if is_granted('ROLE_USER') %}
+            v{{ current_release.name }}
+        {% endif %}
+        -
+        <a href="https://github.com/shapecode/devliver" target="_blank">Contribute</a>
     </div>
 </footer>

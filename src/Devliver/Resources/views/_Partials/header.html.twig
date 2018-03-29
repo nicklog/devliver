@@ -12,6 +12,14 @@
                         currentClass: 'active',
                     }) }}
 
+                    <form class="form-inline ml-auto mr-3">
+                        {% if latest_release.id != current_release.id and is_granted('ROLE_USER') %}
+                            <a class="btn btn-warning" href="{{ latest_release.html_url }}" data-toggle="tooltip" title="{{ latest_release.name }}" target="_blank">
+                                Update Available
+                            </a>
+                        {% endif %}
+                    </form>
+
                     {{ knp_menu_render('main_right', {
                         template: '@Devliver/_Partials/knp_bootstrap4.html.twig',
                         currentClass: 'active',
