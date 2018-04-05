@@ -95,8 +95,10 @@ class SelfUpdateCommand extends Command
         $filename = $asset['name'];
         $filePath = $pwd . '/' . $filename;
 
-        $io->section('download update file...');
+        $io->section('download update file');
+        $io->text('download in progress... please wait.');
         copy($downloadUrl, $filePath);
+        $io->text('download finished');
     }
 
     protected function removeSources(SymfonyStyle $io, $asset)
@@ -117,6 +119,10 @@ class SelfUpdateCommand extends Command
 
         $io->section('remove old source');
 
+        foreach ($list as $item) {
+            $io->text('remove: ' . $item);
+        }
+
         $fs->remove($list);
 
     }
@@ -127,7 +133,7 @@ class SelfUpdateCommand extends Command
         $filename = $asset['name'];
         $filePath = $pwd . '/' . $filename;
 
-        $io->section('unzip new source');
+        $io->section('unzip update file');
 
         $zip = new \ZipArchive();
         if ($zip->open($filePath) === true) {
@@ -145,7 +151,6 @@ class SelfUpdateCommand extends Command
         $io->section('composer install');
 
         $process = new Process('php bin/composer install --no-dev --optimize-autoloader', $pwd);
-        $io->text($process->getCommandLine());
         $helper->run($io, $process, null, function ($type, $data) use ($io) {
             $io->write($data);
         });
@@ -159,7 +164,6 @@ class SelfUpdateCommand extends Command
         $io->section('update database');
 
         $process = new Process('php bin/console doctrine:schema:update --dump-sql', $pwd);
-        $io->text($process->getCommandLine());
         $helper->run($io, $process, null, function ($type, $data) use ($io) {
             $io->write($data);
         });
@@ -173,8 +177,8 @@ class SelfUpdateCommand extends Command
         $fs = new Filesystem();
 
         $io->section('remove update file');
-
         $fs->remove($filePath);
+        $io->text('update file removed');
     }
 
     protected function getWorkingDirectory()
