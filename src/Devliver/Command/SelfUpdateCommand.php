@@ -87,6 +87,10 @@ class SelfUpdateCommand extends Command
 
     }
 
+    /**
+     * @param SymfonyStyle $io
+     * @param              $asset
+     */
     protected function downloadUpdateFile(SymfonyStyle $io, $asset)
     {
         $pwd = $this->getWorkingDirectory();
@@ -100,6 +104,10 @@ class SelfUpdateCommand extends Command
         $io->text('download finished');
     }
 
+    /**
+     * @param SymfonyStyle $io
+     * @param              $asset
+     */
     protected function removeSources(SymfonyStyle $io, $asset)
     {
         $pwd = $this->getWorkingDirectory();
@@ -126,6 +134,10 @@ class SelfUpdateCommand extends Command
 
     }
 
+    /**
+     * @param SymfonyStyle $io
+     * @param              $asset
+     */
     protected function unzip(SymfonyStyle $io, $asset)
     {
         $pwd = $this->getWorkingDirectory();
@@ -142,6 +154,10 @@ class SelfUpdateCommand extends Command
         }
     }
 
+    /**
+     * @param SymfonyStyle $io
+     * @param              $asset
+     */
     protected function composerInstall(SymfonyStyle $io, $asset)
     {
         $pwd = $this->getWorkingDirectory();
@@ -163,6 +179,10 @@ class SelfUpdateCommand extends Command
         });
     }
 
+    /**
+     * @param SymfonyStyle $io
+     * @param              $asset
+     */
     protected function updateDatabase(SymfonyStyle $io, $asset)
     {
         $pwd = $this->getWorkingDirectory();
@@ -184,6 +204,10 @@ class SelfUpdateCommand extends Command
         });
     }
 
+    /**
+     * @param SymfonyStyle $io
+     * @param              $asset
+     */
     protected function removeUpdateFile(SymfonyStyle $io, $asset)
     {
         $pwd = $this->getWorkingDirectory();
@@ -196,6 +220,9 @@ class SelfUpdateCommand extends Command
         $io->text('update file removed');
     }
 
+    /**
+     * @return string
+     */
     protected function getWorkingDirectory()
     {
         return $this->kernel->getProjectDir();
