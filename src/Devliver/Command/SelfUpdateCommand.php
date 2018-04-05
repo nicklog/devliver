@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -52,8 +53,6 @@ class SelfUpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $helper = $this->getHelper('process');
-
         $latestRelease = $this->github->getLatestRelease();
         $asset = $latestRelease['assets'][0];
 
@@ -150,7 +149,15 @@ class SelfUpdateCommand extends Command
 
         $io->section('composer install');
 
-        $process = new Process('php bin/composer install --no-dev --optimize-autoloader', $pwd);
+        $projectDir = $this->kernel->getProjectDir();
+        $bin = $projectDir . '/bin/composer';
+
+        $executableFinder = new PhpExecutableFinder();
+        $php = $executableFinder->find();
+
+        $command = sprintf('%s %s install --no-dev --optimize-autoloader', $php, $bin);
+
+        $process = new Process($command, $pwd);
         $helper->run($io, $process, null, function ($type, $data) use ($io) {
             $io->write($data);
         });
@@ -163,7 +170,15 @@ class SelfUpdateCommand extends Command
 
         $io->section('update database');
 
-        $process = new Process('php bin/console doctrine:schema:update --dump-sql', $pwd);
+        $projectDir = $this->kernel->getProjectDir();
+        $bin = $projectDir . '/bin/console';
+
+        $executableFinder = new PhpExecutableFinder();
+        $php = $executableFinder->find();
+
+        $command = sprintf('%s %s doctrine:schema:update --dump-sql', $php, $bin);
+
+        $process = new Process($command, $pwd);
         $helper->run($io, $process, null, function ($type, $data) use ($io) {
             $io->write($data);
         });
