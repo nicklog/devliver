@@ -198,10 +198,7 @@ class SelfUpdateCommand extends Command
 
     protected function getWorkingDirectory()
     {
-        $pwd = $this->kernel->getProjectDir();
-        $pwd = '/home/nikita/Webserver/test/devliver';
-
-        return $pwd;
+        return $this->kernel->getProjectDir();
     }
 
 }
