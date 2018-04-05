@@ -98,6 +98,7 @@ services:
         class: Shapecode\Devliver\Command\SelfUpdateCommand
         arguments:
             - '@devliver.github_release'
+            - '@kernel'
         tags:
             - { name: console.command }
 
