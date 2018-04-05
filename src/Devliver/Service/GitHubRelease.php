@@ -80,7 +80,7 @@ class GitHubRelease
             $releases = $this->client->api('repo')->releases()->all('shapecode', 'devliver');
 
             $cachedReleases->set($releases);
-            $cachedReleases->expiresAfter(86400);
+            $cachedReleases->expiresAfter(3600);
 
             $this->cache->save($cachedReleases);
         }
