@@ -28,6 +28,8 @@ class DefaultController extends Controller
 
     /**
      * @Route("/packages.json", name="packages")
+     * @Route("/repo/private/packages.json", name="toran_fallback")
+     * @Route("/repo/private", name="toran_fallback_2")
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
