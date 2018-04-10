@@ -234,7 +234,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
         $repo = [];
 
-        $distUrl = $this->getComposerDistUrl('%package%', '%version%', '%reference%', '%type%');
+        $distUrl = $this->getComposerDistUrl('%package%', '%reference%', '%type%');
         $mirror = [
             'dist-url'  => $distUrl,
             'preferred' => true,
