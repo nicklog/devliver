@@ -120,7 +120,6 @@ class SelfUpdateCommand extends Command
             $pwd . '/templates',
             $pwd . '/translations',
             $pwd . '/var/cache',
-            $pwd . '/vendor',
         ];
 
         $io->section('remove old source');
