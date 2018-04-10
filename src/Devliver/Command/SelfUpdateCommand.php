@@ -199,7 +199,7 @@ class SelfUpdateCommand extends Command
         $executableFinder = new PhpExecutableFinder();
         $php = $executableFinder->find();
 
-        $command = sprintf('%s %s doctrine:schema:update --dump-sql', $php, $bin);
+        $command = sprintf('%s %s doctrine:schema:update --dump-sql --force', $php, $bin);
 
         $process = new Process($command, $pwd);
         $helper->run($io, $process, null, function ($type, $data) use ($io) {
