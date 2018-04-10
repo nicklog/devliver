@@ -57,7 +57,6 @@ class SelfUpdateCommand extends Command
     {
         $latestRelease = $this->github->getLatestRelease();
         $lastTag = $this->github->getTagByTagName($latestRelease['tag_name']);
-        $asset = $latestRelease['assets'][0];
 
         $pwd = $this->getWorkingDirectory();
         $filename = $lastTag['name'] . '.zip';
