@@ -13,7 +13,7 @@ Your private self-hosted composer repository.
 
 ### 1. Download
 
-... the project from [github.com](https://github.com/shapecode/devliver/releases) to your web directory.
+... the project from [github.com](https://github.com/shapecode/devliver/releases) to your web directory.  
 The document root of your vhost have to point to the `public` directory.
 
 ### 2. Extract
@@ -34,7 +34,7 @@ Update your database structure.
 bin/console doctrine:schema:update --force
 ```
 
-#### 5. User
+### 5. User
 
 Create an admin user.
 
@@ -44,24 +44,17 @@ bin/console fos:user:create --super-admin
 
 Follow the instructions and your user will be created.
 
-#### 6. That's it
+### 6. That's it
 
 Done ;) Go on!
 
 
 ##  Update Instruction
 
-### 1. Download
-
-... the latest version from [github.com](https://github.com/shapecode/devliver/releases) to your web directory.
-
-### 2. Update
-
 Login into your terminal and run following commands.
 
 ```bash
-rm -rf bin/ config/ public/ src/ templates/ translations/ var/cache/ vendor/
-unzip release.zip -d ./
-php bin/composer install --no-dev --optimize-autoloader
-php bin/console doctrine:schema:update --force
+php bin/console devliver:self-update
 ```
+
+Follow the instructions.
