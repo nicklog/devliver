@@ -27,6 +27,9 @@ class GitHubRelease
     /** @var array */
     protected $releases;
 
+    /** @var array */
+    protected $tags;
+
     /**
      * @param Client            $client
      * @param AdapterInterface  $cache
@@ -88,5 +91,48 @@ class GitHubRelease
         $this->releases = $releases;
 
         return $releases;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllTags()
+    {
+        if (!is_null($this->tags)) {
+            return $this->tags;
+        }
+
+        $cachedReleases = $this->cache->getItem('devliver_tags');
+
+        if ($cachedReleases->isHit()) {
+            $tags = $cachedReleases->get();
+        } else {
+            $tags = $this->client->api('repo')->tags('shapecode', 'devliver');
+
+            $cachedReleases->set($tags);
+            $cachedReleases->expiresAfter(3600);
+
+            $this->cache->save($cachedReleases);
+        }
+
+        $this->tags = $tags;
+
+        return $tags;
+    }
+
+    /**
+     * @param $tagName
+     *
+     * @return null
+     */
+    public function getTagByTagName($tagName)
+    {
+        foreach ($this->getAllTags() as $tag) {
+            if ($tag['name'] == $tagName) {
+                return $tag;
+            }
+        }
+
+        return null;
     }
 }

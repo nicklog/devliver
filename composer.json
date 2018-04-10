@@ -43,6 +43,9 @@
         "doctrine/doctrine-bundle": "~1.6",
         "doctrine/orm": "~2.5",
 
+        "php-http/client-implementation": "~1.0",
+        "php-http/discovery": "~1.4",
+        "php-http/client-common": "~1.7",
         "incenteev/composer-parameter-handler": "~2.0",
         "twig/twig": "~1.0|~2.0",
         "composer/composer": "~1.0",

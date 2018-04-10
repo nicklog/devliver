@@ -2,6 +2,8 @@
 
 namespace Shapecode\Devliver\Command;
 
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\MessageFactoryDiscovery;
 use Shapecode\Devliver\Service\GitHubRelease;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,10 +56,11 @@ class SelfUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $latestRelease = $this->github->getLatestRelease();
+        $lastTag = $this->github->getTagByTagName($latestRelease['tag_name']);
         $asset = $latestRelease['assets'][0];
 
         $pwd = $this->getWorkingDirectory();
-        $filename = $asset['name'];
+        $filename = $lastTag['name'] . '.zip';
         $filePath = $pwd . '/' . $filename;
 
         $io = new SymfonyStyle($input, $output);
@@ -69,7 +72,7 @@ class SelfUpdateCommand extends Command
             return;
         }
 
-        $this->downloadUpdateFile($io, $asset);
+        $this->downloadUpdateFile($io, $filePath, $lastTag['zipball_url']);
 
         if (!file_exists($filePath)) {
             $io->error('Couldn\'t find update file. Abort!');
@@ -78,10 +81,10 @@ class SelfUpdateCommand extends Command
         }
 
         $this->removeSources($io, $asset);
-        $this->unzip($io, $asset);
-        $this->composerInstall($io, $asset);
-        $this->updateDatabase($io, $asset);
-        $this->removeUpdateFile($io, $asset);
+        $this->unzip($io, $filePath, $lastTag);
+        $this->composerInstall($io);
+        $this->updateDatabase($io);
+        $this->removeUpdateFile($io, $filePath);
 
         $io->success('Devliver updated to latest version: ' . $latestRelease['name']);
 
@@ -89,18 +92,16 @@ class SelfUpdateCommand extends Command
 
     /**
      * @param SymfonyStyle $io
-     * @param              $asset
+     * @param              $zipball
+     * @param              $url
      */
-    protected function downloadUpdateFile(SymfonyStyle $io, $asset)
+    protected function downloadUpdateFile(SymfonyStyle $io, $zipball, $url)
     {
-        $pwd = $this->getWorkingDirectory();
-        $downloadUrl = $asset['browser_download_url'];
-        $filename = $asset['name'];
-        $filePath = $pwd . '/' . $filename;
-
         $io->section('download update file');
         $io->text('download in progress... please wait.');
-        copy($downloadUrl, $filePath);
+        if (!file_exists($zipball)) {
+            $this->downloadZipBall($zipball, $url);
+        }
         $io->text('download finished');
     }
 
@@ -136,21 +137,28 @@ class SelfUpdateCommand extends Command
 
     /**
      * @param SymfonyStyle $io
-     * @param              $asset
+     * @param              $zipball
+     * @param              $lastTag
      */
-    protected function unzip(SymfonyStyle $io, $asset)
+    protected function unzip(SymfonyStyle $io, $zipball, $lastTag)
     {
         $pwd = $this->getWorkingDirectory();
-        $filename = $asset['name'];
-        $filePath = $pwd . '/' . $filename;
 
         $io->section('unzip update file');
 
+        $commit = substr($lastTag['commit']['sha'], 0, 7);
+        $zipDirName = 'shapecode-devliver-' . $commit;
+
+        $fs = new Filesystem();
         $zip = new \ZipArchive();
-        if ($zip->open($filePath) === true) {
+        if ($zip->open($zipball) === true) {
             $zip->extractTo($pwd);
             $zip->close();
-        } else {
+
+            $fs->mirror($pwd . '/' . $zipDirName . '/', $pwd, null, [
+                'override' => true
+            ]);
+            $fs->remove($pwd . '/' . $zipDirName);
         }
     }
 
@@ -158,7 +166,7 @@ class SelfUpdateCommand extends Command
      * @param SymfonyStyle $io
      * @param              $asset
      */
-    protected function composerInstall(SymfonyStyle $io, $asset)
+    protected function composerInstall(SymfonyStyle $io)
     {
         $pwd = $this->getWorkingDirectory();
         $helper = $this->getHelper('process');
@@ -183,7 +191,7 @@ class SelfUpdateCommand extends Command
      * @param SymfonyStyle $io
      * @param              $asset
      */
-    protected function updateDatabase(SymfonyStyle $io, $asset)
+    protected function updateDatabase(SymfonyStyle $io)
     {
         $pwd = $this->getWorkingDirectory();
         $helper = $this->getHelper('process');
@@ -208,11 +216,8 @@ class SelfUpdateCommand extends Command
      * @param SymfonyStyle $io
      * @param              $asset
      */
-    protected function removeUpdateFile(SymfonyStyle $io, $asset)
+    protected function removeUpdateFile(SymfonyStyle $io, $filePath)
     {
-        $pwd = $this->getWorkingDirectory();
-        $filename = $asset['name'];
-        $filePath = $pwd . '/' . $filename;
         $fs = new Filesystem();
 
         $io->section('remove update file');
@@ -226,6 +231,23 @@ class SelfUpdateCommand extends Command
     protected function getWorkingDirectory()
     {
         return $this->kernel->getProjectDir();
+    }
+
+    protected function downloadZipBall($dest, $source)
+    {
+        $client = HttpClientDiscovery::find();
+        $messageFactory = MessageFactoryDiscovery::find();
+        $findLocation = $client->sendRequest(
+            $messageFactory->createRequest('GET', $source)
+        );
+
+        $location = $findLocation->getHeader('Location')[0];
+
+        $download = $client->sendRequest(
+            $messageFactory->createRequest('GET', $location)
+        );
+
+        file_put_contents($dest, $download->getBody());
     }
 
 }
