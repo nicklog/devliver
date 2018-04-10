@@ -104,7 +104,7 @@ services:
 
     # menu
     devliver.menu_builder:
-        class: \Shapecode\Devliver\Menu\Builder
+        class: Shapecode\Devliver\Menu\Builder
         arguments:
             - "@translator"
             - "@knp_menu.factory"
