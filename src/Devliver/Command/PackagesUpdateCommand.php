@@ -3,6 +3,7 @@
 namespace Shapecode\Devliver\Command;
 
 use Composer\IO\ConsoleIO;
+use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Shapecode\Devliver\Service\RepositorySynchronizationInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,6 +16,8 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
  *
  * @package Shapecode\Devliver\Command
  * @author  Nikita Loges
+ *
+ * @CronJob("*\/5 * * * *")
  */
 class PackagesUpdateCommand extends Command
 {

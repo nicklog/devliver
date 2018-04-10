@@ -23,4 +23,7 @@ return [
     Shapecode\Devliver\DevliverBundle::class => ['all' => true],
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
     Ornicar\GravatarBundle\OrnicarGravatarBundle::class => ['all' => true],
+    Shapecode\Bundle\CronBundle\ShapecodeCronBundle::class => ['all' => true],
+    Tenolo\Bundle\DoctrineTablePrefixBundle\TenoloDoctrineTablePrefixBundle::class => ['all' => true],
+    Tenolo\Bundle\IgnoreDoctrineAnnotationsBundle\TenoloIgnoreDoctrineAnnotationsBundle::class => ['all' => true],
 ];

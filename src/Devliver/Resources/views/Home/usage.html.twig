@@ -40,11 +40,12 @@
     <h2>4. Cronjob</h2>
     <p>
         You have to run a background update task as a cronjob.<br>
-        The background task is executed with the <code>bin/console devliver:packages:update</code> shell command.
+        The background task is executed with the <code>bin/console shapecode:cron:run</code> shell command.<br>
+        But before cronjobs can run you have to execute <code>bin/console shapecode:cron:scan</code> to find them.
     </p>
     <p>
-        Just add a cronjob that runs the command every 5 minutes like this to your cron table.<br>
-        <code>*/5 * * * * /path/to/your/project/bin/console devliver:packages:update</code>
+        Then just add a cronjob to your cron table that runs the command every 2 minutes like this to your cron table.<br>
+        <code>*/2 * * * * /path/to/your/project/bin/console shapecode:cron:run -q</code>
     </p>
 
     <p>&nbsp;</p>

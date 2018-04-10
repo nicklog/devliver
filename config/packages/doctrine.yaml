@@ -8,7 +8,6 @@ parameters:
 doctrine:
     dbal:
         driver:         'pdo_mysql'
-        server_version: '10.1'
         charset:        'utf8mb4'
 
         host:           '%database_host%'

@@ -1,0 +1,8 @@
+tenolo_doctrine_table_prefix:
+    database_prefix: dl
+    rename_join_table: true
+    namespace_prefix:
+        enable: true
+        replacements:
+            shapecode: sc
+            devliver: dl

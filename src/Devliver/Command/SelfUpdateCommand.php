@@ -83,6 +83,7 @@ class SelfUpdateCommand extends Command
         $this->unzip($io, $filePath, $lastTag);
         $this->composerInstall($io);
         $this->updateDatabase($io);
+        $this->scanForCronjobs($io);
         $this->removeUpdateFile($io, $filePath);
 
         $io->success('Devliver updated to latest version: ' . $latestRelease['name']);
@@ -164,23 +165,9 @@ class SelfUpdateCommand extends Command
      */
     protected function composerInstall(SymfonyStyle $io)
     {
-        $pwd = $this->getWorkingDirectory();
-        $helper = $this->getHelper('process');
-
         $io->section('composer install');
 
-        $projectDir = $this->kernel->getProjectDir();
-        $bin = $projectDir . '/bin/composer';
-
-        $executableFinder = new PhpExecutableFinder();
-        $php = $executableFinder->find();
-
-        $command = sprintf('%s %s install --no-dev --optimize-autoloader', $php, $bin);
-
-        $process = new Process($command, $pwd);
-        $helper->run($io, $process, null, function ($type, $data) use ($io) {
-            $io->write($data);
-        });
+        $this->executeCommand($io, 'install --no-dev --optimize-autoloader');
     }
 
     /**
@@ -188,23 +175,20 @@ class SelfUpdateCommand extends Command
      */
     protected function updateDatabase(SymfonyStyle $io)
     {
-        $pwd = $this->getWorkingDirectory();
-        $helper = $this->getHelper('process');
-
         $io->section('update database');
 
-        $projectDir = $this->kernel->getProjectDir();
-        $bin = $projectDir . '/bin/console';
+        $this->executeCommand($io, 'doctrine:schema:update --dump-sql --force');
+    }
 
-        $executableFinder = new PhpExecutableFinder();
-        $php = $executableFinder->find();
+    /**
+     * @param SymfonyStyle $io
+     */
+    protected function scanForCronjobs(SymfonyStyle $io)
+    {
+        $io->section('cronjobs');
+        $io->text('try to find new cronjobs');
 
-        $command = sprintf('%s %s doctrine:schema:update --dump-sql --force', $php, $bin);
-
-        $process = new Process($command, $pwd);
-        $helper->run($io, $process, null, function ($type, $data) use ($io) {
-            $io->write($data);
-        });
+        $this->executeCommand($io, 'shapecode:cron:scan');
     }
 
     /**
@@ -247,6 +231,25 @@ class SelfUpdateCommand extends Command
         );
 
         file_put_contents($dest, $download->getBody());
+    }
+
+    protected function executeCommand(SymfonyStyle $io, $commandStr)
+    {
+        $pwd = $this->getWorkingDirectory();
+        $helper = $this->getHelper('process');
+
+        $projectDir = $this->kernel->getProjectDir();
+        $bin = $projectDir . '/bin/console';
+
+        $executableFinder = new PhpExecutableFinder();
+        $php = $executableFinder->find();
+
+        $command = sprintf('%s %s %s', $php, $bin, $commandStr);
+
+        $process = new Process($command, $pwd);
+        $helper->run($io, $process, null, function ($type, $data) use ($io) {
+            $io->write($data);
+        });
     }
 
 }
