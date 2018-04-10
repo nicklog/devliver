@@ -80,7 +80,7 @@ class SelfUpdateCommand extends Command
             return;
         }
 
-        $this->removeSources($io, $asset);
+        $this->removeSources($io);
         $this->unzip($io, $filePath, $lastTag);
         $this->composerInstall($io);
         $this->updateDatabase($io);
@@ -107,9 +107,8 @@ class SelfUpdateCommand extends Command
 
     /**
      * @param SymfonyStyle $io
-     * @param              $asset
      */
-    protected function removeSources(SymfonyStyle $io, $asset)
+    protected function removeSources(SymfonyStyle $io)
     {
         $pwd = $this->getWorkingDirectory();
         $fs = new Filesystem();
@@ -164,7 +163,6 @@ class SelfUpdateCommand extends Command
 
     /**
      * @param SymfonyStyle $io
-     * @param              $asset
      */
     protected function composerInstall(SymfonyStyle $io)
     {
@@ -189,7 +187,6 @@ class SelfUpdateCommand extends Command
 
     /**
      * @param SymfonyStyle $io
-     * @param              $asset
      */
     protected function updateDatabase(SymfonyStyle $io)
     {
@@ -214,7 +211,7 @@ class SelfUpdateCommand extends Command
 
     /**
      * @param SymfonyStyle $io
-     * @param              $asset
+     * @param              $filePath
      */
     protected function removeUpdateFile(SymfonyStyle $io, $filePath)
     {
@@ -233,6 +230,10 @@ class SelfUpdateCommand extends Command
         return $this->kernel->getProjectDir();
     }
 
+    /**
+     * @param $dest
+     * @param $source
+     */
     protected function downloadZipBall($dest, $source)
     {
         $client = HttpClientDiscovery::find();
