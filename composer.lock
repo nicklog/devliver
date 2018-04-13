@@ -3213,16 +3213,16 @@
         },
         {
             "name": "shapecode/cron-bundle",
-            "version": "3.0.4",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shapecode/cron-bundle.git",
-                "reference": "12ba1c0cd0ab8f8589bf516eadbdd139d19b0f5a"
+                "reference": "20937b97c6b8351a84b0d87911ee01198a94b3b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/12ba1c0cd0ab8f8589bf516eadbdd139d19b0f5a",
-                "reference": "12ba1c0cd0ab8f8589bf516eadbdd139d19b0f5a",
+                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/20937b97c6b8351a84b0d87911ee01198a94b3b8",
+                "reference": "20937b97c6b8351a84b0d87911ee01198a94b3b8",
                 "shasum": ""
             },
             "require": {
@@ -3248,7 +3248,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-develop": "3.1-dev"
                 }
             },
             "autoload": {
@@ -3285,7 +3285,7 @@
                 "symfony",
                 "time"
             ],
-            "time": "2018-04-05T07:51:09+00:00"
+            "time": "2018-04-13T14:46:08+00:00"
         },
         {
             "name": "sonata-project/admin-bundle",
@@ -4624,21 +4624,21 @@
         },
         {
             "name": "symfony/doctrine-bridge",
-            "version": "v4.0.8",
+            "version": "v3.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/doctrine-bridge.git",
-                "reference": "6743ff309bee333f885b237d04e81652f73f51a3"
+                "reference": "bc11a3f84a49f6de173131aaf5b8db2464b57e00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/doctrine-bridge/zipball/6743ff309bee333f885b237d04e81652f73f51a3",
-                "reference": "6743ff309bee333f885b237d04e81652f73f51a3",
+                "url": "https://api.github.com/repos/symfony/doctrine-bridge/zipball/bc11a3f84a49f6de173131aaf5b8db2464b57e00",
+                "reference": "bc11a3f84a49f6de173131aaf5b8db2464b57e00",
                 "shasum": ""
             },
             "require": {
                 "doctrine/common": "~2.4",
-                "php": "^7.1.3",
+                "php": "^5.5.9|>=7.0.8",
                 "symfony/polyfill-mbstring": "~1.0"
             },
             "conflict": {
@@ -4650,16 +4650,16 @@
                 "doctrine/dbal": "~2.4",
                 "doctrine/orm": "^2.4.5",
                 "symfony/dependency-injection": "~3.4|~4.0",
-                "symfony/expression-language": "~3.4|~4.0",
-                "symfony/form": "~3.4|~4.0",
-                "symfony/http-kernel": "~3.4|~4.0",
-                "symfony/property-access": "~3.4|~4.0",
-                "symfony/property-info": "~3.4|~4.0",
-                "symfony/proxy-manager-bridge": "~3.4|~4.0",
-                "symfony/security": "~3.4|~4.0",
-                "symfony/stopwatch": "~3.4|~4.0",
-                "symfony/translation": "~3.4|~4.0",
-                "symfony/validator": "~3.4|~4.0"
+                "symfony/expression-language": "~2.8|~3.0|~4.0",
+                "symfony/form": "^3.3.10|~4.0",
+                "symfony/http-kernel": "~2.8|~3.0|~4.0",
+                "symfony/property-access": "~2.8|~3.0|~4.0",
+                "symfony/property-info": "~2.8|3.0|~4.0",
+                "symfony/proxy-manager-bridge": "~2.8|~3.0|~4.0",
+                "symfony/security": "~2.8|~3.0|~4.0",
+                "symfony/stopwatch": "~2.8|~3.0|~4.0",
+                "symfony/translation": "~2.8|~3.0|~4.0",
+                "symfony/validator": "^3.2.5|~4.0"
             },
             "suggest": {
                 "doctrine/data-fixtures": "",
@@ -4672,7 +4672,7 @@
             "type": "symfony-bridge",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "3.4-dev"
                 }
             },
             "autoload": {
@@ -4699,7 +4699,7 @@
             ],
             "description": "Symfony Doctrine Bridge",
             "homepage": "https://symfony.com",
-            "time": "2018-03-19T22:35:49+00:00"
+            "time": "2018-03-19T22:32:39+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -7040,34 +7040,34 @@
         },
         {
             "name": "tenolo/doctrine-table-prefix-bundle",
-            "version": "2.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tenolo/doctrine-table-prefix-bundle.git",
-                "reference": "2b545facb1554b35fb575e3847975721974a0685"
+                "reference": "3369e7879a54bf32ccb77f0c5f8f2159b73e3810"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tenolo/doctrine-table-prefix-bundle/zipball/2b545facb1554b35fb575e3847975721974a0685",
-                "reference": "2b545facb1554b35fb575e3847975721974a0685",
+                "url": "https://api.github.com/repos/tenolo/doctrine-table-prefix-bundle/zipball/3369e7879a54bf32ccb77f0c5f8f2159b73e3810",
+                "reference": "3369e7879a54bf32ccb77f0c5f8f2159b73e3810",
                 "shasum": ""
             },
             "require": {
                 "doctrine/common": "~2.6",
+                "doctrine/doctrine-bundle": "~1.6",
                 "doctrine/orm": "~2.5",
-                "php": "~5.5|~7.0",
-                "symfony/config": "~2.8|~3.0",
-                "symfony/dependency-injection": "~2.8|~3.0",
-                "symfony/doctrine-bridge": "~2.8|~3.0",
-                "symfony/framework-bundle": "~2.8|~3.0",
-                "symfony/http-kernel": "~2.8|~3.0",
+                "php": "~5.6|~7.0",
+                "symfony/config": "~2.8|~3.0|~4.0",
+                "symfony/dependency-injection": "~2.8|~3.0|~4.0",
+                "symfony/doctrine-bridge": "~2.8|~3.0|~4.0",
+                "symfony/framework-bundle": "~2.8|~3.0|~4.0",
+                "symfony/http-kernel": "~2.8|~3.0|~4.0",
                 "tenolo/utilities": "~1.3"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev",
-                    "dev-develop": "3.0-dev"
+                    "dev-master": "2.1-dev"
                 }
             },
             "autoload": {
@@ -7101,7 +7101,7 @@
                 "table",
                 "tenolo"
             ],
-            "time": "2018-01-09T15:14:21+00:00"
+            "time": "2018-04-13T13:07:46+00:00"
         },
         {
             "name": "tenolo/ignore-doctrine-annotations-bundle",
