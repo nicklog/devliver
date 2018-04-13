@@ -17,7 +17,7 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
  * @package Shapecode\Devliver\Command
  * @author  Nikita Loges
  *
- * @CronJob("*\/5 * * * *")
+ * @CronJob("*\/5 * * * *", arguments="-q")
  */
 class PackagesUpdateCommand extends Command
 {
