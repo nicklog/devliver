@@ -3217,12 +3217,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shapecode/cron-bundle.git",
-                "reference": "20937b97c6b8351a84b0d87911ee01198a94b3b8"
+                "reference": "86000b0258ac695c631e3f75c2c8f731c5714bdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/20937b97c6b8351a84b0d87911ee01198a94b3b8",
-                "reference": "20937b97c6b8351a84b0d87911ee01198a94b3b8",
+                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/86000b0258ac695c631e3f75c2c8f731c5714bdd",
+                "reference": "86000b0258ac695c631e3f75c2c8f731c5714bdd",
                 "shasum": ""
             },
             "require": {
@@ -3285,7 +3285,7 @@
                 "symfony",
                 "time"
             ],
-            "time": "2018-04-13T14:46:08+00:00"
+            "time": "2018-04-14T18:10:22+00:00"
         },
         {
             "name": "sonata-project/admin-bundle",
