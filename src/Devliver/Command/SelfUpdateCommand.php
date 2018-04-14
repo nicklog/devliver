@@ -167,7 +167,7 @@ class SelfUpdateCommand extends Command
     {
         $io->section('composer install');
 
-        $this->executeCommand($io, 'install --no-dev --optimize-autoloader');
+        $this->executeCommand($io, 'install --no-dev --optimize-autoloader', 'composer');
     }
 
     /**
@@ -233,13 +233,13 @@ class SelfUpdateCommand extends Command
         file_put_contents($dest, $download->getBody());
     }
 
-    protected function executeCommand(SymfonyStyle $io, $commandStr)
+    protected function executeCommand(SymfonyStyle $io, $commandStr, $binary = 'console')
     {
         $pwd = $this->getWorkingDirectory();
         $helper = $this->getHelper('process');
 
         $projectDir = $this->kernel->getProjectDir();
-        $bin = $projectDir . '/bin/console';
+        $bin = $projectDir . '/bin/' . $binary;
 
         $executableFinder = new PhpExecutableFinder();
         $php = $executableFinder->find();
