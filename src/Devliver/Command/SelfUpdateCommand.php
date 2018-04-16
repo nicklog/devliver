@@ -2,6 +2,8 @@
 
 namespace Shapecode\Devliver\Command;
 
+use Http\Client\Common\Plugin\RedirectPlugin;
+use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Shapecode\Devliver\Service\GitHubRelease;
@@ -55,15 +57,14 @@ class SelfUpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $latestRelease = $this->github->getLatestRelease();
-        $lastTag = $this->github->getTagByTagName($latestRelease['tag_name']);
+        $lastTag = $this->github->getLastTag();
 
         $pwd = $this->getWorkingDirectory();
         $filename = $lastTag['name'] . '.zip';
         $filePath = $pwd . '/' . $filename;
 
         $io = new SymfonyStyle($input, $output);
-        $io->title('Update Devliver to latest version: ' . $latestRelease['name']);
+        $io->title('Update Devliver to latest version: ' . $lastTag['name']);
 
         if (!$io->confirm('Do you want update Devliver to the latest version? Do you have a backup?')) {
             $io->error('update canceled');
@@ -86,7 +87,9 @@ class SelfUpdateCommand extends Command
         $this->scanForCronjobs($io);
         $this->removeUpdateFile($io, $filePath);
 
-        $io->success('Devliver updated to latest version: ' . $latestRelease['name']);
+        $this->github->setVersionData($lastTag);
+
+        $io->success('Devliver updated to latest version: ' . $lastTag['name']);
 
     }
 
@@ -209,6 +212,8 @@ class SelfUpdateCommand extends Command
      */
     protected function getWorkingDirectory()
     {
+        return '/home/nikita/Webserver/test/devliver';
+
         return $this->kernel->getProjectDir();
     }
 
@@ -218,16 +223,17 @@ class SelfUpdateCommand extends Command
      */
     protected function downloadZipBall($dest, $source)
     {
+        $redirectPlugin = new RedirectPlugin();
         $client = HttpClientDiscovery::find();
-        $messageFactory = MessageFactoryDiscovery::find();
-        $findLocation = $client->sendRequest(
-            $messageFactory->createRequest('GET', $source)
+
+        $pluginClient = new PluginClient(
+            $client,
+            [$redirectPlugin]
         );
 
-        $location = $findLocation->getHeader('Location')[0];
-
-        $download = $client->sendRequest(
-            $messageFactory->createRequest('GET', $location)
+        $messageFactory = MessageFactoryDiscovery::find();
+        $download = $pluginClient->sendRequest(
+            $messageFactory->createRequest('GET', $source)
         );
 
         file_put_contents($dest, $download->getBody());
@@ -239,7 +245,7 @@ class SelfUpdateCommand extends Command
         $helper = $this->getHelper('process');
 
         $projectDir = $this->kernel->getProjectDir();
-        $bin = $projectDir . '/bin/' . $binary;
+        $bin = realpath($projectDir . '/bin/' . $binary);
 
         $executableFinder = new PhpExecutableFinder();
         $php = $executableFinder->find();

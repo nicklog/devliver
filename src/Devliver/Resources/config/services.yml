@@ -1,7 +1,6 @@
 parameters:
-    devliver_version: "1.0.0 Alpha 8"
-
     devliver_dir:           '%kernel.project_dir%/var/devliver'
+    version_file:           '%kernel.project_dir%/version'
 
     devliver_package_dir:   '%devliver_dir%/package'
     devliver_dist_dir:      '%devliver_dir%/dist'
@@ -74,7 +73,6 @@ services:
         arguments:
             - '@router'
             - '@devliver.github_release'
-            - '%devliver_version%'
         tags:
             - { name: twig.extension }
 
@@ -84,7 +82,7 @@ services:
         arguments:
             - '@Github\Client'
             - '@cache.app'
-            - '%devliver_version%'
+            - '%version_file%'
 
     # command
     devliver.console_command.packages_update:

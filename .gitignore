@@ -3,6 +3,7 @@
 build/
 phpunit.xml
 parameters.yml
+version
 
 ###> symfony/framework-bundle ###
 .env

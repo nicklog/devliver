@@ -4,6 +4,7 @@ namespace Shapecode\Devliver\Service;
 
 use Github\Client;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class GitHubRelease
@@ -21,11 +22,11 @@ class GitHubRelease
     /** @var AdapterInterface */
     protected $cache;
 
-    /** @var */
+    /** @var string */
     protected $currentRelease;
 
-    /** @var array */
-    protected $releases;
+    /** @var string */
+    protected $versionFile;
 
     /** @var array */
     protected $tags;
@@ -33,32 +34,51 @@ class GitHubRelease
     /**
      * @param Client            $client
      * @param AdapterInterface  $cache
-     * @param                   $currentRelease
+     * @param                   $versionFile
      */
-    public function __construct(Client $client, AdapterInterface $cache, $currentRelease)
+    public function __construct(Client $client, AdapterInterface $cache, $versionFile)
     {
         $this->client = $client;
         $this->cache = $cache;
-        $this->currentRelease = $currentRelease;
+        $this->versionFile = $versionFile;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVersionData()
+    {
+        $fs = new Filesystem();
+
+        if (!$fs->exists($this->versionFile)) {
+            $tag = $this->getLastTag();
+            $this->setVersionData($tag);
+        } else {
+            $content = file_get_contents($this->versionFile);
+            $tag = json_decode($content, true);
+        }
+
+        return $tag;
+    }
+
+    /**
+     * @param $tag
+     */
+    public function setVersionData($tag)
+    {
+        $fs = new Filesystem();
+        $fs->dumpFile($this->versionFile, json_encode($tag));
     }
 
     /**
      * @return array
      */
-    public function getLatestRelease()
+    public function getCurrentTag()
     {
-        $releases = $this->getAllReleases();
+        $current = $this->getVersionData();
 
-        return $releases[0];
-    }
-
-    /**
-     * @return array
-     */
-    public function getCurrentRelease()
-    {
-        foreach ($this->getAllReleases() as $release) {
-            if ($release['name'] == $this->currentRelease) {
+        foreach ($this->getAllTags() as $release) {
+            if ($release['name'] == $current['name']) {
                 return $release;
             }
         }
@@ -69,28 +89,9 @@ class GitHubRelease
     /**
      * @return mixed
      */
-    public function getAllReleases()
+    public function getLastTag()
     {
-        if (!is_null($this->releases)) {
-            return $this->releases;
-        }
-
-        $cachedReleases = $this->cache->getItem('devliver_releases');
-
-        if ($cachedReleases->isHit()) {
-            $releases = $cachedReleases->get();
-        } else {
-            $releases = $this->client->api('repo')->releases()->all('shapecode', 'devliver');
-
-            $cachedReleases->set($releases);
-            $cachedReleases->expiresAfter(3600);
-
-            $this->cache->save($cachedReleases);
-        }
-
-        $this->releases = $releases;
-
-        return $releases;
+        return $this->getAllTags()[0];
     }
 
     /**

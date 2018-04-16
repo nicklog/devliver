@@ -13,10 +13,10 @@
                     }) }}
 
                     <form class="form-inline ml-auto mr-3">
-                        {% if current_release is not null and latest_release.id != current_release.id and is_granted('ROLE_USER') %}
-                            <a class="btn btn-warning" href="{{ latest_release.html_url }}" data-toggle="tooltip" title="{{ latest_release.name }}" target="_blank">
+                        {% if latest_release.name != current_release.name and is_granted('ROLE_USER') %}
+                            <div class="btn btn-warning" data-toggle="tooltip" title="{{ latest_release.name }}">
                                 Update Available
-                            </a>
+                            </div>
                         {% endif %}
                     </form>
 
