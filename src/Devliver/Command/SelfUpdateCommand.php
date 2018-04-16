@@ -212,8 +212,6 @@ class SelfUpdateCommand extends Command
      */
     protected function getWorkingDirectory()
     {
-        return '/home/nikita/Webserver/test/devliver';
-
         return $this->kernel->getProjectDir();
     }
 
