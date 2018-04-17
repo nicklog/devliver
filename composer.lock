@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "5c9eeef9a3fa94207379ab461869b42b",
@@ -3213,16 +3213,16 @@
         },
         {
             "name": "shapecode/cron-bundle",
-            "version": "dev-develop",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shapecode/cron-bundle.git",
-                "reference": "86000b0258ac695c631e3f75c2c8f731c5714bdd"
+                "reference": "7172aeb6d46b0474a179381467038d4324586146"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/86000b0258ac695c631e3f75c2c8f731c5714bdd",
-                "reference": "86000b0258ac695c631e3f75c2c8f731c5714bdd",
+                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/7172aeb6d46b0474a179381467038d4324586146",
+                "reference": "7172aeb6d46b0474a179381467038d4324586146",
                 "shasum": ""
             },
             "require": {
@@ -3248,7 +3248,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-develop": "3.1-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -3285,7 +3285,7 @@
                 "symfony",
                 "time"
             ],
-            "time": "2018-04-14T18:10:22+00:00"
+            "time": "2018-04-16T15:43:07+00:00"
         },
         {
             "name": "sonata-project/admin-bundle",
