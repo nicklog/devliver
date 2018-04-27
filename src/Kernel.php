@@ -9,22 +9,39 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
+/**
+ * Class Kernel
+ *
+ * @package App
+ * @author  Nikita Loges
+ * @company tenolo GbR
+ */
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
 
+    /** @var string */
     const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
+    /**
+     * @inheritdoc
+     */
     public function getCacheDir()
     {
         return $this->getProjectDir() . '/var/cache/' . $this->environment;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getLogDir()
     {
         return $this->getProjectDir() . '/var/log';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function registerBundles()
     {
         $contents = require $this->getProjectDir() . '/config/bundles.php';
@@ -38,6 +55,9 @@ class Kernel extends BaseKernel
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
     {
         // Feel free to remove the "container.autowiring.strict_mode" parameter
@@ -52,6 +72,9 @@ class Kernel extends BaseKernel
         $loader->load($confDir . '/{services}_' . $this->environment . self::CONFIG_EXTS, 'glob');
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
         $confDir = $this->getProjectDir() . '/config';
