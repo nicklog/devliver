@@ -48,3 +48,12 @@ menu:
     usage: Anleitung
     change_password: Passwort ändern
     logout: Abmelden
+
+resetting:
+    request:
+        page_header: Passwort zurücksetzen
+        headline: Passwort zurücksetzen
+    reset:
+        page_header: Passwort setzen
+    check_email:
+        page_header: Passwort zurücksetzen

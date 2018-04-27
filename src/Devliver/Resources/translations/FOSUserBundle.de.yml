@@ -1,0 +1,5 @@
+resetting:
+    check_email: |
+        Eine E-Mail wurde verschickt. Sie beinhaltet einen Link zum Zurücksetzen des Passwortes.
+
+        Eventuell wurde diese E-Mail als Spam markiert, wenn sie nicht angekommen ist.
