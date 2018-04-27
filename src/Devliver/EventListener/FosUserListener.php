@@ -35,6 +35,7 @@ class FosUserListener implements EventSubscriberInterface
     {
         return [
             FOSUserEvents::CHANGE_PASSWORD_SUCCESS => 'onChangePasswordCompleted',
+            FOSUserEvents::RESETTING_RESET_SUCCESS => 'onResettingResetSuccess',
         ];
     }
 
@@ -44,6 +45,17 @@ class FosUserListener implements EventSubscriberInterface
     public function onChangePasswordCompleted(FormEvent $event)
     {
         $url = $this->router->generate('devliver_index');
+        $response = new RedirectResponse($url);
+
+        $event->setResponse($response);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onResettingResetSuccess(FormEvent $event)
+    {
+        $url = $this->router->generate('fos_user_security_login');
         $response = new RedirectResponse($url);
 
         $event->setResponse($response);
