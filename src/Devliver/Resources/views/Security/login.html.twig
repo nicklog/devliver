@@ -38,6 +38,10 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="_submit" name="_submit">
             <i class="fas fa-sign-in-alt fa-fw"></i> {{ 'security.login.submit'|trans }}
         </button>
+
+        <p>
+            <a href="{{ path("fos_user_resetting_request") }}">Passwort vergessen</a>
+        </p>
     </form>
 
 {% endblock %}

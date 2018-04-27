@@ -1,0 +1,13 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageTitle %}
+    <i class="fas fa-sign-in-alt fa-fw"></i> {{ 'resetting.check_email.page_header'|trans({}, 'messages') }}
+{% endblock %}
+
+{% block content %}
+<p>
+{{ 'resetting.check_email'|trans({'%tokenLifetime%': tokenLifetime})|nl2br }}
+</p>
+{% endblock %}

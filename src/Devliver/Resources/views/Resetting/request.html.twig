@@ -1,0 +1,26 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageTitle %}
+    <i class="fas fa-sign-in-alt fa-fw"></i> {{ 'resetting.request.page_header'|trans({}, 'messages') }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="offset-md-4 col-md-4">
+            <form action="{{ path("fos_user_resetting_send_email") }}" method="post">
+                <h2 class="h3 mb-3 font-weight-normal">{{ 'resetting.request.headline'|trans({}, 'messages') }}</h2>
+
+                <div class="form-group">
+                    <label for="username">{{ 'resetting.request.username'|trans }}</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="{{ 'resetting.request.username'|trans }}" required autofocus>
+                </div>
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit" name="submit">
+                    <i class="fas fa-sign-in-alt fa-fw"></i> {{ 'resetting.request.submit'|trans }}
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
