@@ -4,8 +4,8 @@ fos_user:
     firewall_name: main
 
     from_email:
-        address:        webmaster@example.com
-        sender_name:    Admin
+        address:        "%mailer_user%"
+        sender_name:    "%mailer_user%"
 
     group:
         group_class: Shapecode\Devliver\Entity\UserGroup
@@ -13,3 +13,6 @@ fos_user:
 
     service:
         user_manager: sonata.user.orm.user_manager
+
+    resetting:
+        retry_ttl: 0

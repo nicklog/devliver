@@ -1,5 +1,26 @@
-{% extends "@FOSUser/layout.html.twig" %}
+{% extends '@Devliver/layout.html.twig' %}
 
-{% block fos_user_content %}
-{% include "@FOSUser/Resetting/reset_content.html.twig" %}
-{% endblock fos_user_content %}
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageTitle %}
+    <i class="fas fa-sign-in-alt fa-fw"></i> {{ 'resetting.request.page_header'|trans({}, 'messages') }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="offset-md-4 col-md-4">
+            {{ form_start(form, { 'action': path('fos_user_resetting_reset', {'token': token}) }) }}
+
+            {{ form_widget(form) }}
+
+            <div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" name="submit">
+                    {{ 'resetting.reset.submit'|trans }}
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+{% endblock %}
