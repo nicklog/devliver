@@ -46,13 +46,23 @@ class DefaultController extends Controller
      */
     public function usageAction()
     {
-        $packagesUrl = $this->generateUrl('devliver_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $content = file_get_contents('https://raw.githubusercontent.com/shapecode/devliver/master/README.md');
+        $cache = $this->get('cache.app');
+        $item = $cache->getItem('readme');
 
-        $content = str_replace('https://yourdomain.url', $packagesUrl, $content);
+        if (!$item->isHit()) {
+            $content = file_get_contents('https://raw.githubusercontent.com/shapecode/devliver/master/README.md');
+            $packagesUrl = $this->generateUrl('devliver_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $content = str_replace('https://yourdomain.url', $packagesUrl, $content);
+
+            $item->set($content);
+            $item->expiresAfter(86400);
+
+            $cache->save($item);
+        } else {
+            $content = $item->get();
+        }
 
         return $this->render('@Devliver/Home/usage.html.twig', [
-            'page'  => 'home',
             'usage' => $content
         ]);
     }
