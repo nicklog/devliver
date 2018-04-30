@@ -3,6 +3,7 @@
 namespace Shapecode\Devliver\Menu;
 
 use Knp\Menu\FactoryInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -20,13 +21,19 @@ class Builder
     /** @var TranslatorInterface */
     protected $factory;
 
+    /** @var AuthorizationChecker */
+    protected $authorizationChecker;
+
     /**
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface  $translator
+     * @param FactoryInterface     $factory
+     * @param AuthorizationChecker $authorizationChecker
      */
-    public function __construct(TranslatorInterface $translator, FactoryInterface $factory)
+    public function __construct(TranslatorInterface $translator, FactoryInterface $factory, AuthorizationChecker $authorizationChecker)
     {
         $this->translator = $translator;
         $this->factory = $factory;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -86,6 +93,16 @@ class Builder
                 'class' => 'navbar-nav'
             ]
         ]);
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $menu->addChild('sonata_admin_dashboard', [
+                'label'      => 'menu.admin',
+                'route'      => 'sonata_admin_dashboard',
+                'attributes' => [
+                    'icon' => 'fas fa-lock fa-fw',
+                ],
+            ]);
+        }
 
         $menu->addChild('fos_user_change_password', [
             'label'      => 'menu.change_password',

@@ -43,6 +43,7 @@ action:
     cancel: Abbrechen
 
 menu:
+    admin: Admin
     repositories: Repositories
     packages: Packages
     usage: Anleitung

@@ -106,6 +106,7 @@ services:
         arguments:
             - "@translator"
             - "@knp_menu.factory"
+            - "@security.authorization_checker"
 
     devliver.main_menu_left:
         class: Knp\Menu\MenuItem
