@@ -40,17 +40,7 @@ class ComposerFactory
     {
         $repositories = $this->registry->getRepository(Repo::class)->findAll();
 
-        unset(Config::$defaultRepositories['packagist.org']);
-
-        $config = Factory::createConfig();
-        $config->merge(['repositories' => array_map(
-            function (Repo $r) {
-                return $r->getConfig();
-            },
-            $repositories
-        )]);
-
-        return $config;
+        return $this->createReposConfig($repositories);
     }
 
     /**
@@ -60,12 +50,7 @@ class ComposerFactory
      */
     public function createRepoConfig(RepoInterface $repo)
     {
-        unset(Config::$defaultRepositories['packagist.org']);
-
-        $config = Factory::createConfig();
-        $config->merge(['repositories' => [$repo->getConfig()]]);
-
-        return $config;
+        return $this->createReposConfig([$repo]);
     }
 
     /**

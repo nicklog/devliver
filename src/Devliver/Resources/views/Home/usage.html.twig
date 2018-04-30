@@ -5,52 +5,5 @@
 {% endblock %}
 
 {% block content %}
-    <h2>1. Prerequirements</h2>
-
-    <p>
-        Be sure that you have git installed and that your server has access to the repositories that you want to de(v)liver.
-    </p>
-
-    <h2>2. Users</h2>
-
-    <p>
-        The packages.json is secured by basic http authentication. Add users in the <a href="{{ path('sonata_admin_dashboard') }}" target="_blank">Admin Panel</a>
-        with the role <code>ROLE_REPO</code>. These users have access to the packages.json and can download archives.
-    </p>
-
-    <h2>3. Packages.json</h2>
-
-    <p>To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json to your projects.<br>
-        Composer will you ask for credentials to access the packages.json when you update your project.</p>
-    <p>This is your repository of private packages.</p>
-
-    <code>
-        <pre>
-    {
-        "repositories": [
-            {
-                "type": "composer",
-                "url": "{{ url('devliver_index') }}"
-            }
-        ]
-    }
-        </pre>
-    </code>
-
-    <h2>4. Cronjob</h2>
-    <p>
-        You have to run a background update task as a cronjob.<br>
-        The background task is executed with the <code>bin/console shapecode:cron:run</code> shell command.<br>
-        But before cronjobs can run you have to execute <code>bin/console shapecode:cron:scan</code> to find them.
-    </p>
-    <p>
-        Then just add a cronjob to your cron table that runs the command every 2 minutes like this to your cron table.<br>
-        <code>*/2 * * * * /path/to/your/project/bin/console shapecode:cron:run -q</code>
-    </p>
-
-    <p>&nbsp;</p>
-    <p>
-        You are ready.<br>
-        Now, just add repositories to devliver.
-    </p>
+    {{ usage|markdown }}
 {% endblock %}

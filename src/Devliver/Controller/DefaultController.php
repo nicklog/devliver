@@ -4,6 +4,7 @@ namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class DefaultController
@@ -45,8 +46,14 @@ class DefaultController extends Controller
      */
     public function usageAction()
     {
+        $packagesUrl = $this->generateUrl('devliver_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $content = file_get_contents('https://raw.githubusercontent.com/shapecode/devliver/master/README.md');
+
+        $content = str_replace('https://yourdomain.url', $packagesUrl, $content);
+
         return $this->render('@Devliver/Home/usage.html.twig', [
-            'page' => 'home'
+            'page'  => 'home',
+            'usage' => $content
         ]);
     }
 }

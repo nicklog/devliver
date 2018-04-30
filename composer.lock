@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c9eeef9a3fa94207379ab461869b42b",
+    "content-hash": "f020674cf35df76b853ff2e8654e1700",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -378,6 +378,58 @@
                 "validator"
             ],
             "time": "2018-01-31T13:17:27+00:00"
+        },
+        {
+            "name": "demontpx/parsedown-bundle",
+            "version": "1.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DemonTPx/parsedown-bundle.git",
+                "reference": "b5c2a449be9393f0559ae500f459e6245f1bbf1a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DemonTPx/parsedown-bundle/zipball/b5c2a449be9393f0559ae500f459e6245f1bbf1a",
+                "reference": "b5c2a449be9393f0559ae500f459e6245f1bbf1a",
+                "shasum": ""
+            },
+            "require": {
+                "erusev/parsedown": "^1.6",
+                "php": "^7.1",
+                "symfony/config": "^3.2|^4.0",
+                "symfony/dependency-injection": "^3.2|^4.0",
+                "symfony/http-kernel": "^3.2|^4.0",
+                "twig/twig": "^2.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.9",
+                "phpunit/phpunit": "^6.0",
+                "symfony/yaml": "^3.2|^4.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Demontpx\\ParsedownBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Parsedown (markdown) bundle for Symfony",
+            "keywords": [
+                "bundle",
+                "markdown",
+                "md",
+                "parsedown",
+                "symfony"
+            ],
+            "time": "2018-02-18T21:42:02+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -2184,22 +2236,22 @@
         },
         {
             "name": "ornicar/gravatar-bundle",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "target-dir": "Ornicar/GravatarBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/henrikbjorn/GravatarBundle.git",
-                "reference": "87c866dc369a502f25b3fe206e9190ee3111eb57"
+                "reference": "5a4e3619f0654eaa3ad4e4a45d927bd0bf044e7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/henrikbjorn/GravatarBundle/zipball/87c866dc369a502f25b3fe206e9190ee3111eb57",
-                "reference": "87c866dc369a502f25b3fe206e9190ee3111eb57",
+                "url": "https://api.github.com/repos/henrikbjorn/GravatarBundle/zipball/5a4e3619f0654eaa3ad4e4a45d927bd0bf044e7c",
+                "reference": "5a4e3619f0654eaa3ad4e4a45d927bd0bf044e7c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
-                "symfony/framework-bundle": "~4.0|~3.0|~2.0",
+                "symfony/framework-bundle": "~4.0|~3.0|~2.3",
                 "symfony/templating": "~4.0|~3.0|~2.0"
             },
             "conflict": {
@@ -2244,7 +2296,7 @@
                 "templating",
                 "twig"
             ],
-            "time": "2018-01-04T11:15:27+00:00"
+            "time": "2018-02-01T09:44:32+00:00"
         },
         {
             "name": "paragonie/random_compat",
