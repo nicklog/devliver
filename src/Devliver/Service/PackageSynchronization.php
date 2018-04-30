@@ -12,8 +12,10 @@ use Shapecode\Devliver\Composer\ComposerFactory;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Repo;
-use Shapecode\Devliver\Model\PackageAdapter;
+use Shapecode\Devliver\Entity\User;
+use Shapecode\Devliver\Entity\Version;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -41,18 +43,23 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /** @var ArrayDumper */
     protected $dumper;
 
+    /** @var TagAwareAdapterInterface */
+    protected $cache;
+
     /**
-     * @param ManagerRegistry       $registry
-     * @param UrlGeneratorInterface $router
-     * @param ComposerFactory       $composerFactory
-     * @param                       $packageDir
+     * @param ManagerRegistry          $registry
+     * @param UrlGeneratorInterface    $router
+     * @param ComposerFactory          $composerFactory
+     * @param TagAwareAdapterInterface $cache
+     * @param                          $packageDir
      */
-    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, ComposerFactory $composerFactory, $packageDir)
+    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, ComposerFactory $composerFactory, TagAwareAdapterInterface $cache, $packageDir)
     {
         $this->registry = $registry;
         $this->router = $router;
         $this->composerFactory = $composerFactory;
         $this->packageDir = $packageDir;
+        $this->cache = $cache;
         $this->dumper = new ArrayDumper;
     }
 
@@ -111,7 +118,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $em->flush();
         }
 
-        $this->dumpPackageJson($packages);
+        $this->dumpPackageJson($packages, $dbPackage);
     }
 
     /**
@@ -165,10 +172,16 @@ class PackageSynchronization implements PackageSynchronizationInterface
     }
 
     /**
-     * @param array|CompletePackage[] $packages
+     * @param array            $packages
+     * @param PackageInterface $dbPackage
+     *
+     * @throws \Exception
      */
-    protected function dumpPackageJson(array $packages)
+    protected function dumpPackageJson(array $packages, PackageInterface $dbPackage)
     {
+        $versionRepository = $this->registry->getRepository(Version::class);
+        $em = $this->registry->getManager();
+
         $fs = new Filesystem();
 
         if (!$fs->exists($this->packageDir)) {
@@ -183,15 +196,32 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 continue;
             }
 
+            $dbVersion = $versionRepository->findOneBy([
+                'name' => $package->getPrettyVersion()
+            ]);
+
+            if (!$dbVersion) {
+                $dbVersion = new Version();
+                $dbVersion->setName($package->getPrettyVersion());
+                $dbVersion->setPackage($dbPackage);
+            }
+
             $distUrl = $this->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
 
             $package->setDistUrl($distUrl);
             $package->setDistType('zip');
             $package->setDistReference($package->getSourceReference());
 
+            $data = $this->dumper->dump($package);
+            $data['uid'] = crc32($package->getName()) . ($uid++);
+
+            $dbVersion->setData($data);
+
             $data[$package->getPrettyName()]['__normalized_name'] = $package->getName();
-            $data[$package->getPrettyName()][$package->getPrettyVersion()] = $this->dumper->dump($package);
-            $data[$package->getPrettyName()][$package->getPrettyVersion()]['uid'] = crc32($package->getName()) . ($uid++);
+            $data[$package->getPrettyName()][$package->getPrettyVersion()] = $data;
+
+            $em->persist($dbVersion);
+            $em->flush();
         }
 
         foreach ($data as $prettyName => $packageData) {
@@ -208,22 +238,34 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /**
      * @inheritdoc
      */
-    public function dumpPackagesJson()
+    public function dumpPackagesJson(User $user)
     {
-        $filename = $this->packageDir . '/packages.json';
+        $cacheKey = 'user-packages-json-' . $user->getId();
+        $item = $this->cache->getItem($cacheKey);
+
+        if ($item->isHit()) {
+            return $item->get();
+        }
+
+        $item->tag('packages.json');
+        $item->tag('packages-user-' . $user->getId());
 
         $repos = $this->registry->getRepository(Repo::class)->findAll();
         $providers = [];
 
         foreach ($repos as $repo) {
+            $item->tag('packages-repo-' . $repo->getId());
+
             if ($repo->hasPackages()) {
 
                 foreach ($repo->getPackages() as $package) {
                     $name = $package->getName();
 
+                    $item->tag('packages-package-' . $package->getId());
+
                     if (!isset($providers[$name]) && file_exists($this->getJsonMetadataPath($name))) {
                         $providers[$name] = [
-                            'sha256' => hash_file('sha256', $this->getJsonMetadataPath($name))
+                            'sha256' => sha1($name . '-' . $user->getId())
                         ];
                     }
                 }
@@ -246,8 +288,14 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%hash%/%package%.json';
         $repo['providers'] = $providers;
 
-        $repoJson = new JsonFile($filename);
-        $repoJson->write($repo);
+        $json = json_encode($repo);
+
+        $item->set($json);
+        $item->expiresAfter(96400);
+
+        $this->cache->save($item);
+
+        return $json;
     }
 
     /**
@@ -258,7 +306,6 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $io = $this->composerFactory->createIO();
 
         $this->sync($package, $io);
-        $this->dumpPackagesJson();
     }
 
     /**

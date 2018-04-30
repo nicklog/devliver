@@ -198,8 +198,6 @@ class RepoController extends Controller
         $em->remove($repo);
         $em->flush();
 
-        $this->get('devliver.package_synchronization')->dumpPackagesJson();
-
         $this->get('session')->getFlashBag()->add('success', 'Repository removed');
 
         return $this->redirectToRoute('devliver_repo_index');

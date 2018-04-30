@@ -25,6 +25,12 @@ class Package extends BaseEntity implements PackageInterface
     protected $repos;
 
     /**
+     * @var ArrayCollection|PersistentCollection|Repo[]
+     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="package", cascade={"persist", "remove"})
+     */
+    protected $versions;
+
+    /**
      * @var string
      * @ORM\Column(type="string")
      */

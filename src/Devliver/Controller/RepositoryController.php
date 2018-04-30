@@ -28,14 +28,9 @@ class RepositoryController extends Controller
      */
     public function indexAction()
     {
-        $packageDir = $this->container->getParameter('devliver_package_dir');
-        $fileName = $packageDir . '/packages.json';
+        $json = $this->get('devliver.package_synchronization')->dumpPackagesJson($this->getUser());
 
-        if (!file_exists($fileName)) {
-            throw $this->createNotFoundException();
-        }
-
-        return new BinaryFileResponse($fileName);
+        return new Response($json);
     }
 
     /**
@@ -55,7 +50,9 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $hash2 = hash_file('sha256', $fileName);
+        $user = $this->getUser();
+
+        $hash2 = sha1($package . '-' . $user->getId());
 
         if ($hash != $hash2) {
             throw $this->createNotFoundException();

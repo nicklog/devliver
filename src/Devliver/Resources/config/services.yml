@@ -11,6 +11,11 @@ parameters:
 
 services:
 
+    cache.tag.app:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        decorates: cache.app
+        arguments: ['@cache.tag.app.inner']
+
     # synchronization
     devliver.package_synchronization:
         class: Shapecode\Devliver\Service\PackageSynchronization
@@ -19,6 +24,7 @@ services:
             - '@doctrine'
             - '@router'
             - '@devliver.composer_factory'
+            - '@cache.app'
             - '%devliver_package_dir%'
 
     devliver.repository_synchronization:
@@ -66,6 +72,20 @@ services:
             - '@router'
         tags:
             - { name: kernel.event_subscriber }
+
+    devliver.event_listener.package:
+        class: Shapecode\Devliver\EventListener\PackageListener
+        arguments:
+            - '@cache.app'
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    devliver.event_listener.repo:
+        class: Shapecode\Devliver\EventListener\RepoListener
+        arguments:
+            - '@cache.app'
+        tags:
+            - { name: doctrine.event_subscriber }
 
     # twig
     devliver.twig_extension.devliver:

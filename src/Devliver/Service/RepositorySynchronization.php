@@ -52,8 +52,6 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
         foreach ($repositories as $repo) {
             $this->syncRepo($repo, $io);
         }
-
-        $this->packageSynchronization->dumpPackagesJson();
     }
 
     /**
@@ -84,6 +82,5 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
         $io = $this->composerFactory->createIO();
 
         $this->syncRepo($repo, $io);
-        $this->packageSynchronization->dumpPackagesJson();
     }
 }

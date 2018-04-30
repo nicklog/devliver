@@ -6,6 +6,7 @@ use Composer\IO\IOInterface;
 use Composer\Package\CompletePackageInterface;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Repo;
+use Shapecode\Devliver\Entity\User;
 
 /**
  * Interface PackageSynchronizationInterface
@@ -62,7 +63,9 @@ interface PackageSynchronizationInterface
     public function loadPackages($name);
 
     /**
+     * @param User $user
      *
+     * @return string
      */
-    public function dumpPackagesJson();
+    public function dumpPackagesJson(User $user);
 }
