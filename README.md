@@ -44,7 +44,38 @@ bin/console fos:user:create --super-admin
 
 Follow the instructions and your user will be created.
 
-### 6. That's it
+
+### 6. Other users
+
+The packages.json is secured by basic http authentication. Add users in the Admin Panel with the role `ROLE_REPO`. These users have access to the packages.json and can download archives.
+
+### 7. Cronjob
+
+You have to run a background update task as a cronjob.  
+The background task is executed with the `bin/console shapecode:cron:run` shell command.  
+
+Just add a cronjob to your cron table that runs the command every 2 minutes like this to your cron table.  
+`*/2 * * * * /path/to/your/project/bin/console shapecode:cron:run -q`
+
+### 8. Packages.json
+
+To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json to your projects.  
+Composer will you ask for credentials to access the packages.json when you update your project.
+  
+This is your repository of private packages.
+
+```json
+    {
+        "repositories": [
+            {
+                "type": "composer",
+                "url": "https://yourdomain.url"
+            }
+        ]
+    }
+```
+
+### 9. That's it
 
 Done ;) Go on!
 
@@ -54,7 +85,7 @@ Done ;) Go on!
 Login into your terminal and run following commands.
 
 ```bash
-php bin/console devliver:self-update
+bin/console devliver:self-update
 ```
 
 Follow the instructions.
