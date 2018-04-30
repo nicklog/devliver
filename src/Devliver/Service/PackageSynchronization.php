@@ -188,7 +188,6 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $fs->mkdir($this->packageDir);
         }
 
-        $uid = 0;
         $data = [];
 
         foreach ($packages as $package) {
@@ -197,7 +196,8 @@ class PackageSynchronization implements PackageSynchronizationInterface
             }
 
             $dbVersion = $versionRepository->findOneBy([
-                'name' => $package->getPrettyVersion()
+                'package' => $dbPackage->getId(),
+                'name'    => $package->getPrettyVersion(),
             ]);
 
             if (!$dbVersion) {
@@ -212,13 +212,12 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $package->setDistType('zip');
             $package->setDistReference($package->getSourceReference());
 
-            $data = $this->dumper->dump($package);
-            $data['uid'] = crc32($package->getName()) . ($uid++);
+            $packageData = $this->dumper->dump($package);
 
-            $dbVersion->setData($data);
+            $dbVersion->setData($packageData);
 
             $data[$package->getPrettyName()]['__normalized_name'] = $package->getName();
-            $data[$package->getPrettyName()][$package->getPrettyVersion()] = $data;
+            $data[$package->getPrettyName()][$package->getPrettyVersion()] = $packageData;
 
             $em->persist($dbVersion);
             $em->flush();
