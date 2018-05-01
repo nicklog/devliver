@@ -28,7 +28,7 @@ class Package extends BaseEntity implements PackageInterface
 
     /**
      * @var ArrayCollection|PersistentCollection|Version[]
-     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="package", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="package", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $versions;
 
@@ -55,7 +55,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return ArrayCollection|PersistentCollection|Repo[]
+     * @inheritdoc
      */
     public function getRepos(): Collection
     {
@@ -63,9 +63,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param Repo $repo
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function hasRepo(Repo $repo): bool
     {
@@ -73,7 +71,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param Repo $repo
+     * @inheritdoc
      */
     public function addRepo(Repo $repo)
     {
@@ -84,7 +82,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param Repo $repo
+     * @inheritdoc
      */
     public function removeRepo(Repo $repo)
     {
@@ -95,7 +93,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getName(): string
     {
@@ -103,7 +101,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param string $name
+     * @inheritdoc
      */
     public function setName(string $name)
     {
@@ -111,7 +109,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getDownloads(): int
     {
@@ -119,7 +117,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param int $downloads
+     * @inheritdoc
      */
     public function setDownloads(int $downloads)
     {
@@ -127,7 +125,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param int $downloads
+     * @inheritdoc
      */
     public function increaseDownloads(int $downloads = 1)
     {
@@ -135,7 +133,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return ArrayCollection|PersistentCollection|Version[]
+     * @inheritdoc
      */
     public function getVersions(): Collection
     {
@@ -143,7 +141,44 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return CompletePackage[]
+     * @inheritdoc
+     */
+    public function hasVersions(): bool
+    {
+        return ($this->getVersions()->count() > 0);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasVersion(VersionInterface $version)
+    {
+        return $this->getVersions()->contains($version);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addVersion(VersionInterface $version)
+    {
+        if (!$this->hasVersion($version)) {
+            $version->setPackage($this);
+            $this->getVersions()->add($version);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removePackage(VersionInterface $version)
+    {
+        if (!$this->hasVersion($version)) {
+            $this->getVersions()->removeElement($version);
+        }
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getPackages(): array
     {
@@ -164,7 +199,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return CompletePackage
+     * @inheritdoc
      */
     public function getLastStablePackage(): CompletePackage
     {
@@ -172,7 +207,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function __toString(): string
     {

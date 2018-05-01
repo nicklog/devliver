@@ -74,6 +74,11 @@ interface PackageInterface extends BaseEntityInterface
     public function getPackages(): array;
 
     /**
+     * @return bool
+     */
+    public function hasVersions(): bool;
+
+    /**
      * @return CompletePackage
      */
     public function getLastStablePackage(): CompletePackage;
