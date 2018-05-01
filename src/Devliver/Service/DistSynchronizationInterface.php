@@ -2,9 +2,7 @@
 
 namespace Shapecode\Devliver\Service;
 
-use Composer\IO\IOInterface;
-use Composer\Package\CompletePackage;
-use Symfony\Component\HttpFoundation\Request;
+use Shapecode\Devliver\Entity\Package;
 
 /**
  * Interface DistSynchronizationInterface
@@ -18,18 +16,10 @@ interface DistSynchronizationInterface
     const DIST_FORMAT = '/%package%/%version%/%reference%.%type%';
 
     /**
-     * @param IOInterface       $io
-     * @param CompletePackage[] $packages
-     */
-    public function sync(IOInterface $io, array $packages);
-
-    /**
-     * @param Request $request
-     * @param         $name
+     * @param Package $dbPackage
      * @param         $ref
-     * @param         $format
      *
-     * @return mixed|string
+     * @return string
      */
-    public function getDistFilename(Request $request, $name, $ref, $format): string;
+    public function getDistFilename(Package $dbPackage, $ref): string;
 }

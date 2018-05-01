@@ -2,6 +2,8 @@
 
 namespace Shapecode\Devliver\Entity;
 
+use Composer\Package\AliasPackage;
+use Composer\Package\Loader\ArrayLoader;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -80,5 +82,21 @@ class Version extends BaseEntity implements VersionInterface
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return \Composer\Package\PackageInterface
+     */
+    public function getPackageInformation(): \Composer\Package\PackageInterface
+    {
+        $loader = new ArrayLoader();
+
+        $p = $loader->load($this->getData());
+
+        if ($p instanceof AliasPackage) {
+            $p = $p->getAliasOf();
+        }
+
+        return $p;
     }
 }

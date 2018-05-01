@@ -41,24 +41,24 @@ class RepositoryController extends Controller
      */
     public function providerAction($hash, $vendor, $project)
     {
-        $package = $vendor . '/' . $project;
-        $packageSynchronization = $this->get('devliver.package_synchronization');
-
-        $fileName = $packageSynchronization->getJsonMetadataPath($package);
-
-        if (!file_exists($fileName)) {
-            throw $this->createNotFoundException();
-        }
-
+        $doctrine = $this->getDoctrine();
         $user = $this->getUser();
 
-        $hash2 = sha1($package . '-' . $user->getId());
+        $name = $vendor . '/' . $project;
+        $hash2 = sha1($name . '-' . $user->getId());
 
         if ($hash != $hash2) {
-            throw $this->createNotFoundException();
+            throw $this->createAccessDeniedException();
         }
 
-        return new BinaryFileResponse($fileName);
+        $packageSynchronization = $this->get('devliver.package_synchronization');
+
+        $repository = $doctrine->getRepository(Package::class);
+        $package = $repository->findOneByName($name);
+
+        $json = $packageSynchronization->dumpPackageJson($user, $package);
+
+        return new Response($json);
     }
 
     /**
@@ -75,8 +75,14 @@ class RepositoryController extends Controller
      */
     public function distAction(Request $req, $vendor, $project, $ref, $type)
     {
-        $packageName = $vendor . '/' . $project;
-        $cacheFile = $this->get('devliver.dist_synchronization')->getDistFilename($req, $packageName, $ref, $type);
+        $doctrine = $this->getDoctrine();
+
+        $name = $vendor . '/' . $project;
+
+        $repository = $doctrine->getRepository(Package::class);
+        $package = $repository->findOneByName($name);
+
+        $cacheFile = $this->get('devliver.dist_synchronization')->getDistFilename($package, $ref);
 
         if (empty($cacheFile)) {
             throw $this->createNotFoundException();

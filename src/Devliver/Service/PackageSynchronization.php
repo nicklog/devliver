@@ -3,11 +3,8 @@
 namespace Shapecode\Devliver\Service;
 
 use Composer\IO\IOInterface;
-use Composer\Json\JsonFile;
 use Composer\Package\AliasPackage;
-use Composer\Package\CompletePackage;
 use Composer\Package\Dumper\ArrayDumper;
-use Composer\Package\Loader\ArrayLoader;
 use Shapecode\Devliver\Composer\ComposerFactory;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
@@ -16,7 +13,6 @@ use Shapecode\Devliver\Entity\User;
 use Shapecode\Devliver\Entity\Version;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -118,77 +114,17 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $em->flush();
         }
 
-        $this->dumpPackageJson($packages, $dbPackage);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasJsonMetadata($name)
-    {
-        return file_exists($this->getJsonMetadataPath($name));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getJsonMetadataPath($name)
-    {
-        return $this->packageDir . '/' . strtolower($name) . '.json';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getJsonMetadata($packageName)
-    {
-        return json_decode(file_get_contents($this->getJsonMetadataPath($packageName)), true);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function loadPackages($name)
-    {
-        $packageData = $this->getJsonMetadata($name);
-        $loader = new ArrayLoader();
-
-        /** @var CompletePackage[] $packages */
-        $packages = [];
-
-        if (!empty($packageData['packages'][$name])) {
-            foreach ($packageData['packages'][$name] as $p) {
-                $p = $loader->load($p);
-
-                if ($p instanceof AliasPackage) {
-                    $p = $p->getAliasOf();
-                }
-
-                $packages[] = $p;
-            }
-        }
-
-        return $packages;
+        $this->updateVersions($packages, $dbPackage);
     }
 
     /**
      * @param array            $packages
      * @param PackageInterface $dbPackage
-     *
-     * @throws \Exception
      */
-    protected function dumpPackageJson(array $packages, PackageInterface $dbPackage)
+    protected function updateVersions(array $packages, PackageInterface $dbPackage)
     {
         $versionRepository = $this->registry->getRepository(Version::class);
         $em = $this->registry->getManager();
-
-        $fs = new Filesystem();
-
-        if (!$fs->exists($this->packageDir)) {
-            $fs->mkdir($this->packageDir);
-        }
-
-        $data = [];
 
         foreach ($packages as $package) {
             if ($package instanceof AliasPackage) {
@@ -216,28 +152,39 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
             $dbVersion->setData($packageData);
 
-            $data[$package->getPrettyName()]['__normalized_name'] = $package->getName();
-            $data[$package->getPrettyName()][$package->getPrettyVersion()] = $packageData;
-
             $em->persist($dbVersion);
             $em->flush();
         }
+    }
 
-        foreach ($data as $prettyName => $packageData) {
-            $packageName = $packageData['__normalized_name'];
+    /**
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    public function dumpPackageJson(User $user, PackageInterface $package): string
+    {
+        $data = [];
 
-            unset($packageData['__normalized_name']);
+        foreach ($package->getVersions() as $version) {
+            if ($version instanceof AliasPackage) {
+                continue;
+            }
 
-            $json = new JsonFile($this->getJsonMetadataPath($packageName));
+            $packageData = $this->dumper->dump($version->getPackageInformation());
 
-            $json->write(['packages' => [$prettyName => $packageData]]);
+            $data[$version->getName()] = $packageData;
         }
+
+        $jsonData = ['packages' => [$package->getName() => $data]];
+
+        return json_encode($jsonData);
     }
 
     /**
      * @inheritdoc
      */
-    public function dumpPackagesJson(User $user)
+    public function dumpPackagesJson(User $user): string
     {
         $cacheKey = 'user-packages-json-' . $user->getId();
         $item = $this->cache->getItem($cacheKey);
@@ -262,7 +209,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
                     $item->tag('packages-package-' . $package->getId());
 
-                    if (!isset($providers[$name]) && file_exists($this->getJsonMetadataPath($name))) {
+                    if (!isset($providers[$name])) {
                         $providers[$name] = [
                             'sha256' => sha1($name . '-' . $user->getId())
                         ];
@@ -314,7 +261,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
      *
      * @return string
      */
-    protected function getComposerDistUrl($package, $ref, $type = 'zip')
+    protected function getComposerDistUrl($package, $ref, $type = 'zip'): string
     {
         $distUrl = $this->router->generate('devliver_repository_dist', [
             'vendor'  => 'PACK',

@@ -2,7 +2,6 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Composer\Package\CompletePackage;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -88,66 +87,19 @@ class PackageController extends Controller
      */
     public function viewAction(Package $package)
     {
-        $packageSynchronization = $this->get('devliver.package_synchronization');
-
-        $name = $package->getName();
-
-        if (!$packageSynchronization->hasJsonMetadata($name)) {
+        if (!$package->getVersions()->count()) {
             return $this->redirectToRoute('devliver_package_update', [
                 'package' => $package->getId()
             ]);
         }
 
-        $packages = $packageSynchronization->loadPackages($name);
-        $packages = $this->sortPackagesByVersion($packages);
-        $stable = $this->getLastStableVersion($packages);
+        $packages = $package->getPackages();
+        $stable = $package->getLastStablePackage();
 
         return $this->render('@Devliver/Package/view.html.twig', [
             'package'  => $package,
             'info'     => $stable,
             'versions' => $packages
         ]);
-    }
-
-    /**
-     * @param CompletePackage[] $packages
-     *
-     * @return CompletePackage
-     */
-    protected function getLastStableVersion(array $packages)
-    {
-        foreach ($packages as $p) {
-            if (!$p->isDev()) {
-                return $p;
-            }
-        }
-
-        return $packages[0];
-    }
-
-    /**
-     * @param CompletePackage[] $packages
-     *
-     * @return CompletePackage[]
-     */
-    protected function sortPackagesByVersion(array $packages)
-    {
-        uasort($packages, function (CompletePackage $a, CompletePackage $b) {
-            if ($a->isDev() && !$b->isDev()) {
-                return -1;
-            } elseif (!$a->isDev() && $b->isDev()) {
-                return 1;
-            }
-
-            if ($a->getReleaseDate() < $b->getReleaseDate()) {
-                return 1;
-            } elseif ($a->getReleaseDate() < $b->getReleaseDate()) {
-                return -1;
-            }
-
-            return 0;
-        });
-
-        return $packages;
     }
 }

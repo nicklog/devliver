@@ -2,6 +2,7 @@
 
 namespace Shapecode\Devliver\Entity;
 
+use Composer\Package\CompletePackage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
@@ -61,4 +62,19 @@ interface PackageInterface extends BaseEntityInterface
      * @param int $downloads
      */
     public function increaseDownloads(int $downloads = 1);
+
+    /**
+     * @return ArrayCollection|PersistentCollection|Version[]
+     */
+    public function getVersions(): Collection;
+
+    /**
+     * @return CompletePackage[]
+     */
+    public function getPackages(): array;
+
+    /**
+     * @return CompletePackage
+     */
+    public function getLastStablePackage(): CompletePackage;
 }

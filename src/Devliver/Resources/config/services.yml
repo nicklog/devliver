@@ -39,10 +39,7 @@ services:
         class: Shapecode\Devliver\Service\DistSynchronization
         public: true
         arguments:
-            - '@router'
             - '@devliver.composer_config'
-            - '@devliver.repository_synchronization'
-            - '@devliver.package_synchronization'
             - '%devliver_dist_dir%'
 
     # composer

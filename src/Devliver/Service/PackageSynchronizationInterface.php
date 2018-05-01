@@ -3,7 +3,6 @@
 namespace Shapecode\Devliver\Service;
 
 use Composer\IO\IOInterface;
-use Composer\Package\CompletePackageInterface;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Repo;
 use Shapecode\Devliver\Entity\User;
@@ -30,42 +29,22 @@ interface PackageSynchronizationInterface
     public function save(array $packages, Repo $repo = null);
 
     /**
-     * @param $name
-     *
-     * @return bool
-     */
-    public function hasJsonMetadata($name);
-
-    /**
-     * @param $name
-     *
-     * @return string
-     */
-    public function getJsonMetadataPath($name);
-
-    /**
-     * @param $packageName
-     *
-     * @return string
-     */
-    public function getJsonMetadata($packageName);
-
-    /**
      * @param PackageInterface $package
      */
     public function runUpdate(PackageInterface $package);
 
     /**
-     * @param $name
+     * @param User             $user
+     * @param PackageInterface $package
      *
-     * @return array|CompletePackageInterface[]
+     * @return string
      */
-    public function loadPackages($name);
+    public function dumpPackageJson(User $user, PackageInterface $package): string;
 
     /**
      * @param User $user
      *
      * @return string
      */
-    public function dumpPackagesJson(User $user);
+    public function dumpPackagesJson(User $user): string;
 }

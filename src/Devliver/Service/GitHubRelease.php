@@ -23,9 +23,6 @@ class GitHubRelease
     protected $cache;
 
     /** @var string */
-    protected $currentRelease;
-
-    /** @var string */
     protected $versionFile;
 
     /** @var array */

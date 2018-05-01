@@ -2,10 +2,12 @@
 
 namespace Shapecode\Devliver\Entity;
 
+use Composer\Package\CompletePackage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
+use Shapecode\Devliver\Util\ComposerUtil;
 
 /**
  * Class Package
@@ -25,7 +27,7 @@ class Package extends BaseEntity implements PackageInterface
     protected $repos;
 
     /**
-     * @var ArrayCollection|PersistentCollection|Repo[]
+     * @var ArrayCollection|PersistentCollection|Version[]
      * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="package", cascade={"persist", "remove"})
      */
     protected $versions;
@@ -41,6 +43,9 @@ class Package extends BaseEntity implements PackageInterface
      * @ORM\Column(type="integer", options={"unsigned": true})
      */
     protected $downloads = 0;
+
+    /** @var CompletePackage[] */
+    protected $packages;
 
     /**
      */
@@ -130,9 +135,46 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
+     * @return ArrayCollection|PersistentCollection|Version[]
+     */
+    public function getVersions(): Collection
+    {
+        return $this->versions;
+    }
+
+    /**
+     * @return CompletePackage[]
+     */
+    public function getPackages(): array
+    {
+        if (!is_null($this->packages)) {
+            return $this->packages;
+        }
+
+        $versions = $this->getVersions();
+        $packages = [];
+
+        foreach ($versions as $version) {
+            $packages[] = $version->getPackageInformation();
+        }
+
+        $this->packages = ComposerUtil::sortPackagesByVersion($packages);
+
+        return $this->packages;
+    }
+
+    /**
+     * @return CompletePackage
+     */
+    public function getLastStablePackage(): CompletePackage
+    {
+        return ComposerUtil::getLastStableVersion($this->getPackages());
+    }
+
+    /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getName();
     }
