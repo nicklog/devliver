@@ -18,10 +18,11 @@
         </a>
         </span>
 
-        <span class="mr-3">
-
+        {% if is_granted('ROLE_USER') %}
+            <span class="mr-3">
         <a href="{{ path('devliver_software_index') }}"><i class="fas fa-cube"></i> Software</a>
         </span>
+        {% endif %}
 
     </div>
 </footer>
