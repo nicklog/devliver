@@ -1,0 +1,65 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fab fa-git fa-fw" data-fa-mask="fas fa-circle"></i> {{ 'software.list.page_header'|trans }}
+{% endblock %}
+
+{% block pageActions %}
+{% endblock %}
+
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    {{ 'software.plural'|trans }} <span class="badge badge-primary">{{ packages|length }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0">
+
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Beschreibung</th>
+                            <th>Version</th>
+                            <th>Lizenz</th>
+                            <th>Typ</th>
+                            <th></th>
+                            <th>Release Date</th>
+                        </tr>
+                        {% set counter = 0 %}
+                        {% for package in packages %}
+                            {% set counter = counter + 1 %}
+                            <tr>
+                                <td>{{ counter }}</td>
+                                <td>{{ package.name }}</td>
+                                <td title="{{ package.description }}">{{ package.description|truncate }}</td>
+                                <td>{{ package.prettyVersion }}</td>
+                                <td>{{ package.license|join(', ') }}</td>
+                                <td>{{ package.type }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="https://packagist.org/packages/{{ package.name }}" class="btn btn-sm btn-link" target="_blank">
+                                            <i class="fas fa-cube fa-fw"></i>
+                                        </a>
+                                    {% if package.homepage %}
+                                        <a href="{{ package.homepage }}" class="btn btn-sm btn-link" target="_blank">
+                                            <i class="fas fa-home fa-fw"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if package.support.source is defined %}
+                                        <a href="{{ package.support.source }}" class="btn btn-sm btn-link" target="_blank">
+                                            <i class="fas fa-code fa-fw"></i>
+                                        </a>
+                                    {% endif %}
+                                    </div>
+                                </td>
+                                <td>{{ package.releaseDate|date('m-d-y') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

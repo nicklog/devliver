@@ -1,12 +1,27 @@
 <footer class="footer">
     <div class="container">
+
+        <span class="mr-3">
+
+            <a href="https://github.com/shapecode/devliver" target="_blank">
+                <i class="fas fa-cubes"></i>
+                Devliver
+            </a>
+            {% if is_granted('ROLE_USER') %}
+                v{{ current_release.name }}
+            {% endif %}
+        </span>
+
+        <span class="mr-3">
         <a href="https://github.com/shapecode/devliver" target="_blank">
-            Devliver
+            <i class="fas fa-code-branch"></i> Contribute
         </a>
-        {% if is_granted('ROLE_USER') %}
-            v{{ current_release.name }}
-        {% endif %}
-        -
-        <a href="https://github.com/shapecode/devliver" target="_blank">Contribute</a>
+        </span>
+
+        <span class="mr-3">
+
+        <a href="{{ path('devliver_software_index') }}"><i class="fas fa-cube"></i> Software</a>
+        </span>
+
     </div>
 </footer>
