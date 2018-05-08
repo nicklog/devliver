@@ -13,7 +13,7 @@ use Sonata\UserBundle\Entity\BaseGroup;
  *
  * @ORM\Entity()
  */
-class UserGroup extends BaseGroup implements BaseEntityInterface
+class UserGroup extends BaseGroup
 {
 
     /**

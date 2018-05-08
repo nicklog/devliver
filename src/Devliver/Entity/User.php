@@ -13,7 +13,7 @@ use Sonata\UserBundle\Entity\BaseUser;
  *
  * @ORM\Entity()
  */
-class User extends BaseUser implements BaseEntityInterface
+class User extends BaseUser
 {
 
     /**

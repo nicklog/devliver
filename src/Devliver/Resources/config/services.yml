@@ -63,6 +63,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    devliver.event_listener.entity:
+        class: Shapecode\Devliver\EventListener\EntityListener
+        tags:
+            - { name: doctrine.event_subscriber }
+
     devliver.event_listener.fos_user:
         class: Shapecode\Devliver\EventListener\FosUserListener
         arguments:

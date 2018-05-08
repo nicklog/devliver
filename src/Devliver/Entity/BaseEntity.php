@@ -24,11 +24,56 @@ class BaseEntity implements BaseEntityInterface
     protected $id;
 
     /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime")
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime")
+     */
+    protected $updatedAt;
+
+    /**
      * @inheritdoc
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCreatedAt(): \DateTime
+    {
+
+        return $this->createdAt;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
+
+    }
 }
