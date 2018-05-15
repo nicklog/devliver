@@ -92,12 +92,13 @@
             <div class="card mb-3">
                 <div class="card-header py-1 px-2">Versions</div>
                 <ul class="list-group list-group-flush">
-                    {% for version in versions %}
-                        {% set adapter = package_adapter(version) %}
+                    {% for version in package.versions %}
+                        {% set pi = version.packageInformation %}
+                        {% set adapter = package_adapter(pi) %}
                         <li class="list-group-item py-1 px-2 clearfix">
                             <div class="float-left">
-                                <a href="#" class="package-link" data-toggle="tooltip" title="{{ version.prettyVersion }}" data-package="details_{{ (version.prettyVersion ~ version.sourceReference)|sha1 }}">
-                                    {{ version.prettyVersion|truncate(40) }}
+                                <a href="#" class="package-link" data-toggle="tooltip" title="{{ pi.prettyVersion }}" data-package="details_{{ (pi.prettyVersion ~ pi.sourceReference)|sha1 }}">
+                                    {{ pi.prettyVersion|truncate(40) }}
 
                                     {% if adapter.alias is not null %}
                                         / {{ adapter.alias }}
@@ -105,7 +106,8 @@
                                 </a>
                             </div>
                             <div class="float-right">
-                                <a href="{{ package_download_url(version) }}" data-toggle="tooltip" title="Download"><i class="fas fa-download"></i></a>
+                                <span class="badge badge-primary badge-pill" title="Downloads">{{ version_downloads(version)|number_format }}</span>
+                                <a href="{{ package_download_url(pi) }}" data-toggle="tooltip" title="Download"><i class="fas fa-download"></i></a>
                             </div>
                         </li>
                     {% endfor %}

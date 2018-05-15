@@ -93,6 +93,7 @@ services:
     devliver.twig_extension.devliver:
         class: Shapecode\Devliver\Twig\Extension\DevliverExtension
         arguments:
+            - '@doctrine'
             - '@router'
             - '@devliver.github_release'
         tags:

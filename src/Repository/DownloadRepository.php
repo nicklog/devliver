@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Devliver\Repository;
+namespace Shapecode\Devliver\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Shapecode\Devliver\Entity\PackageInterface;
@@ -9,7 +9,7 @@ use Shapecode\Devliver\Entity\VersionInterface;
 /**
  * Class DownloadRepository
  *
- * @package App\Devliver\Repository
+ * @package Shapecode\Devliver\Repository
  * @author  Nikita Loges
  * @company tenolo GbR
  */

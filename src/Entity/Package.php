@@ -33,16 +33,16 @@ class Package extends BaseEntity implements PackageInterface
     protected $versions;
 
     /**
+     * @var ArrayCollection|PersistentCollection|Collection|Download[]
+     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Download", mappedBy="package", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    protected $downloads;
+
+    /**
      * @var string
      * @ORM\Column(type="string")
      */
     protected $name;
-
-    /**
-     * @var integer
-     * @ORM\Column(type="integer", options={"unsigned": true})
-     */
-    protected $downloads = 0;
 
     /** @var CompletePackage[] */
     protected $packages;
@@ -108,30 +108,6 @@ class Package extends BaseEntity implements PackageInterface
     public function setName(string $name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDownloads(): int
-    {
-        return $this->downloads;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setDownloads(int $downloads)
-    {
-        $this->downloads = $downloads;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function increaseDownloads(int $downloads = 1)
-    {
-        $this->downloads += $downloads;
     }
 
     /**

@@ -4,7 +4,10 @@ namespace Shapecode\Devliver\Entity;
 
 use Composer\Package\AliasPackage;
 use Composer\Package\Loader\ArrayLoader;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * Class Version
@@ -23,6 +26,12 @@ class Version extends BaseEntity implements VersionInterface
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     protected $package;
+
+    /**
+     * @var ArrayCollection|PersistentCollection|Collection|Download[]
+     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Download", mappedBy="version", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    protected $downloads;
 
     /**
      * @var string

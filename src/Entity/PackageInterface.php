@@ -49,21 +49,6 @@ interface PackageInterface extends BaseEntityInterface
     public function setName(string $name);
 
     /**
-     * @return int
-     */
-    public function getDownloads(): int;
-
-    /**
-     * @param int $downloads
-     */
-    public function setDownloads(int $downloads);
-
-    /**
-     * @param int $downloads
-     */
-    public function increaseDownloads(int $downloads = 1);
-
-    /**
      * @return ArrayCollection|PersistentCollection|Version[]
      */
     public function getVersions(): Collection;

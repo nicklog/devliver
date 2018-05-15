@@ -2,9 +2,12 @@
 
 namespace Shapecode\Devliver\Twig\Extension;
 
+use App\Devliver\Repository\DownloadRepository;
 use Composer\Package\CompletePackageInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Shapecode\Devliver\Entity\Download;
 use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\VersionInterface;
 use Shapecode\Devliver\Model\PackageAdapter;
 use Shapecode\Devliver\Service\GitHubRelease;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,11 +35,13 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     protected $github;
 
     /**
+     * @param ManagerRegistry       $registry
      * @param UrlGeneratorInterface $router
      * @param GitHubRelease         $github
      */
-    public function __construct(UrlGeneratorInterface $router, GitHubRelease $github)
+    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, GitHubRelease $github)
     {
+        $this->registry = $registry;
         $this->router = $router;
         $this->github = $github;
     }
@@ -47,6 +52,7 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     public function getFunctions()
     {
         return [
+            new TwigFunction('version_downloads', [$this, 'getVersionDownloadsCounter']),
             new TwigFunction('package_downloads', [$this, 'getPackageDownloadsCounter']),
             new TwigFunction('package_download_url', [$this, 'getPackageDownloadUrl']),
             new TwigFunction('package_adapter', [$this, 'getPackageAdapter'])
@@ -71,7 +77,23 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
      */
     public function getPackageDownloadsCounter(PackageInterface $package)
     {
+        /** @var DownloadRepository $repo */
+        $repo = $this->registry->getRepository(Download::class);
 
+        return $repo->countPackageDownloads($package);
+    }
+
+    /**
+     * @param PackageInterface $version
+     *
+     * @return int
+     */
+    public function getVersionDownloadsCounter(VersionInterface $version)
+    {
+        /** @var DownloadRepository $repo */
+        $repo = $this->registry->getRepository(Download::class);
+
+        return $repo->countVersionDownloads($version);
     }
 
     /**
