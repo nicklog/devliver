@@ -39,6 +39,8 @@ class Repo extends BaseEntity implements RepoInterface
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->packages = new ArrayCollection();
     }
 

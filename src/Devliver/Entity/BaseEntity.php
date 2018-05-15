@@ -36,6 +36,15 @@ class BaseEntity implements BaseEntityInterface
     protected $updatedAt;
 
     /**
+     *
+     */
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
      * @inheritdoc
      */
     public function getId(): int

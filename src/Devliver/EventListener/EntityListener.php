@@ -37,8 +37,6 @@ class EntityListener implements EventSubscriber
 
         $this->updateCreatedAt($entity);
         $this->updateUpdatedAt($entity);
-
-        $args->getEntityManager()->persist($entity);
     }
 
     /**
@@ -50,8 +48,6 @@ class EntityListener implements EventSubscriber
 
         $this->updateCreatedAt($entity);
         $this->updateUpdatedAt($entity);
-
-        $args->getEntityManager()->persist($entity);
     }
 
     /**

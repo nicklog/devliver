@@ -51,6 +51,8 @@ class Package extends BaseEntity implements PackageInterface
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->repos = new ArrayCollection();
     }
 

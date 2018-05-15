@@ -153,8 +153,9 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $dbVersion->setData($packageData);
 
             $em->persist($dbVersion);
-            $em->flush();
         }
+
+        $em->flush();
     }
 
     /**
