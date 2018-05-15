@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Devliver\Controller;
+namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Download;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class DownloadController
  *
- * @package App\Devliver\Controller
+ * @package Shapecode\Devliver\Controller
  * @author  Nikita Loges
  * @company tenolo GbR
  *

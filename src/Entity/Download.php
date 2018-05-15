@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author  Nikita Loges
  * @company tenolo GbR
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\DownloadRepository")
  */
 class Download extends BaseEntity implements DownloadInterface
 {

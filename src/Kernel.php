@@ -1,8 +1,7 @@
 <?php
 
-namespace App;
+namespace Shapecode\Devliver;
 
-use Shapecode\Devliver\DevliverBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

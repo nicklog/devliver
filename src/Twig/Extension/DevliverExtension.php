@@ -3,6 +3,8 @@
 namespace Shapecode\Devliver\Twig\Extension;
 
 use Composer\Package\CompletePackageInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Model\PackageAdapter;
 use Shapecode\Devliver\Service\GitHubRelease;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,6 +21,9 @@ use Twig\TwigFunction;
  */
 class DevliverExtension extends AbstractExtension implements GlobalsInterface
 {
+
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /** @var UrlGeneratorInterface */
     protected $router;
@@ -42,6 +47,7 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     public function getFunctions()
     {
         return [
+            new TwigFunction('package_downloads', [$this, 'getPackageDownloadsCounter']),
             new TwigFunction('package_download_url', [$this, 'getPackageDownloadUrl']),
             new TwigFunction('package_adapter', [$this, 'getPackageAdapter'])
         ];
@@ -56,6 +62,16 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('sha1', 'sha1'),
             new TwigFilter('package_adapter', [$this, 'getPackageAdapter'])
         ];
+    }
+
+    /**
+     * @param PackageInterface $package
+     *
+     * @return int
+     */
+    public function getPackageDownloadsCounter(PackageInterface $package)
+    {
+
     }
 
     /**

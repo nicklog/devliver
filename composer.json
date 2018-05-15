@@ -3,8 +3,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "Shapecode\\Devliver\\": "src/Devliver/",
-            "App\\": "src/"
+            "Shapecode\\Devliver\\": "src/"
         }
     },
     "require": {
