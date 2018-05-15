@@ -17,22 +17,45 @@ class Download extends BaseEntity implements DownloadInterface
 {
 
     /**
-     * @var VersionInterface
+     * @var PackageInterface
      * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="downloads", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    protected $package;
+
+    /**
+     * @var VersionInterface
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="downloads", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
     protected $version;
 
     /**
-     * @return VersionInterface
+     * @inheritdoc
      */
-    public function getVersion(): VersionInterface
+    public function getPackage(): PackageInterface
+    {
+        return $this->package;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPackage(PackageInterface $package)
+    {
+        $this->package = $package;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
     {
         return $this->version;
     }
 
     /**
-     * @param VersionInterface $version
+     * @inheritdoc
      */
     public function setVersion(VersionInterface $version)
     {

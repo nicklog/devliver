@@ -6,7 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -91,42 +90,4 @@ class RepositoryController extends Controller
         return new BinaryFileResponse($cacheFile, 200, [], false);
     }
 
-    /**
-     * @Route("/track-downloads", name="track_downloads")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse|Response
-     */
-    public function trackDownloadsAction(Request $request)
-    {
-        $postData = json_decode($request->getContent(), true);
-
-        if (empty($postData['downloads']) || !is_array($postData['downloads'])) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getManager();
-
-        $repository = $doctrine->getRepository(Package::class);
-
-        foreach ($postData['downloads'] as $p) {
-            $name = $p['name'];
-
-            $package = $repository->findOneBy([
-                'name' => $name
-            ]);
-
-            if ($package) {
-                $package->increaseDownloads();
-            }
-
-            $em->persist($package);
-        }
-
-        $em->flush();
-
-        return new JsonResponse(['status' => 'success'], 201);
-    }
 }

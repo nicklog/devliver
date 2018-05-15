@@ -13,9 +13,19 @@ interface DownloadInterface extends BaseEntityInterface
 {
 
     /**
-     * @return VersionInterface
+     * @return PackageInterface
      */
-    public function getVersion(): VersionInterface;
+    public function getPackage(): PackageInterface;
+
+    /**
+     * @param PackageInterface $package
+     */
+    public function setPackage(PackageInterface $package);
+
+    /**
+     * @return VersionInterface|null
+     */
+    public function getVersion();
 
     /**
      * @param VersionInterface $version

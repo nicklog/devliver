@@ -138,7 +138,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
             if (!$dbVersion) {
                 $dbVersion = new Version();
-                $dbVersion->setName($package->getPrettyVersion());
+                $dbVersion->setName($package->getVersion());
                 $dbVersion->setPackage($dbPackage);
             }
 
@@ -230,7 +230,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
         ];
 
         $repo['packages'] = [];
-        $repo['notify-batch'] = $this->router->generate('devliver_repository_track_downloads', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $repo['notify-batch'] = $this->router->generate('devliver_download_track', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $repo['mirrors'] = [$mirror];
         $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%hash%/%package%.json';
         $repo['providers'] = $providers;
