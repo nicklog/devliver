@@ -1,5 +1,5 @@
 {
-    "license": "MIT",
+    "license": "LGPL-3.0",
     "type": "project",
     "autoload": {
         "psr-4": {
