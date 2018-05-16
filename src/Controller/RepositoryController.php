@@ -55,6 +55,10 @@ class RepositoryController extends Controller
         $repository = $doctrine->getRepository(Package::class);
         $package = $repository->findOneByName($name);
 
+        if ($package === null) {
+            throw $this->createNotFoundException();
+        }
+
         $json = $packageSynchronization->dumpPackageJson($user, $package);
 
         return new Response($json);
@@ -72,7 +76,7 @@ class RepositoryController extends Controller
      *
      * @return BinaryFileResponse|Response
      */
-    public function distAction(Request $req, $vendor, $project, $ref, $type)
+    public function distAction($vendor, $project, $ref, $type)
     {
         $doctrine = $this->getDoctrine();
 
@@ -80,6 +84,10 @@ class RepositoryController extends Controller
 
         $repository = $doctrine->getRepository(Package::class);
         $package = $repository->findOneByName($name);
+
+        if ($package === null) {
+            throw $this->createNotFoundException();
+        }
 
         $cacheFile = $this->get('devliver.dist_synchronization')->getDistFilename($package, $ref);
 

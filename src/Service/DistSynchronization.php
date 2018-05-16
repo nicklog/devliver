@@ -2,14 +2,13 @@
 
 namespace Shapecode\Devliver\Service;
 
-use Composer\Config as ComposerConfig;
 use Composer\Downloader\FileDownloader;
 use Composer\Factory;
-use Composer\IO\NullIO;
 use Composer\Package\Archiver\ArchiveManager;
-use Composer\Package\PackageInterface;
+use Composer\Package\CompletePackageInterface;
 use Composer\Util\ComposerMirror;
-use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Composer\ComposerManager;
+use Shapecode\Devliver\Entity\PackageInterface as EntityPackageInterface;
 use Shapecode\Devliver\Model\PackageAdapter;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -22,8 +21,8 @@ use Symfony\Component\Filesystem\Filesystem;
 class DistSynchronization implements DistSynchronizationInterface
 {
 
-    /** @var ComposerConfig */
-    protected $config;
+    /** @var ComposerManager */
+    protected $composerManager;
 
     /** @var string */
     protected $format = 'zip';
@@ -32,19 +31,19 @@ class DistSynchronization implements DistSynchronizationInterface
     protected $distDir;
 
     /**
-     * @param ComposerConfig $config
-     * @param                $distDir
+     * @param ComposerManager $composerManager
+     * @param                 $distDir
      */
-    public function __construct(ComposerConfig $config, $distDir)
+    public function __construct(ComposerManager $composerManager, $distDir)
     {
-        $this->config = $config;
+        $this->composerManager = $composerManager;
         $this->distDir = $distDir;
     }
 
     /**
      * @inheritdoc
      */
-    public function getDistFilename(Package $dbPackage, $ref): string
+    public function getDistFilename(EntityPackageInterface $dbPackage, $ref): string
     {
         if (!$dbPackage->getVersions()->count()) {
             return '';
@@ -52,10 +51,6 @@ class DistSynchronization implements DistSynchronizationInterface
 
         foreach ($dbPackage->getPackages() as $package) {
             if ($package->getSourceReference() == $ref) {
-
-                $io = new NullIO();
-                $io->loadConfiguration($this->config);
-
                 $cacheFile = $this->getCacheFile($package);
 
                 if (file_exists($cacheFile)) {
@@ -72,11 +67,11 @@ class DistSynchronization implements DistSynchronizationInterface
     }
 
     /**
-     * @param PackageInterface $package
+     * @param CompletePackageInterface $package
      *
      * @return mixed|null
      */
-    protected function downloadPackage(PackageInterface $package)
+    protected function downloadPackage(CompletePackageInterface $package)
     {
         $cacheFile = $this->getCacheFile($package);
         $cacheDir = dirname($cacheFile);
@@ -111,11 +106,11 @@ class DistSynchronization implements DistSynchronizationInterface
     }
 
     /**
-     * @param PackageInterface $package
+     * @param CompletePackageInterface $package
      *
-     * @return mixed
+     * @return string
      */
-    protected function getCacheFile(PackageInterface $package): string
+    protected function getCacheFile(CompletePackageInterface $package): string
     {
         $targetDir = $this->distDir . DistSynchronizationInterface::DIST_FORMAT;
 
@@ -134,10 +129,8 @@ class DistSynchronization implements DistSynchronizationInterface
      */
     protected function createFileDownloader(): FileDownloader
     {
-        $config = $this->config;
-
-        $io = new NullIO();
-        $io->loadConfiguration($config);
+        $config = $this->composerManager->getConfig();
+        $io = $this->composerManager->createIO();
 
         $downloader = new FileDownloader($io, $config);
         $downloader->setOutputProgress(false);
@@ -150,7 +143,7 @@ class DistSynchronization implements DistSynchronizationInterface
      */
     protected function createArchiveManager(): ArchiveManager
     {
-        $config = $this->config;
+        $config = $this->composerManager->getConfig();
 
         $factory = new Factory();
 

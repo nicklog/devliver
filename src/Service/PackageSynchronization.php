@@ -5,7 +5,7 @@ namespace Shapecode\Devliver\Service;
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\Dumper\ArrayDumper;
-use Shapecode\Devliver\Composer\ComposerFactory;
+use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Repo;
@@ -30,8 +30,8 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /** @var UrlGeneratorInterface */
     protected $router;
 
-    /** @var ComposerFactory */
-    protected $composerFactory;
+    /** @var ComposerManager */
+    protected $composerManager;
 
     /** @var string */
     protected $packageDir;
@@ -45,15 +45,15 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /**
      * @param ManagerRegistry          $registry
      * @param UrlGeneratorInterface    $router
-     * @param ComposerFactory          $composerFactory
+     * @param ComposerManager          $composerManager
      * @param TagAwareAdapterInterface $cache
      * @param                          $packageDir
      */
-    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, ComposerFactory $composerFactory, TagAwareAdapterInterface $cache, $packageDir)
+    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, ComposerManager $composerManager, TagAwareAdapterInterface $cache, $packageDir)
     {
         $this->registry = $registry;
         $this->router = $router;
-        $this->composerFactory = $composerFactory;
+        $this->composerManager = $composerManager;
         $this->packageDir = $packageDir;
         $this->cache = $cache;
         $this->dumper = new ArrayDumper;
@@ -65,10 +65,10 @@ class PackageSynchronization implements PackageSynchronizationInterface
     public function sync(PackageInterface $package, IOInterface $io = null)
     {
         if ($io === null) {
-            $io = $this->composerFactory->createIO();
+            $io = $this->composerManager->createIO();
         }
 
-        $repositories = $this->composerFactory->createReposByPackage($io, $package);
+        $repositories = $this->composerManager->createReposByPackage($io, $package);
 
         $packages = [];
         foreach ($repositories as $repository) {

@@ -3,7 +3,7 @@
 namespace Shapecode\Devliver\Service;
 
 use Composer\IO\IOInterface;
-use Shapecode\Devliver\Composer\ComposerFactory;
+use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Repo;
 use Shapecode\Devliver\Entity\RepoInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -20,8 +20,8 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var ComposerFactory */
-    protected $composerFactory;
+    /** @var ComposerManager */
+    protected $composerManager;
 
     /** @var PackageSynchronizationInterface */
     protected $packageSynchronization;
@@ -29,13 +29,13 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
     /**
      * @param ManagerRegistry                 $registry
      * @param PackageSynchronizationInterface $packageSynchronization
-     * @param ComposerFactory                 $composerFactory
+     * @param ComposerManager                 $composerManager
      */
-    public function __construct(ManagerRegistry $registry, PackageSynchronizationInterface $packageSynchronization, ComposerFactory $composerFactory)
+    public function __construct(ManagerRegistry $registry, PackageSynchronizationInterface $packageSynchronization, ComposerManager $composerManager)
     {
         $this->registry = $registry;
         $this->packageSynchronization = $packageSynchronization;
-        $this->composerFactory = $composerFactory;
+        $this->composerManager = $composerManager;
     }
 
     /**
@@ -44,7 +44,7 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
     public function sync(IOInterface $io = null)
     {
         if ($io === null) {
-            $io = $this->composerFactory->createIO();
+            $io = $this->composerManager->createIO();
         }
 
         $repositories = $this->registry->getRepository(Repo::class)->findAll();
@@ -60,10 +60,10 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
     public function syncRepo(RepoInterface $repo, IOInterface $io = null)
     {
         if ($io === null) {
-            $io = $this->composerFactory->createIO();
+            $io = $this->composerManager->createIO();
         }
 
-        $repository = $this->composerFactory->createRepo($io, $repo);
+        $repository = $this->composerManager->createRepo($io, $repo);
 
         $packages = $repository->getPackages();
 

@@ -2,7 +2,7 @@
 
 namespace Shapecode\Devliver\Service;
 
-use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Entity\PackageInterface;
 
 /**
  * Interface DistSynchronizationInterface
@@ -16,10 +16,10 @@ interface DistSynchronizationInterface
     const DIST_FORMAT = '/%package%/%version%/%reference%.%type%';
 
     /**
-     * @param Package $dbPackage
-     * @param         $ref
+     * @param PackageInterface $dbPackage
+     * @param                  $ref
      *
      * @return string
      */
-    public function getDistFilename(Package $dbPackage, $ref): string;
+    public function getDistFilename(PackageInterface $dbPackage, $ref): string;
 }

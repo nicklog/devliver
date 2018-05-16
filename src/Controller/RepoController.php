@@ -148,7 +148,7 @@ class RepoController extends Controller
             return $this->redirectToRoute('devliver_repo_index');
         }
 
-        $this->get('devliver.repository_synchronization')->sync($repo);
+        $this->get('devliver.repository_synchronization')->syncRepo($repo);
 
         $this->get('session')->getFlashBag()->add('success', 'Repository updated');
 

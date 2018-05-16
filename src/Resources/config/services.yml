@@ -6,9 +6,6 @@ parameters:
     devliver_dist_dir:      '%devliver_dir%/dist'
     devliver_composer_dir:  '%devliver_dir%/composer'
 
-    composer_home:          '%devliver_composer_dir%/home'
-    composer_cache_dir:     '%devliver_composer_dir%/cache'
-
 services:
 
     cache.tag.app:
@@ -23,7 +20,7 @@ services:
         arguments:
             - '@doctrine'
             - '@router'
-            - '@devliver.composer_factory'
+            - '@devliver.composer_manager'
             - '@cache.app'
             - '%devliver_package_dir%'
 
@@ -33,36 +30,30 @@ services:
         arguments:
             - '@doctrine'
             - '@devliver.package_synchronization'
-            - '@devliver.composer_factory'
+            - '@devliver.composer_manager'
 
     devliver.dist_synchronization:
         class: Shapecode\Devliver\Service\DistSynchronization
         public: true
         arguments:
-            - '@devliver.composer_config'
+            - '@devliver.composer_manager'
             - '%devliver_dist_dir%'
 
     # composer
-    devliver.composer_factory:
-        class: Shapecode\Devliver\Composer\ComposerFactory
+    devliver.config_factory:
+        class: Shapecode\Devliver\Composer\ConfigFactory
+        public: false
+        arguments:
+            - '%devliver_composer_dir%'
+            
+    devliver.composer_manager:
+        class: Shapecode\Devliver\Composer\ComposerManager
         public: true
         arguments:
             - '@doctrine'
-
-    devliver.composer_config:
-        class: Composer\Config
-        factory: 'devliver.composer_factory:create'
-        public: true
+            - '@devliver.config_factory'
 
     # event listener
-    devliver.event_listener.composer:
-        class: Shapecode\Devliver\EventListener\ComposerListener
-        arguments:
-            - '%composer_home%'
-            - '%composer_cache_dir%'
-        tags:
-            - { name: kernel.event_subscriber }
-
     devliver.event_listener.entity:
         class: Shapecode\Devliver\EventListener\EntityListener
         tags:

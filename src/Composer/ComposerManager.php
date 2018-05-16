@@ -3,7 +3,6 @@
 namespace Shapecode\Devliver\Composer;
 
 use Composer\Config;
-use Composer\Factory;
 use Composer\IO\BufferIO;
 use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryFactory;
@@ -14,63 +13,64 @@ use Shapecode\Devliver\Entity\RepoInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class ConfigFactory
+ * Class ComposerManager
  *
  * @package Shapecode\Devliver\Composer
  * @author  Nikita Loges
  */
-class ComposerFactory
+class ComposerManager
 {
 
     /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var Config */
+    protected $config;
+
+    /** @var ConfigFactory */
+    protected $configFactory;
+
     /**
      * @param ManagerRegistry $registry
+     * @param ConfigFactory   $configFactory
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ConfigFactory $configFactory)
     {
         $this->registry = $registry;
+        $this->configFactory = $configFactory;
+    }
+
+    /**
+     * @return BufferIO
+     */
+    public function createIO()
+    {
+        $io = new BufferIO('', OutputInterface::VERBOSITY_VERBOSE);
+        $io->loadConfiguration($this->getConfig());
+
+        return $io;
     }
 
     /**
      * @return Config
+     */
+    public function getConfig()
+    {
+        if ($this->config === null) {
+            $repositories = $this->registry->getRepository(Repo::class)->findAll();
+            $this->config = $this->createReposConfig($repositories);
+        }
+
+        return $this->config;
+    }
+
+    /**
+     * @return Config
+     * @deprecated
      */
     public function create()
     {
-        $repositories = $this->registry->getRepository(Repo::class)->findAll();
-
-        return $this->createReposConfig($repositories);
-    }
-
-    /**
-     * @param RepoInterface $repo
-     *
-     * @return Config
-     */
-    public function createRepoConfig(RepoInterface $repo)
-    {
-        return $this->createReposConfig([$repo]);
-    }
-
-    /**
-     * @param array $repos
-     *
-     * @return Config
-     */
-    public function createReposConfig(array $repos)
-    {
-        unset(Config::$defaultRepositories['packagist.org']);
-
-        $config = Factory::createConfig();
-        $config->merge(['repositories' => array_map(
-            function (Repo $r) {
-                return $r->getConfig();
-            },
-            $repos
-        )]);
-
-        return $config;
+        return $this->getConfig();
     }
 
     /**
@@ -102,13 +102,30 @@ class ComposerFactory
     }
 
     /**
-     * @return BufferIO
+     * @param RepoInterface $repo
+     *
+     * @return Config
      */
-    public function createIO()
+    public function createRepoConfig(RepoInterface $repo)
     {
-        $io = new BufferIO('', OutputInterface::VERBOSITY_VERBOSE);
-        $io->loadConfiguration($this->create());
+        return $this->createReposConfig([$repo]);
+    }
 
-        return $io;
+    /**
+     * @param array $repos
+     *
+     * @return Config
+     */
+    public function createReposConfig(array $repos)
+    {
+        $config = $this->configFactory->create();
+        $config->merge(['repositories' => array_map(
+            function (Repo $r) {
+                return $r->getConfig();
+            },
+            $repos
+        )]);
+
+        return $config;
     }
 }
