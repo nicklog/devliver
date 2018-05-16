@@ -48,3 +48,17 @@ menu:
     usage: Usage
     change_password: Change password
     logout: Logout
+
+resetting:
+    request:
+        page_header: Password reset
+        headline: Password reset
+    reset:
+        page_header: Set Password
+    check_email:
+        page_header: Password reset
+
+software:
+    list:
+        page_header: Software
+    plural: Software

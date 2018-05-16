@@ -20,7 +20,7 @@
                         <tr>
                             <th>#</th>
                             <th>Name</th>
-                            <th>Beschreibung</th>
+                            <th>Author</th>
                             <th>Version</th>
                             <th>Lizenz</th>
                             <th>Typ</th>
@@ -33,7 +33,17 @@
                             <tr>
                                 <td>{{ counter }}</td>
                                 <td>{{ package.name }}</td>
-                                <td title="{{ package.description }}">{{ package.description|truncate }}</td>
+                                <td>
+                                    {% for author in package.authors %}
+                                        {% if author.homepage is defined and author.homepage is not empty %}
+                                            <a href="{{ author.homepage }}" target="_blank">{{ author.name }}</a>
+                                        {% else %}
+                                            {{ author.name }}
+                                        {% endif %}
+                                        {% if author.email is defined and author.email is not empty %} <a href="mailto:{{ author.email }}"><i class="fas fa-envelope"></i></a>{% endif %}
+                                        {% if loop.last != true %}, {% endif %}
+                                    {% endfor %}
+                                </td>
                                 <td>{{ package.prettyVersion }}</td>
                                 <td>{{ package.license|join(', ') }}</td>
                                 <td>{{ package.type }}</td>
@@ -42,16 +52,16 @@
                                         <a href="https://packagist.org/packages/{{ package.name }}" class="btn btn-sm btn-link" target="_blank">
                                             <i class="fas fa-cube fa-fw"></i>
                                         </a>
-                                    {% if package.homepage %}
-                                        <a href="{{ package.homepage }}" class="btn btn-sm btn-link" target="_blank">
-                                            <i class="fas fa-home fa-fw"></i>
-                                        </a>
-                                    {% endif %}
-                                    {% if package.support.source is defined %}
-                                        <a href="{{ package.support.source }}" class="btn btn-sm btn-link" target="_blank">
-                                            <i class="fas fa-code fa-fw"></i>
-                                        </a>
-                                    {% endif %}
+                                        {% if package.homepage %}
+                                            <a href="{{ package.homepage }}" class="btn btn-sm btn-link" target="_blank">
+                                                <i class="fas fa-home fa-fw"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if package.support.source is defined %}
+                                            <a href="{{ package.support.source }}" class="btn btn-sm btn-link" target="_blank">
+                                                <i class="fas fa-code fa-fw"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                                 <td>{{ package.releaseDate|date('m-d-y') }}</td>

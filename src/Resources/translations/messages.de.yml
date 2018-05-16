@@ -58,3 +58,8 @@ resetting:
         page_header: Passwort setzen
     check_email:
         page_header: Passwort zurücksetzen
+
+software:
+    list:
+        page_header: Software
+    plural: Software
