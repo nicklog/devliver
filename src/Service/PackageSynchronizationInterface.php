@@ -23,8 +23,8 @@ interface PackageSynchronizationInterface
     public function sync(PackageInterface $package, IOInterface $io = null);
 
     /**
-     * @param array     $packages
-     * @param Repo|null $repo
+     * @param array|\Composer\Package\PackageInterface[] $packages
+     * @param Repo|null                                  $repo
      */
     public function save(array $packages, Repo $repo = null);
 

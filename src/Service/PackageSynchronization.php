@@ -92,6 +92,9 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
         if (count($packages)) {
             foreach ($packages as $package) {
+                if ($package instanceof AliasPackage) {
+                    continue;
+                }
 
                 $dbPackage = $packageRepository->findOneBy([
                     'name' => $package->getPrettyName()
@@ -128,6 +131,16 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $versionRepository = $this->registry->getRepository(Version::class);
         $em = $this->registry->getManager();
 
+        $knownVersions = $versionRepository->findBy([
+            'package' => $dbPackage
+        ]);
+
+        $toRemove = [];
+        foreach ($knownVersions as $knownVersion) {
+            $name = $knownVersion->getName();
+            $toRemove[$name] = $knownVersion;
+        }
+
         foreach ($packages as $package) {
             if ($package instanceof AliasPackage) {
                 continue;
@@ -154,7 +167,16 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
             $dbVersion->setData($packageData);
 
+            $version = $package->getVersion();
+            if (isset($toRemove[$version])) {
+                unset($toRemove[$version]);
+            }
+
             $em->persist($dbVersion);
+        }
+
+        foreach ($toRemove as $item) {
+            $em->remove($item);
         }
 
         $em->flush();
