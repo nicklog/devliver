@@ -33,7 +33,7 @@
                             <tr>
                                 <td>{{ counter }}</td>
                                 <td>{{ package.name }}</td>
-                                <td>
+                                <td style="white-space: nowrap;">
                                     {% for author in package.authors %}
                                         {% if author.homepage is defined and author.homepage is not empty %}
                                             <a href="{{ author.homepage }}" target="_blank">{{ author.name }}</a>
@@ -41,12 +41,12 @@
                                             {{ author.name }}
                                         {% endif %}
                                         {% if author.email is defined and author.email is not empty %} <a href="mailto:{{ author.email }}"><i class="fas fa-envelope"></i></a>{% endif %}
-                                        {% if loop.last != true %}, {% endif %}
+                                        {% if loop.last != true %}<br>{% endif %}
                                     {% endfor %}
                                 </td>
                                 <td>{{ package.prettyVersion }}</td>
                                 <td>{{ package.license|join(', ') }}</td>
-                                <td>{{ package.type }}</td>
+                                <td style="white-space: nowrap;">{{ package.type }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="https://packagist.org/packages/{{ package.name }}" class="btn btn-sm btn-link" target="_blank">
