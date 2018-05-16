@@ -31,7 +31,7 @@ Now run `php bin/composer install --no-dev --optimize-autoloader` and follow ins
 Update your database structure.
  
 ```bash
-bin/console doctrine:schema:update --force
+php bin/console doctrine:schema:update --force
 ```
 
 ### 5. User
@@ -39,7 +39,7 @@ bin/console doctrine:schema:update --force
 Create an admin user.
 
 ```bash
-bin/console fos:user:create --super-admin
+php bin/console fos:user:create --super-admin
 ```
 
 Follow the instructions and your user will be created.
@@ -87,7 +87,7 @@ This is your repository of private packages.
 Login into your terminal and run following commands.
 
 ```bash
-bin/console devliver:self-update
+php bin/console devliver:self-update
 ```
 
 Follow the instructions.
