@@ -19,12 +19,17 @@ class ConfigFactory
     /** @var string */
     protected $composerDirectory;
 
+    /** @var string */
+    protected $projectDir;
+
     /**
      * @param string $composerDirectory
+     * @param string $projectDir
      */
-    public function __construct(string $composerDirectory)
+    public function __construct(string $composerDirectory, string $projectDir)
     {
         $this->composerDirectory = $composerDirectory;
+        $this->projectDir = $projectDir;
     }
 
     /**
@@ -35,8 +40,8 @@ class ConfigFactory
         unset(Config::$defaultRepositories['packagist.org']);
 
         $fs = new Filesystem();
-        if (!$fs->exists($this->composerDirectory)) {
-            $fs->mkdir($this->composerDirectory);
+        if (!$fs->exists($this->getComposerConfigDir())) {
+            $fs->mkdir($this->getComposerConfigDir());
         }
 
         $config = new Config(false, getcwd());
@@ -52,7 +57,7 @@ class ConfigFactory
      */
     protected function setConfigSource(Config $config)
     {
-        $file = new JsonFile($this->composerDirectory . '/config.json');
+        $file = new JsonFile($this->getComposerConfigDir() . '/config.json');
 
         $source = new Config\JsonConfigSource($file);
         $source->addConfigSetting('home', $this->composerDirectory);
@@ -66,10 +71,18 @@ class ConfigFactory
      */
     protected function setAuthConfigSource(Config $config)
     {
-        $file = new JsonFile($this->composerDirectory . '/auth.json');
+        $file = new JsonFile($this->getComposerConfigDir() . '/auth.json');
         if ($file->exists()) {
             $config->merge(['config' => $file->read()]);
         }
         $config->setAuthConfigSource(new Config\JsonConfigSource($file, true));
+    }
+
+    /**
+     * @return string
+     */
+    protected function getComposerConfigDir()
+    {
+        return $this->projectDir . '/composer';
     }
 }

@@ -45,7 +45,8 @@ services:
         public: false
         arguments:
             - '%devliver_composer_dir%'
-            
+            - '%kernel.project_dir%'
+
     devliver.composer_manager:
         class: Shapecode\Devliver\Composer\ComposerManager
         public: true

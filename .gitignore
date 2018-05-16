@@ -4,6 +4,7 @@ build/
 phpunit.xml
 parameters.yml
 version
+composer/
 
 ###> symfony/framework-bundle ###
 .env
