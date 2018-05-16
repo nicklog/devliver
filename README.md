@@ -57,9 +57,16 @@ The background task is executed with the `bin/console shapecode:cron:run` shell 
 Just add a cronjob to your cron table that runs the command every 2 minutes like this to your cron table.  
 `*/2 * * * * /path/to/your/project/bin/console shapecode:cron:run -q`
 
-### 8. Packages.json
+## Authentication
 
-To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json to your projects.  
+The repositories will usually be protected. 
+There are 2 ways to allow devliver access to these repositories. 
+You store an SSH key in the ssh directory in the home directory for the corresponding web server user. 
+Or you can create an `auth.json` file in the `%document_root%/composer` directory. See the documentation on [getcomposer.org](https://getcomposer.org/doc/articles/http-basic-authentication.md).
+
+## How to Use
+
+To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json in your projects.  
 Composer will you ask for credentials to access the packages.json when you update your project.
   
 This is your repository of private packages.
@@ -74,11 +81,6 @@ This is your repository of private packages.
         ]
     }
 ```
-
-### 9. That's it
-
-Done ;) Go on!
-
 
 ##  Update Instruction
 
