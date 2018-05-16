@@ -63,7 +63,7 @@ class PackageController extends Controller
      */
     public function updateAction(Request $request, Package $package)
     {
-        $this->get('devliver.package_synchronization')->runUpdate($package);
+        $this->get('devliver.package_synchronization')->sync($package);
 
         $this->get('session')->getFlashBag()->add('success', 'Package updated');
 

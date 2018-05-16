@@ -64,7 +64,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
      */
     public function sync(PackageInterface $package, IOInterface $io = null)
     {
-        if (is_null($io)) {
+        if ($io === null) {
             $io = $this->composerFactory->createIO();
         }
 
@@ -90,31 +90,33 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $packageRepository = $this->registry->getRepository(Package::class);
         $em = $this->registry->getManager();
 
-        foreach ($packages as $package) {
+        if (count($packages)) {
+            foreach ($packages as $package) {
 
-            $dbPackage = $packageRepository->findOneBy([
-                'name' => $package->getPrettyName()
-            ]);
+                $dbPackage = $packageRepository->findOneBy([
+                    'name' => $package->getPrettyName()
+                ]);
 
-            if (!$dbPackage) {
-                $dbPackage = new Package();
-                $dbPackage->setName($package->getPrettyName());
+                if (!$dbPackage) {
+                    $dbPackage = new Package();
+                    $dbPackage->setName($package->getPrettyName());
 
-                $em->persist($dbPackage);
-                $em->flush();
+                    $em->persist($dbPackage);
+                    $em->flush();
+                }
+
+                if ($repo) {
+                    $repo->addPackage($dbPackage);
+                }
             }
 
             if ($repo) {
-                $repo->addPackage($dbPackage);
+                $em->persist($repo);
+                $em->flush();
             }
-        }
 
-        if ($repo) {
-            $em->persist($repo);
-            $em->flush();
+            $this->updateVersions($packages, $dbPackage);
         }
-
-        $this->updateVersions($packages, $dbPackage);
     }
 
     /**
@@ -159,19 +161,13 @@ class PackageSynchronization implements PackageSynchronizationInterface
     }
 
     /**
-     * @param PackageInterface $package
-     *
-     * @return string
+     * @inheritdoc
      */
     public function dumpPackageJson(User $user, PackageInterface $package): string
     {
         $data = [];
 
         foreach ($package->getVersions() as $version) {
-            if ($version instanceof AliasPackage) {
-                continue;
-            }
-
             $packageData = $this->dumper->dump($version->getPackageInformation());
 
             $data[$version->getName()] = $packageData;
@@ -243,16 +239,6 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $this->cache->save($item);
 
         return $json;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function runUpdate(PackageInterface $package)
-    {
-        $io = $this->composerFactory->createIO();
-
-        $this->sync($package, $io);
     }
 
     /**

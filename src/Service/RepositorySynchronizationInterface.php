@@ -24,9 +24,4 @@ interface RepositorySynchronizationInterface
      * @param IOInterface|null $io
      */
     public function syncRepo(RepoInterface $repo, IOInterface $io = null);
-
-    /**
-     * @param RepoInterface $repo
-     */
-    public function runUpdate(RepoInterface $repo);
 }

@@ -29,11 +29,6 @@ interface PackageSynchronizationInterface
     public function save(array $packages, Repo $repo = null);
 
     /**
-     * @param PackageInterface $package
-     */
-    public function runUpdate(PackageInterface $package);
-
-    /**
      * @param User             $user
      * @param PackageInterface $package
      *

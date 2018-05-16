@@ -43,7 +43,7 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
      */
     public function sync(IOInterface $io = null)
     {
-        if (is_null($io)) {
+        if ($io === null) {
             $io = $this->composerFactory->createIO();
         }
 
@@ -59,7 +59,7 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
      */
     public function syncRepo(RepoInterface $repo, IOInterface $io = null)
     {
-        if (is_null($io)) {
+        if ($io === null) {
             $io = $this->composerFactory->createIO();
         }
 
@@ -72,15 +72,5 @@ class RepositorySynchronization implements RepositorySynchronizationInterface
         }
 
         $this->packageSynchronization->save($packages, $repo);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function runUpdate(RepoInterface $repo)
-    {
-        $io = $this->composerFactory->createIO();
-
-        $this->syncRepo($repo, $io);
     }
 }
