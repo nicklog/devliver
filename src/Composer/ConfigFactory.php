@@ -71,9 +71,12 @@ class ConfigFactory
      */
     protected function setAuthConfigSource(Config $config)
     {
-        $file = new JsonFile($this->getComposerConfigDir() . '/auth.json');
+        $filename = $this->getComposerConfigDir() . '/auth.json';
+        $file = new JsonFile($filename);
         if ($file->exists()) {
             $config->merge(['config' => $file->read()]);
+        } else {
+            file_put_contents($filename, '{}');
         }
         $config->setAuthConfigSource(new Config\JsonConfigSource($file, true));
     }
