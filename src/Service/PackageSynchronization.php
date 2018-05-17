@@ -199,6 +199,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $packageData = $this->dumper->dump($version->getPackageInformation());
 
             $data[$version->getName()] = $packageData;
+            $data[$version->getName()]['uid'] = $version->getId();
         }
 
         $jsonData = ['packages' => [$package->getName() => $data]];
