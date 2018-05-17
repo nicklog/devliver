@@ -170,7 +170,7 @@ class SelfUpdateCommand extends Command
     {
         $io->section('composer install');
 
-        $this->executeCommand($io, 'install --no-dev --optimize-autoloader', 'composer');
+        $this->executeCommand($io, 'install --no-dev --optimize-autoloader', 'composer.phar');
     }
 
     /**
