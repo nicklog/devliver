@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author  Nikita Loges
  * @company tenolo GbR
  *
- * @Route("", name="devliver_download_")
+ * @Route("/", name="devliver_download_")
  */
 class DownloadController extends Controller
 {
@@ -52,12 +52,12 @@ class DownloadController extends Controller
                 'name' => $name
             ]);
 
-            $version = $versionRepo->findOneBy([
-                'package' => $package->getId(),
-                'name'    => $versionName,
-            ]);
-
             if ($package) {
+                $version = $versionRepo->findOneBy([
+                    'package' => $package->getId(),
+                    'name'    => $versionName,
+                ]);
+
                 $download = new Download();
                 $download->setPackage($package);
 
