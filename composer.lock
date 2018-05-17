@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "f020674cf35df76b853ff2e8654e1700",
@@ -3268,16 +3268,16 @@
         },
         {
             "name": "shapecode/cron-bundle",
-            "version": "3.1.2",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shapecode/cron-bundle.git",
-                "reference": "5569bee8643e9e9a9facd657fd98f0e219bd9cca"
+                "reference": "8e55ceec04e64db64cb32e200b86c69471ff82d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/5569bee8643e9e9a9facd657fd98f0e219bd9cca",
-                "reference": "5569bee8643e9e9a9facd657fd98f0e219bd9cca",
+                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/8e55ceec04e64db64cb32e200b86c69471ff82d1",
+                "reference": "8e55ceec04e64db64cb32e200b86c69471ff82d1",
                 "shasum": ""
             },
             "require": {
@@ -3300,10 +3300,13 @@
                 "mockery/mockery": "^1.0",
                 "phpunit/phpunit": "^6.1"
             },
+            "suggest": {
+                "sonata-project/admin-bundle": "to manage cronjobs in the sonata admin panel"
+            },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-develop": "3.2-dev"
                 }
             },
             "autoload": {
@@ -3340,7 +3343,7 @@
                 "symfony",
                 "time"
             ],
-            "time": "2018-04-17T09:55:03+00:00"
+            "time": "2018-05-07T16:46:31+00:00"
         },
         {
             "name": "sonata-project/admin-bundle",
@@ -7221,16 +7224,16 @@
         },
         {
             "name": "tenolo/utilities",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tenolo/utilities.git",
-                "reference": "f88a1b333739284a4eb0407297f82bc1d397d84b"
+                "reference": "eb3471d4347c17df1b05ddf75d70897869bf1ff4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tenolo/utilities/zipball/f88a1b333739284a4eb0407297f82bc1d397d84b",
-                "reference": "f88a1b333739284a4eb0407297f82bc1d397d84b",
+                "url": "https://api.github.com/repos/tenolo/utilities/zipball/eb3471d4347c17df1b05ddf75d70897869bf1ff4",
+                "reference": "eb3471d4347c17df1b05ddf75d70897869bf1ff4",
                 "shasum": ""
             },
             "require": {
@@ -7279,7 +7282,7 @@
                 "utility",
                 "utils"
             ],
-            "time": "2018-04-27T07:54:09+00:00"
+            "time": "2018-05-03T15:02:56+00:00"
         },
         {
             "name": "twig/extensions",
