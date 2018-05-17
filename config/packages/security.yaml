@@ -54,8 +54,6 @@ security:
             anonymous:          true
 
     access_control:
-        - { path: ^/repo/, role: ROLE_REPO }
-
         - { path: ^/packages.json, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
@@ -68,6 +66,8 @@ security:
         - { path: ^/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        - { path: ^/repo/, role: ROLE_REPO }
 
         - { path: ^/admin/, role: [ROLE_ADMIN, ROLE_SONATA_ADMIN] }
         - { path: ^/.*, role: ROLE_MANAGER }
