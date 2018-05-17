@@ -31,4 +31,14 @@ interface DownloadInterface extends BaseEntityInterface
      * @param VersionInterface $version
      */
     public function setVersion(VersionInterface $version);
+
+    /**
+     * @return string
+     */
+    public function getVersionName();;
+
+    /**
+     * @param string $versionName
+     */
+    public function setVersionName(string $versionName);
 }
