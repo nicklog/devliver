@@ -199,6 +199,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $packageData = $this->dumper->dump($version->getPackageInformation());
 
             $data[$version->getName()] = $packageData;
+            $data[$version->getName()]['uid'] = $version->getId();
         }
 
         $jsonData = ['packages' => [$package->getName() => $data]];
@@ -236,7 +237,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
                     if (!isset($providers[$name])) {
                         $providers[$name] = [
-                            'sha256' => sha1($name . '-' . $user->getId())
+                            'sha256' => null
                         ];
                     }
                 }
@@ -256,7 +257,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $repo['packages'] = [];
         $repo['notify-batch'] = $this->router->generate('devliver_download_track', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $repo['mirrors'] = [$mirror];
-        $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%hash%/%package%.json';
+        $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%package%.json';
         $repo['providers'] = $providers;
 
         $json = json_encode($repo);

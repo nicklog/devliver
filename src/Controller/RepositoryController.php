@@ -33,22 +33,17 @@ class RepositoryController extends Controller
     }
 
     /**
-     * @Route("/repo/provider/{hash}/{vendor}/{project}.json", name="provider")
+     * @Route("/repo/provider/{vendor}/{project}.json", name="provider")
      * @Route("/repo/provider", name="provider_base")
      *
      * @return Response
      */
-    public function providerAction($hash, $vendor, $project)
+    public function providerAction($vendor, $project)
     {
         $doctrine = $this->getDoctrine();
         $user = $this->getUser();
 
         $name = $vendor . '/' . $project;
-        $hash2 = sha1($name . '-' . $user->getId());
-
-        if ($hash != $hash2) {
-            throw $this->createAccessDeniedException();
-        }
 
         $packageSynchronization = $this->get('devliver.package_synchronization');
 
