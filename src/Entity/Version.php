@@ -25,7 +25,7 @@ class Version extends BaseEntity implements VersionInterface
 
     /**
      * @var PackageInterface
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="versions", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="versions", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     protected $package;

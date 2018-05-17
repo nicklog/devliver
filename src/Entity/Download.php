@@ -18,15 +18,15 @@ class Download extends BaseEntity implements DownloadInterface
 
     /**
      * @var PackageInterface
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="downloads", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="downloads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     protected $package;
 
     /**
      * @var VersionInterface
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="downloads", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="downloads", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     protected $version;
 

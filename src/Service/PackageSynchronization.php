@@ -154,7 +154,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $new = false;
             if (!$dbVersion) {
                 $dbVersion = new Version();
-                $dbVersion->setName($package->getVersion());
+                $dbVersion->setName($package->getPrettyVersion());
                 $dbVersion->setPackage($dbPackage);
                 $new = true;
             }
@@ -169,7 +169,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
             $dbVersion->setData($packageData);
 
-            $version = $package->getVersion();
+            $version = $package->getPrettyVersion();
             if (isset($toRemove[$version])) {
                 unset($toRemove[$version]);
             }
