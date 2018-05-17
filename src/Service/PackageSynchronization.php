@@ -93,7 +93,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
         if (count($packages)) {
             foreach ($packages as $package) {
                 if ($package instanceof AliasPackage) {
-                    continue;
+                    $package = $package->getAliasOf();
                 }
 
                 $dbPackage = $packageRepository->findOneBy([
@@ -143,7 +143,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
         foreach ($packages as $package) {
             if ($package instanceof AliasPackage) {
-                continue;
+                $package = $package->getAliasOf();
             }
 
             $dbVersion = $versionRepository->findOneBy([
@@ -151,10 +151,12 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 'name'    => $package->getPrettyVersion(),
             ]);
 
+            $new = false;
             if (!$dbVersion) {
                 $dbVersion = new Version();
                 $dbVersion->setName($package->getVersion());
                 $dbVersion->setPackage($dbPackage);
+                $new = true;
             }
 
             $distUrl = $this->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
@@ -173,6 +175,10 @@ class PackageSynchronization implements PackageSynchronizationInterface
             }
 
             $em->persist($dbVersion);
+
+            if ($new) {
+                $em->flush();
+            }
         }
 
         foreach ($toRemove as $item) {
