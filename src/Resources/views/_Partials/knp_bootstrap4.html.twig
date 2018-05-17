@@ -118,7 +118,7 @@
 
     {%- if item.uri is not empty and (not item.current or options.currentAsLink) %}
         {{ ownmacro.setCssClassAttribute(item, 'LinkAttribute', 'dropdown-item') }}
-        {{ block('linkElement') }}
+        {{ block('dropdownLinkElement') }}
     {%- else %}
         {{ block('spanElementDropdown') }}
     {%- endif %}
@@ -137,7 +137,7 @@
     {% import _self as ownmacro %}
     {{ ownmacro.setCssClassAttribute(item, 'LabelAttribute', 'dropdown-header') }}
     <div {{ macros.attributes(item.labelAttributes) }}>
-        {% if item.attribute('icon') is not empty %}
+        {% if item.attribute('icon') is not empty  %}
             <i class="{{ item.attribute('icon') }}"></i>
         {% endif %}
         {{ block('label') }}
@@ -161,7 +161,18 @@
     {% import _self as ownmacro %}
     {{ ownmacro.setCssClassAttribute(item, 'LinkAttribute', 'nav-link') }}
     <a href="{{ item.uri }}"{{ macros.attributes(item.linkAttributes) }}>
-        {% if item.attribute('icon') is not empty %}
+        {% if item.attribute('icon') is not empty  %}
+            <i class="{{ item.attribute('icon') }}"></i>
+        {% endif %}
+        {{ block('label') }}
+    </a>
+{% endblock %}
+
+{% block dropdownLinkElement %}
+    {% import "knp_menu.html.twig" as macros %}
+    {% import _self as ownmacro %}
+    <a href="{{ item.uri }}"{{ macros.attributes(item.linkAttributes) }}>
+        {% if item.attribute('icon') is not empty  %}
             <i class="{{ item.attribute('icon') }}"></i>
         {% endif %}
         {{ block('label') }}
@@ -173,7 +184,7 @@
     {% import _self as ownmacro %}
     {{ ownmacro.setCssClassAttribute(item, 'LabelAttribute', 'navbar-text') }}
     <span {{ macros.attributes(item.labelAttributes) }}>
-        {% if item.attribute('icon') is not empty %}
+        {% if item.attribute('icon') is not empty  %}
             <i class="{{ item.attribute('icon') }}"></i>
         {% endif %}
         {{ block('label') }}
@@ -188,7 +199,7 @@
     {%- set attributes = attributes|merge({'class': classes|join(' ')}) %}
     {%- set attributes = attributes|merge({'data-toggle': 'dropdown'}) %}
     <a href="#"{{ macros.attributes(attributes) }}>
-        {% if item.attribute('icon') is not empty %}
+        {% if item.attribute('icon') is not empty  %}
             <i class="{{ item.attribute('icon') }}"></i>
         {% endif %}
         {{ block('label') }}

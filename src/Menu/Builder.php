@@ -3,6 +3,7 @@
 namespace Shapecode\Devliver\Menu;
 
 use Knp\Menu\FactoryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -24,16 +25,21 @@ class Builder
     /** @var AuthorizationChecker */
     protected $authorizationChecker;
 
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
     /**
-     * @param TranslatorInterface  $translator
-     * @param FactoryInterface     $factory
-     * @param AuthorizationChecker $authorizationChecker
+     * @param TranslatorInterface   $translator
+     * @param FactoryInterface      $factory
+     * @param AuthorizationChecker  $authorizationChecker
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(TranslatorInterface $translator, FactoryInterface $factory, AuthorizationChecker $authorizationChecker)
+    public function __construct(TranslatorInterface $translator, FactoryInterface $factory, AuthorizationChecker $authorizationChecker, TokenStorageInterface $tokenStorage)
     {
         $this->translator = $translator;
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -94,17 +100,31 @@ class Builder
             ]
         ]);
 
+        $token = $this->tokenStorage->getToken();
+        $username = ($token !== null) ? $token->getUsername() : 'Profil';
+
+        $dropdown = $menu->addChild(
+            $username,
+            [
+                'attributes' => [
+                    'dropdown' => true,
+                    'icon'     => 'fas fa-user fa-fw',
+                ],
+            ]
+        );
+
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            $menu->addChild('sonata_admin_dashboard', [
+            $dropdown->addChild('sonata_admin_dashboard', [
                 'label'      => 'menu.admin',
                 'route'      => 'sonata_admin_dashboard',
                 'attributes' => [
-                    'icon' => 'fas fa-lock fa-fw',
+                    'divider_append' => true,
+                    'icon'           => 'fas fa-lock fa-fw',
                 ],
             ]);
         }
 
-        $menu->addChild('fos_user_change_password', [
+        $dropdown->addChild('fos_user_change_password', [
             'label'      => 'menu.change_password',
             'route'      => 'fos_user_change_password',
             'attributes' => [
@@ -112,11 +132,12 @@ class Builder
             ],
         ]);
 
-        $menu->addChild('fos_user_security_logout', [
+        $dropdown->addChild('fos_user_security_logout', [
             'label'      => 'menu.logout',
             'route'      => 'fos_user_security_logout',
             'attributes' => [
-                'icon' => 'fas fa-sign-out-alt fa-fw',
+                'divider_prepend' => true,
+                'icon'            => 'fas fa-sign-out-alt fa-fw',
             ],
         ]);
 

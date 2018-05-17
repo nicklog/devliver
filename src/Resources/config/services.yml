@@ -122,6 +122,7 @@ services:
             - "@translator"
             - "@knp_menu.factory"
             - "@security.authorization_checker"
+            - "@security.token_storage"
 
     devliver.main_menu_left:
         class: Knp\Menu\MenuItem
