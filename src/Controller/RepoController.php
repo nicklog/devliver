@@ -4,7 +4,6 @@ namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Repo;
-use Shapecode\Devliver\Form\Type\Forms\RepoMultipleType;
 use Shapecode\Devliver\Form\Type\Forms\RepoType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,7 +54,7 @@ class RepoController extends Controller
     }
 
     /**
-     * @Route("/add-multiple", name="create_multiple")
+     * @Route("/add", name="add")
      *
      * @param Request $request
      *
@@ -63,25 +62,14 @@ class RepoController extends Controller
      */
     public function addMultipleAction(Request $request)
     {
-        $form = $this->createForm(RepoMultipleType::class);
+        $repo = new Repo();
+        $form = $this->createForm(RepoType::class, $repo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
-            $data = $form->getData();
-            $urls = explode("\r\n", $data['urls']);
-
-            foreach ($urls as $url) {
-                $url = trim($url);
-
-                if (!empty($url)) {
-                    $repo = new Repo();
-                    $repo->setUrl($url);
-
-                    $em->persist($repo);
-                }
-            }
+            $em->persist($repo);
 
             $em->flush();
 
@@ -90,7 +78,7 @@ class RepoController extends Controller
             return $this->redirectToRoute('devliver_repo_index');
         }
 
-        return $this->render('@Devliver/Repo/addMultiple.html.twig', [
+        return $this->render('@Devliver/Repo/add.html.twig', [
             'form' => $form->createView()
         ]);
     }

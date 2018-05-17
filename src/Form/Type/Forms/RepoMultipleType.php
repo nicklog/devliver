@@ -3,11 +3,10 @@
 namespace Shapecode\Devliver\Form\Type\Forms;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class RepoMultipleType
@@ -23,15 +22,11 @@ class RepoMultipleType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('urls', TextareaType::class, [
-            'required'    => false,
-            'label'       => 'Repository URLs. In each line one.',
-            'constraints' => [
-                new NotBlank()
-            ],
-            'attr'        => [
-                'rows' => 10
-            ]
+        $builder->add('urls', CollectionType::class, [
+            'required'   => false,
+            'label'      => 'Repository URLs. In each line one.',
+            'allow_add' => true,
+            'entry_type' => \Shapecode\Devliver\Form\Type\Widgets\RepoType::class,
         ]);
 
         $builder->add('submit', SubmitType::class, [

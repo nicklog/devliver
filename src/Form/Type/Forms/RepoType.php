@@ -5,10 +5,8 @@ namespace Shapecode\Devliver\Form\Type\Forms;
 use Shapecode\Devliver\Entity\RepoInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class RepoType
@@ -24,12 +22,9 @@ class RepoType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('url', TextType::class, [
-            'required'    => false,
-            'label'       => 'Repository URL or path (bitbucket git repositories need the trailing .git)',
-            'constraints' => [
-                new NotBlank()
-            ]
+        $builder->add('repo', \Shapecode\Devliver\Form\Type\Widgets\RepoType::class, [
+            'inherit_data' => true,
+            'label' => false,
         ]);
 
         $builder->add('submit', SubmitType::class, [

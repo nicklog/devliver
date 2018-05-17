@@ -24,13 +24,15 @@ class RepoTypeType extends AbstractType
             'required'          => true,
             'label'             => 'Type',
             'choices'           => [
-                'vcs'      => 'vcs',
-                'git'      => 'git',
-                'hg'       => 'hg',
-                'svn'      => 'svn',
-                'artifact' => 'artifact',
-                'pear'     => 'pear',
-                'package'  => 'package'
+                'vcs'    => 'vcs',
+                'gitlab' => 'gitlab',
+                'github' => 'github',
+//                'git'      => 'git',
+//                'hg'       => 'hg',
+//                'svn'      => 'svn',
+//                'artifact' => 'artifact',
+//                'pear'     => 'pear',
+//                'package'  => 'package'
             ],
             'choices_as_values' => true
         ]);

@@ -1,17 +1,1 @@
-{% extends '@Devliver/Repo/addMultiple.html.twig' %}
-
-{% block pageTitle %}
-    <i class="fas fa-edit fa-fw"></i> {{ 'repository.edit.page_header'|trans }}
-{% endblock %}
-
-{% block pageActions %}
-    <a href="{{ path('devliver_repo_index') }}" data-toggle="tooltip" title="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger"><span class="fa fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
-{% endblock %}
-
-{% block content %}
-    {{ form_start(form) }}
-
-    {{ form_row(form.url) }}
-
-    {{ form_end(form) }}
-{% endblock %}
+{% extends '@Devliver/Repo/add.html.twig' %}

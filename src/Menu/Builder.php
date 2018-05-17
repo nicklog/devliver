@@ -59,7 +59,7 @@ class Builder
             'route'  => 'devliver_repo_index',
             'extras' => [
                 'routes' => [
-                    'devliver_repo_create_multiple',
+                    'devliver_repo_add',
                     'devliver_repo_edit',
                 ],
             ]

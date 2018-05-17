@@ -19,12 +19,12 @@ repository:
     list:
         page_header: Repositories
     add:
-        page_header: Repositories hinzufügen
+        page_header: Repository hinzufügen
     edit:
         page_header: Repository bearbeiten
     singular: Repository
     plural: Repositories
-    add_repositories: Repositories hinzufügen
+    add_repositories: Repository hinzufügen
 
 package:
     list:
