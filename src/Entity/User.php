@@ -24,4 +24,26 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true, unique=true)
+     */
+    protected $apiToken;
+
+    /**
+     * @return string|null
+     */
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    /**
+     * @param string $apiToken
+     */
+    public function setApiToken(string $apiToken)
+    {
+        $this->apiToken = $apiToken;
+    }
+
 }

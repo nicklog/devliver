@@ -81,6 +81,11 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
 
+    devliver.event_listener.user:
+        class: Shapecode\Devliver\EventListener\UserListener
+        tags:
+            - { name: doctrine.event_subscriber }
+
     # twig
     devliver.twig_extension.devliver:
         class: Shapecode\Devliver\Twig\Extension\DevliverExtension
