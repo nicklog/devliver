@@ -17,7 +17,7 @@ use Doctrine\ORM\PersistentCollection;
  *
  * @ORM\Entity()
  * @ORM\Table(indexes={
- *     @ORM\Index(name="package_name", columns={"package_id", "name"})
+ *     @ORM\Index(columns={"package_id", "name"})
  * })
  */
 class Version extends BaseEntity implements VersionInterface
