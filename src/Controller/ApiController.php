@@ -5,11 +5,14 @@ namespace Shapecode\Devliver\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Entity\Repo;
 use Shapecode\Devliver\Entity\User;
+use Shapecode\Devliver\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tenolo\Utilities\Utils\StringUtil;
 
 /**
  * Class ApiController
@@ -31,6 +34,7 @@ class ApiController extends Controller
     {
         // parse the payload
         $payload = json_decode($request->request->get('payload'), true);
+
         if (!$payload && $request->headers->get('Content-Type') === 'application/json') {
             $payload = json_decode($request->getContent(), true);
         }
@@ -39,59 +43,71 @@ class ApiController extends Controller
             return new JsonResponse(['status' => 'error', 'message' => 'Missing payload parameter'], 406);
         }
 
-        if (isset($payload['project']['git_http_url'])) { // gitlab event payload
-            $urlRegex = '{^(?:ssh://git@|https?://|git://|git@)?(?P<host>[a-z0-9.-]+)(?::[0-9]+/|[:/])(?P<path>[\w.-]+(?:/[\w.-]+?)+)(?:\.git|/)?$}i';
-            $url = $payload['project']['git_http_url'];
-        } elseif (isset($payload['repository']['url'])) { // github/anything hook
-            $urlRegex = '{^(?:ssh://git@|https?://|git://|git@)?(?P<host>[a-z0-9.-]+)(?::[0-9]+/|[:/])(?P<path>[\w.-]+(?:/[\w.-]+?)+)(?:\.git|/)?$}i';
-            $url = $payload['repository']['url'];
-            $url = str_replace('https://api.github.com/repos', 'https://github.com', $url);
-        } elseif (isset($payload['repository']['links']['html']['href'])) { // bitbucket push event payload
-            $urlRegex = '{^(?:https?://|git://|git@)?(?:api\.)?(?P<host>bitbucket\.org)[/:](?P<path>[\w.-]+/[\w.-]+?)(\.git)?/?$}i';
-            $url = $payload['repository']['links']['html']['href'];
-        } elseif (isset($payload['canon_url']) && isset($payload['repository']['absolute_url'])) { // bitbucket post hook (deprecated)
-            $urlRegex = '{^(?:https?://|git://|git@)?(?P<host>bitbucket\.org)[/:](?P<path>[\w.-]+/[\w.-]+?)(\.git)?/?$}i';
-            $url = $payload['canon_url'] . $payload['repository']['absolute_url'];
-        } else {
+        $urls = [];
+
+        // gitlab
+        if (isset($payload['project']['git_ssh_url'])) {
+            $urls[] = $payload['project']['git_ssh_url'];
+        }
+        if (isset($payload['project']['git_http_url'])) {
+            $urls[] = $payload['project']['git_http_url'];
+        }
+
+        // github
+        if (isset($payload['repository']['git_url'])) {
+            $urls[] = $payload['repository']['git_url'];
+        }
+        if (isset($payload['repository']['ssh_url'])) {
+            $urls[] = $payload['repository']['ssh_url'];
+        }
+        if (isset($payload['repository']['clone_url'])) {
+            $urls[] = $payload['repository']['clone_url'];
+        }
+
+        // bitbucket
+        if (isset($payload['repository']['links']['html']['href'])) {
+            $bitbucketHtmlUrl = $payload['repository']['links']['html']['href'];
+
+            $git_http_url = $bitbucketHtmlUrl . '.git';
+            $git_ssh_url = 'git@bitbucket.org:' . StringUtil::removeFromStart('https://bitbucket.org/', $bitbucketHtmlUrl) . '.git';
+
+            $urls[] = $git_http_url;
+            $urls[] = $git_ssh_url;
+        }
+
+        if (empty($urls)) {
             return new JsonResponse(['status' => 'error', 'message' => 'Missing or invalid payload'], 406);
         }
 
-        return $this->receivePost($request, $url, $urlRegex);
+        return $this->receiveWebhook($request, $urls);
     }
 
     /**
      * Perform the package update
      *
-     * @param Request $request  the current request
-     * @param string  $url      the repository's URL (deducted from the request)
-     * @param string  $urlRegex the regex used to split the user packages into domain and path
+     * @param Request $request
+     * @param array   $urls
      *
      * @return Response
      */
-    protected function receivePost(Request $request, $url, $urlRegex)
+    protected function receiveWebhook(Request $request, array $urls)
     {
-        // try to parse the URL first to avoid the DB lookup on malformed requests
-        if (!preg_match($urlRegex, $url)) {
-            return new Response(json_encode(['status' => 'error', 'message' => 'Could not parse payload repository URL']), 406);
-        }
-
         // find the user
         $user = $this->findUser($request);
 
         if (!$user) {
-            return new Response(json_encode(['status' => 'error', 'message' => 'Invalid credentials']), 403);
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid credentials'], 403);
         }
 
-        // try to find the user package
-        $packages = $this->findPackagesByUrl($url, $urlRegex);
+        $repos = $this->findReposByUrl($urls);
 
-        if (!$packages) {
-            return new Response(json_encode(['status' => 'error', 'message' => 'Could not find a package that matches this request']), 404);
+        if (!$repos) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Could not find a package that matches this request'], 404);
         }
 
         /** @var Package $package */
-        foreach ($packages as $package) {
-            $this->get('devliver.package_synchronization')->sync($package);
+        foreach ($repos as $repo) {
+            $this->get('devliver.repository_synchronization')->syncRepo($repo);
         }
 
         return new JsonResponse(['status' => 'success'], 202);
@@ -107,11 +123,9 @@ class ApiController extends Controller
         $username = $request->get('username');
         $apiToken = $request->get('apiToken');
 
+        /** @var UserRepository $repo */
         $repo = $this->getDoctrine()->getRepository(User::class);
-        $user = $repo->findOneBy([
-            'username' => $username,
-            'apiToken' => $apiToken
-        ]);
+        $user = $repo->findOneByUsernameAndToken($username, $apiToken);
 
         if ($user && !$user->isEnabled()) {
             return null;
@@ -121,35 +135,16 @@ class ApiController extends Controller
     }
 
     /**
-     * @param string $url
-     * @param string $urlRegex
+     * @param array $urls
      *
-     * @return array the packages found
+     * @return Repo[]
      */
-    protected function findPackagesByUrl($url, $urlRegex)
+    protected function findReposByUrl(array $urls)
     {
-        if (!preg_match($urlRegex, $url, $matched)) {
-            return [];
-        }
+        $repo = $this->getDoctrine()->getRepository(Repo::class);
 
-        $repo = $this->getDoctrine()->getRepository(Package::class);
-
-        /** @var Package[] $all */
-        $all = $repo->findAll();
-
-        $packages = [];
-        foreach ($all as $package) {
-            foreach ($package->getRepos() as $r) {
-
-                if (preg_match($urlRegex, $r->getUrl(), $candidate)
-                    && strtolower($candidate['host']) === strtolower($matched['host'])
-                    && strtolower($candidate['path']) === strtolower($matched['path'])
-                ) {
-                    $packages[] = $package;
-                }
-            }
-        }
-
-        return $packages;
+        return $repo->findBy([
+            'url' => $urls
+        ]);
     }
 }
