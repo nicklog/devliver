@@ -11,7 +11,7 @@ use Sonata\UserBundle\Entity\BaseUser;
  * @package Shapecode\Devliver\Entity
  * @author  Nikita Loges
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\UserRepository")
  */
 class User extends BaseUser
 {
