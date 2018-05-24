@@ -113,6 +113,23 @@ class Builder
             ]
         );
 
+        $dropdown->addChild('devliver_profile_index', [
+            'label'      => 'Profile',
+            'route'      => 'devliver_profile_index',
+            'attributes' => [
+                'icon' => 'fas fa-user fa-fw',
+            ],
+        ]);
+
+        $dropdown->addChild('fos_user_change_password', [
+            'label'      => 'menu.change_password',
+            'route'      => 'fos_user_change_password',
+            'attributes' => [
+                'divider_append' => true,
+                'icon'           => 'fas fa-key fa-fw',
+            ],
+        ]);
+
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $dropdown->addChild('sonata_admin_dashboard', [
                 'label'      => 'menu.admin',
@@ -124,20 +141,11 @@ class Builder
             ]);
         }
 
-        $dropdown->addChild('fos_user_change_password', [
-            'label'      => 'menu.change_password',
-            'route'      => 'fos_user_change_password',
-            'attributes' => [
-                'icon' => 'fas fa-key fa-fw',
-            ],
-        ]);
-
         $dropdown->addChild('fos_user_security_logout', [
             'label'      => 'menu.logout',
             'route'      => 'fos_user_security_logout',
             'attributes' => [
-                'divider_prepend' => true,
-                'icon'            => 'fas fa-sign-out-alt fa-fw',
+                'icon' => 'fas fa-sign-out-alt fa-fw',
             ],
         ]);
 

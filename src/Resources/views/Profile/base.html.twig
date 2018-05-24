@@ -1,0 +1,34 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block pageTitle %}
+    <i class="fas fa-user fa-fw"></i> {{ app.user.username }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="nav flex-column nav-pills">
+                <a class="nav-link{% if app.request.get('_route') == 'devliver_profile_index' %} active{% endif %}" href="{{ path('devliver_profile_index') }}">
+                    <in class="fas fa-user fa-fw"></in>
+                    Profile
+                </a>
+                <a class="nav-link{% if app.request.get('_route') == 'devliver_profile_edit' %} active{% endif %}" href="{{ path('devliver_profile_edit') }}">
+                    <in class="fas fa-wrench fa-fw"></in>
+                    Settings
+                </a>
+                <a class="nav-link{% if app.request.get('_route') == 'fos_user_change_password' %} active{% endif %}" href="{{ path('fos_user_change_password') }}">
+                    <in class="fas fa-key fa-fw"></in>
+                    Change password
+                </a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            {% block profile %}
+            {% endblock %}
+        </div>
+    </div>
+
+{% endblock %}
