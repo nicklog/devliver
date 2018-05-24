@@ -182,6 +182,9 @@
     "psr/simple-cache": {
         "version": "1.0.1"
     },
+    "roave/security-advisories": {
+        "version": "dev-master"
+    },
     "seld/cli-prompt": {
         "version": "1.0.3"
     },
@@ -367,6 +370,9 @@
     },
     "symfony/polyfill-apcu": {
         "version": "v1.7.0"
+    },
+    "symfony/polyfill-ctype": {
+        "version": "v1.8.0"
     },
     "symfony/polyfill-intl-icu": {
         "version": "v1.7.0"
