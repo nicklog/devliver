@@ -86,7 +86,7 @@ class ApiController extends Controller
         $packages = $this->findPackagesByUrl($url, $urlRegex);
 
         if (!$packages) {
-            return new Response(json_encode(['status' => 'error', 'message' => 'Could not find a package that matches this request (does user maintain the package?)']), 404);
+            return new Response(json_encode(['status' => 'error', 'message' => 'Could not find a package that matches this request']), 404);
         }
 
         /** @var Package $package */
