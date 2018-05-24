@@ -27,6 +27,7 @@ class RepoTypeType extends AbstractType
                 'vcs'    => 'vcs',
                 'gitlab' => 'gitlab',
                 'github' => 'github',
+                'git-bitbucket' => 'git-bitbucket',
 //                'git'      => 'git',
 //                'hg'       => 'hg',
 //                'svn'      => 'svn',
