@@ -45,6 +45,14 @@ class ConfigFactory
         }
 
         $config = new Config(false, getcwd());
+        $config->merge([
+            'config'       => [
+                'home' => $this->composerDirectory,
+            ],
+            'repositories' => [
+                'packagist.org' => false
+            ]
+        ]);
 
         $this->setConfigSource($config);
         $this->setAuthConfigSource($config);
@@ -57,13 +65,17 @@ class ConfigFactory
      */
     protected function setConfigSource(Config $config)
     {
-        $file = new JsonFile($this->getComposerConfigDir() . '/config.json');
+        $filename = $this->getComposerConfigDir() . '/config.json';
+        $file = new JsonFile($filename);
+
+        if (!$file->exists()) {
+            file_put_contents($filename, '{}');
+        }
 
         $source = new Config\JsonConfigSource($file);
-        $source->addConfigSetting('home', $this->composerDirectory);
 
         $config->merge($file->read());
-        $config->setConfigSource(new Config\JsonConfigSource($file));
+        $config->setConfigSource($source);
     }
 
     /**
@@ -73,12 +85,16 @@ class ConfigFactory
     {
         $filename = $this->getComposerConfigDir() . '/auth.json';
         $file = new JsonFile($filename);
+
         if ($file->exists()) {
             $config->merge(['config' => $file->read()]);
         } else {
             file_put_contents($filename, '{}');
         }
-        $config->setAuthConfigSource(new Config\JsonConfigSource($file, true));
+
+        $source = new Config\JsonConfigSource($file, true);
+
+        $config->setAuthConfigSource($source);
     }
 
     /**

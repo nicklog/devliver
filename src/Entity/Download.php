@@ -31,6 +31,12 @@ class Download extends BaseEntity implements DownloadInterface
     protected $version;
 
     /**
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $versionName;
+
+    /**
      * @inheritdoc
      */
     public function getPackage(): PackageInterface
@@ -60,5 +66,21 @@ class Download extends BaseEntity implements DownloadInterface
     public function setVersion(VersionInterface $version)
     {
         $this->version = $version;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersionName()
+    {
+        return $this->versionName;
+    }
+
+    /**
+     * @param string $versionName
+     */
+    public function setVersionName(string $versionName)
+    {
+        $this->versionName = $versionName;
     }
 }

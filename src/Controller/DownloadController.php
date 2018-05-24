@@ -60,6 +60,7 @@ class DownloadController extends Controller
 
                 $download = new Download();
                 $download->setPackage($package);
+                $download->setVersionName($versionName);
 
                 if ($version) {
                     $download->setVersion($version);

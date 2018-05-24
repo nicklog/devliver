@@ -42,6 +42,8 @@
                         <tr>
                             <th>{{ knp_pagination_sortable(pagination, '#', ['p.id']) }}</th>
                             <th>{{ knp_pagination_sortable(pagination, 'Name', ['p.name']) }}</th>
+                            <th>Last Version</th>
+                            <th>Datum</th>
                             <th>{{ knp_pagination_sortable(pagination, 'Downloads', ['p.downloads']) }}</th>
                             <th></th>
                         </tr>
@@ -52,6 +54,12 @@
                                     <a href="{{ path('devliver_package_view', {package: package.id}) }}">
                                         {{ package.name }}
                                     </a>
+                                </td>
+                                <td>
+                                    {{ package.lastStablePackage.prettyVersion }}
+                                </td>
+                                <td>
+                                    {{ package.lastStablePackage.releaseDate|date }}
                                 </td>
                                 <td>
                                     <span class="badge badge-primary">{{ package_downloads(package)|number_format }}</span>
