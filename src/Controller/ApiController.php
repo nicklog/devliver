@@ -21,13 +21,13 @@ use Tenolo\Utilities\Utils\StringUtil;
  * @author  Nikita Loges
  * @company tenolo GbR
  *
- * @Route("/", name="devliver_api_")
+ * @Route("/api", name="devliver_api_")
  */
 class ApiController extends Controller
 {
 
     /**
-     * @Route("/api/update-package", name="generic_postreceive", defaults={"_format" = "json"})
+     * @Route("/update-package", name="generic_postreceive", defaults={"_format" = "json"})
      * @Method({"POST"})
      */
     public function updatePackageAction(Request $request)
