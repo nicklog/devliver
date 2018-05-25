@@ -1,0 +1,161 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-question-circle fa-fw"></i> How To
+{% endblock %}
+
+{% block content %}
+    <h2>
+        Requirements
+    </h2>
+    <div class="row">
+        <div class="col-md-12">
+            <ul>
+                <li><strong>PHP 7.0</strong> or higher</li>
+                <li><strong>MariaDB/MySQL</strong></li>
+                <li><strong>git</strong> installed on server</li>
+                <li>the running web user has <strong>access</strong> to <strong>private</strong> git repositories over <strong>ssh</strong>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>
+        Installation Instruction
+    </h2>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Download</h4>
+            <p>... the project from github.com to your web directory.<br>
+                The document root of your vhost have to point to the public directory.</p>
+            <h4>Extract</h4>
+            <p>Login into your terminal and run following command in the project directory.</p>
+
+            <p><code>unzip release.zip -d ./</code></p>
+
+            <h4>Install</h4>
+            <p>Now run <code>php bin/composer install --no-dev --optimize-autoloader</code> and follow instructions.</p>
+            <h4>Database</h4>
+            <p>Update your database structure.<br>
+                <code>php bin/console doctrine:schema:update --force</code>
+            </p>
+            <h4>User</h4>
+            <p>Create an admin user.<br>
+                <code>php bin/console fos:user:create --super-admin</code><br>
+                Follow the instructions and your user will be created.</p>
+            <h4>Other users</h4>
+            <p>The packages.json is secured by basic http authentication. Add users in the Admin Panel with the role ROLE_REPO. These users have access to the packages.json and can download archives.</p>
+        </div>
+    </div>
+
+    <h2>
+        Authentication
+    </h2>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                The repositories will usually be protected.
+                There are 2 ways to allow devliver access to these repositories.
+                You store an SSH key in the ssh directory in the home directory for the corresponding web server user.
+                Or you can create an auth.json file in the <code>%document_root%/composer</code> directory.
+                See the documentation on <a href="https://getcomposer.org/doc/articles/http-basic-authentication.md">getcomposer.org</a>.
+            </p>
+        </div>
+    </div>
+
+    <h2>
+        Add Repository
+    </h2>
+    <div class="row">
+        <div class="col-md-12">
+            <p>To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json in your projects.
+                Composer will you ask for credentials to access the packages.json when you update your project.</p>
+            <p>This is your repository of private packages.</p>
+            <pre>
+    {
+        "repositories": [
+            {
+                "type": "composer",
+                "url": "{{ app.request.schemeAndHttpHost }}"
+            }
+        ]
+    }
+            </pre>
+        </div>
+    </div>
+
+    <h2>
+        Update Instruction
+    </h2>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                Login into your terminal and run following command.<br>
+                <code>php bin/console devliver:self-update</code><br>
+                Follow the instructions.
+            </p>
+        </div>
+    </div>
+
+    <h2>
+        How to update packages?
+    </h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Cronjob</h3>
+            <p>You can run a background update task as a cronjob.
+                The background task is executed with the <code>bin/console shapecode:cron:run</code> shell command.</p>
+
+            <p> Just add a cronjob to your cron table that runs the command every 2 minutes like this to your cron table.<br>
+                <code>*/2 * * * * /path/to/your/project/bin/console shapecode:cron:run -q</code></p>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                But be careful. This command updates each repository and can take a long time. Especially if many repositories are managed.
+                If many repositories are managed, it is recommended to use hooks.
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h3>GitHub Service Hook</h3>
+            <p>Enabling the Packagist service hook ensures that your package will always be updated instantly when you push to GitHub.</p>
+            <p>To do so you can:</p>
+            <ul>
+                <li>Go to your GitHub repository</li>
+                <li>Click the "Settings" button</li>
+                <li>Click "Integrations &amp; services"</li>
+                <li>Add a "Packagist" service, and configure it with your username and token</li>
+                <li>Enter "{{ app.request.schemeAndHttpHost }}" in the domain field</li>
+                <li>Check the "Active" box and submit the form</li>
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Gitlab System Hooks</h3>
+            <p>Creating a System Hook ensures that your package will always be updated instantly when you push to your GitLab.</p>
+            <p>To do so you can:</p>
+            <ul>
+                <li>Go to your Admin Area</li>
+                <li>Click the "System Hooks" button in den left panel</li>
+                <li>Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}</code> in url field</li>
+                <li>Let "Secret Token" empty</li>
+                <li>Enable "Push events" and "Tag push events"</li>
+                <li>Submit the form</li>
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Bitbucket Webhooks</h3>
+            <p>To enable the Bitbucket web hook, go to your BitBucket repository, open the settings and select "Webhooks" in the menu. Add a new hook. You have to enter the Devliver endpoint, containing both your username and API token. Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}</code> as URL. Save your changes and you're done.</p>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Manual hook setup</h3>
+            <p>If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar. You have to do a <code>POST</code> request to <code>{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}</code> with a request body looking like this: <code>{"repository":{"git_url":"REPOSITORY_GIT_URL"}}</code></p>
+            <p>You can do this using curl for example:</p>
+            <pre>curl -XPOST -H'content-type:application/json' '{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'</pre>
+        </div>
+
+        <section class="col-md-6">
+            <h3>API Token</h3>
+            <p>You can find your API token on <a href="{{ path('devliver_profile_index') }}">your profile page</a>.</p>
+        </section>
+    </div>
+{% endblock %}

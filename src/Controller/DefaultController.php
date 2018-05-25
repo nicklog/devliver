@@ -4,7 +4,6 @@ namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class DefaultController
@@ -40,30 +39,13 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/usage", name="usage")
+     * @Route("/how-to", name="howto")
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function usageAction()
+    public function howtoAction()
     {
-        $cache = $this->get('cache.app');
-        $item = $cache->getItem('readme');
-
-        if (!$item->isHit()) {
-            $content = file_get_contents('https://raw.githubusercontent.com/shapecode/devliver/master/README.md');
-            $packagesUrl = $this->generateUrl('devliver_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-            $content = str_replace('https://yourdomain.url', $packagesUrl, $content);
-
-            $item->set($content);
-            $item->expiresAfter(86400);
-
-            $cache->save($item);
-        } else {
-            $content = $item->get();
-        }
-
-        return $this->render('@Devliver/Home/usage.html.twig', [
-            'usage' => $content
+        return $this->render('@Devliver/Home/howto.html.twig', [
         ]);
     }
 }

@@ -27,7 +27,7 @@ class ApiController extends Controller
 {
 
     /**
-     * @Route("/update-package", name="generic_postreceive", defaults={"_format" = "json"})
+     * @Route("/update-package", name="package_update", defaults={"_format" = "json"})
      * @Method({"POST"})
      */
     public function updatePackageAction(Request $request)

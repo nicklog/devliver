@@ -78,14 +78,6 @@ class Builder
             ]
         ]);
 
-        $menu->addChild('devliver_usage', [
-            'label'      => 'menu.usage',
-            'route'      => 'devliver_usage',
-            'attributes' => [
-                'icon' => 'fas fa-question-circle fa-fw',
-            ],
-        ]);
-
         return $menu;
     }
 
