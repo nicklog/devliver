@@ -32,6 +32,9 @@ class Package extends BaseEntity implements PackageInterface
      */
     protected $versions;
 
+    /** @var ArrayCollection|Version[] */
+    protected $versionsSorted;
+
     /**
      * @var ArrayCollection|PersistentCollection|Collection|Download[]
      * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Download", mappedBy="package", cascade={"persist", "remove"}, orphanRemoval=true)
@@ -44,8 +47,17 @@ class Package extends BaseEntity implements PackageInterface
      */
     protected $name;
 
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    protected $autoUpdate = false;
+
     /** @var CompletePackage[] */
     protected $packages;
+
+    /** @var CompletePackage */
+    protected $lastStable;
 
     /**
      */
@@ -75,7 +87,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function addRepo(Repo $repo)
+    public function addRepo(Repo $repo): void
     {
         if (!$this->hasRepo($repo)) {
             $repo->getPackages()->add($this);
@@ -86,7 +98,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function removeRepo(Repo $repo)
+    public function removeRepo(Repo $repo): void
     {
         if (!$this->hasRepo($repo)) {
             $repo->getPackages()->removeElement($this);
@@ -105,9 +117,25 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoUpdate(): bool
+    {
+        return $this->autoUpdate;
+    }
+
+    /**
+     * @param bool $autoUpdate
+     */
+    public function setAutoUpdate(bool $autoUpdate): void
+    {
+        $this->autoUpdate = $autoUpdate;
     }
 
     /**
@@ -121,6 +149,21 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
+    public function getVersionsSorted(): Collection
+    {
+        if ($this->versionsSorted === null) {
+            $sorted = $this->getVersions()->toArray();
+            $sorted = ComposerUtil::sortPackagesByVersion($sorted);
+
+            $this->versionsSorted = new ArrayCollection($sorted);
+        }
+
+        return $this->versionsSorted;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function hasVersions(): bool
     {
         return ($this->getVersions()->count() > 0);
@@ -129,7 +172,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function hasVersion(VersionInterface $version)
+    public function hasVersion(VersionInterface $version): bool
     {
         return $this->getVersions()->contains($version);
     }
@@ -137,7 +180,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function addVersion(VersionInterface $version)
+    public function addVersion(VersionInterface $version): void
     {
         if (!$this->hasVersion($version)) {
             $version->setPackage($this);
@@ -148,7 +191,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function removePackage(VersionInterface $version)
+    public function removePackage(VersionInterface $version): void
     {
         if (!$this->hasVersion($version)) {
             $this->getVersions()->removeElement($version);
@@ -160,18 +203,19 @@ class Package extends BaseEntity implements PackageInterface
      */
     public function getPackages(): array
     {
-        if (!is_null($this->packages)) {
+        if ($this->packages !== null) {
             return $this->packages;
         }
 
-        $versions = $this->getVersions();
+        $versions = $this->getVersionsSorted();
+
         $packages = [];
 
         foreach ($versions as $version) {
             $packages[] = $version->getPackageInformation();
         }
 
-        $this->packages = ComposerUtil::sortPackagesByVersion($packages);
+        $this->packages = $packages;
 
         return $this->packages;
     }
@@ -181,7 +225,11 @@ class Package extends BaseEntity implements PackageInterface
      */
     public function getLastStablePackage(): CompletePackage
     {
-        return ComposerUtil::getLastStableVersion($this->getPackages());
+        if ($this->lastStable === null) {
+            $this->lastStable = ComposerUtil::getLastStableVersion($this->getPackages());
+        }
+
+        return $this->lastStable;
     }
 
     /**

@@ -31,12 +31,12 @@ interface PackageInterface extends BaseEntityInterface
     /**
      * @param Repo $repo
      */
-    public function addRepo(Repo $repo);
+    public function addRepo(Repo $repo): void;
 
     /**
      * @param Repo $repo
      */
-    public function removeRepo(Repo $repo);
+    public function removeRepo(Repo $repo): void;
 
     /**
      * @return string
@@ -46,7 +46,17 @@ interface PackageInterface extends BaseEntityInterface
     /**
      * @param string $name
      */
-    public function setName(string $name);
+    public function setName(string $name): void;
+
+    /**
+     * @return bool
+     */
+    public function isAutoUpdate(): bool;
+
+    /**
+     * @param bool $autoUpdate
+     */
+    public function setAutoUpdate(bool $autoUpdate): void;
 
     /**
      * @return ArrayCollection|PersistentCollection|Version[]
@@ -54,14 +64,29 @@ interface PackageInterface extends BaseEntityInterface
     public function getVersions(): Collection;
 
     /**
-     * @return CompletePackage[]
+     * @return ArrayCollection|Version[]
      */
-    public function getPackages(): array;
+    public function getVersionsSorted(): Collection;
 
     /**
      * @return bool
      */
     public function hasVersions(): bool;
+
+    /**
+     * @inheritdoc
+     */
+    public function addVersion(VersionInterface $version): void;
+
+    /**
+     * @inheritdoc
+     */
+    public function removePackage(VersionInterface $version): void;
+
+    /**
+     * @return CompletePackage[]
+     */
+    public function getPackages(): array;
 
     /**
      * @return CompletePackage

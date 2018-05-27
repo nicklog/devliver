@@ -92,7 +92,7 @@
             <div class="card mb-3">
                 <div class="card-header py-1 px-2">Versions</div>
                 <ul class="list-group list-group-flush">
-                    {% for version in package.versions %}
+                    {% for version in package.versionsSorted %}
                         {% set pi = version.packageInformation %}
                         {% set adapter = package_adapter(pi) %}
                         <li class="list-group-item py-1 px-2 clearfix">
