@@ -132,6 +132,10 @@ class ApiController extends Controller
         $username = $request->get('username');
         $token = $request->get('token');
 
+        if($username === null || $token === null) {
+            return null;
+        }
+
         /** @var UserRepository $repo */
         $repo = $this->getDoctrine()->getRepository(User::class);
         $user = $repo->findOneByUsernameAndToken($username, $token);
