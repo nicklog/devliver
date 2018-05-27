@@ -105,10 +105,19 @@ class ApiController extends Controller
             return new JsonResponse(['status' => 'error', 'message' => 'Could not find a package that matches this request'], 404);
         }
 
+        $em = $this->getDoctrine()->getManager();
+
         /** @var Package $package */
         foreach ($repos as $repo) {
             $this->get('devliver.repository_synchronization')->syncRepo($repo);
+
+            foreach ($repo->getPackages() as $package) {
+                $package->setAutoUpdate(true);
+                $em->persist($package);
+            }
         }
+
+        $em->flush();
 
         return new JsonResponse(['status' => 'success'], 202);
     }
