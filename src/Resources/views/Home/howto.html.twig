@@ -134,7 +134,7 @@
             <ul>
                 <li>Go to your Admin Area</li>
                 <li>Click the "System Hooks" button in den left panel</li>
-                <li>Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}</code> in url field</li>
+                <li>Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> in url field</li>
                 <li>Let "Secret Token" empty</li>
                 <li>Enable "Push events" and "Tag push events"</li>
                 <li>Submit the form</li>
@@ -143,14 +143,14 @@
 
         <div class="col-md-6">
             <h3>Bitbucket Webhooks</h3>
-            <p>To enable the Bitbucket web hook, go to your BitBucket repository, open the settings and select "Webhooks" in the menu. Add a new hook. You have to enter the Devliver endpoint, containing both your username and API token. Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}</code> as URL. Save your changes and you're done.</p>
+            <p>To enable the Bitbucket web hook, go to your BitBucket repository, open the settings and select "Webhooks" in the menu. Add a new hook. You have to enter the Devliver endpoint, containing both your username and API token. Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> as URL. Save your changes and you're done.</p>
         </div>
 
         <div class="col-md-6">
             <h3>Manual hook setup</h3>
-            <p>If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar. You have to do a <code>POST</code> request to <code>{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}</code> with a request body looking like this: <code>{"repository":{"git_url":"REPOSITORY_GIT_URL"}}</code></p>
+            <p>If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar. You have to do a <code>POST</code> request to <code>{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> with a request body looking like this: <code>{"repository":{"git_url":"REPOSITORY_GIT_URL"}}</code></p>
             <p>You can do this using curl for example:</p>
-            <pre>curl -XPOST -H'content-type:application/json' '{{ url('devliver_api_package_update', { username: app.user.username, apiToken: 'API_TOKEN' }) }}' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'</pre>
+            <pre>curl -XPOST -H'content-type:application/json' '{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'</pre>
         </div>
 
         <section class="col-md-6">

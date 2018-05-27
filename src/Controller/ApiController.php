@@ -121,11 +121,11 @@ class ApiController extends Controller
     protected function findUser(Request $request)
     {
         $username = $request->get('username');
-        $apiToken = $request->get('apiToken');
+        $token = $request->get('token');
 
         /** @var UserRepository $repo */
         $repo = $this->getDoctrine()->getRepository(User::class);
-        $user = $repo->findOneByUsernameAndToken($username, $apiToken);
+        $user = $repo->findOneByUsernameAndToken($username, $token);
 
         if ($user && !$user->isEnabled()) {
             return null;
