@@ -1,1 +1,10 @@
 {% extends '@Devliver/Repo/add.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-edit fa-fw"></i> {{ 'repository.edit.page_header'|trans }}
+{% endblock %}
+
+{% block pageActions %}
+    <a href="{{ path('devliver_repo_add') }}" data-toggle="tooltip" title="{{ 'action.add'|trans }}" class="btn btn-primary"><span class="fa fa-plus fa-fw"></span> {{ 'action.add'|trans }}</a>
+    {{ parent() }}
+{% endblock %}

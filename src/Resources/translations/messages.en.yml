@@ -36,6 +36,7 @@ package:
     plural: Packages
 
 action:
+    add: Add
     update_all: Update All
     update: Update
     edit: Edit
