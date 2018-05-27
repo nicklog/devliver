@@ -59,6 +59,16 @@ interface PackageInterface extends BaseEntityInterface
     public function setAutoUpdate(bool $autoUpdate): void;
 
     /**
+     * @return \DateTime|null
+     */
+    public function getLastUpdate(): ?\DateTime;
+
+    /**
+     * @param \DateTime $lastUpdate
+     */
+    public function setLastUpdate(\DateTime $lastUpdate): void;
+
+    /**
      * @return ArrayCollection|PersistentCollection|Version[]
      */
     public function getVersions(): Collection;

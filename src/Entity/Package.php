@@ -53,6 +53,12 @@ class Package extends BaseEntity implements PackageInterface
      */
     protected $autoUpdate = false;
 
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime")
+     */
+    protected $lastUpdate;
+
     /** @var CompletePackage[] */
     protected $packages;
 
@@ -136,6 +142,22 @@ class Package extends BaseEntity implements PackageInterface
     public function setAutoUpdate(bool $autoUpdate): void
     {
         $this->autoUpdate = $autoUpdate;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getLastUpdate(): ?\DateTime
+    {
+        return $this->lastUpdate;
+    }
+
+    /**
+     * @param \DateTime $lastUpdate
+     */
+    public function setLastUpdate(\DateTime $lastUpdate): void
+    {
+        $this->lastUpdate = $lastUpdate;
     }
 
     /**

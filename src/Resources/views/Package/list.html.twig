@@ -44,6 +44,7 @@
                             <th>{{ knp_pagination_sortable(pagination, 'Name', ['p.name']) }}</th>
                             <th>Last Version</th>
                             <th>Datum</th>
+                            <th>Last Update</th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -63,8 +64,13 @@
                                     {{ package.lastStablePackage.releaseDate|date }}
                                 </td>
                                 <td>
+                                    {{ package.lastUpdate|date }}
+                                </td>
+                                <td>
                                     <span class="badge badge-primary">{{ package_downloads(package)|number_format }} Downloads</span>
-                                    {% if package.autoUpdate == false %}
+                                    {% if package.autoUpdate %}
+                                        <span class="badge badge-success">Auto Update</span>
+                                    {% else %}
                                         <span class="badge badge-danger">No Auto Update</span>
                                     {% endif %}
                                 </td>

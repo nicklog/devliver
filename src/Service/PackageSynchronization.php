@@ -108,6 +108,8 @@ class PackageSynchronization implements PackageSynchronizationInterface
                     $em->flush();
                 }
 
+                $dbPackage->setLastUpdate(new \DateTime());
+
                 if ($repo) {
                     $repo->addPackage($dbPackage);
                 }
