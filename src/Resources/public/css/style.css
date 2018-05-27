@@ -1,3 +1,10 @@
 .pagination {
     margin-bottom: 0px;
 }
+
+.btn-group-xs > .btn, .btn-xs {
+    padding: .25rem .4rem;
+    font-size: .775rem;
+    line-height: .5;
+    border-radius: .2rem;
+}
