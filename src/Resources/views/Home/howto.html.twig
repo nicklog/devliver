@@ -6,48 +6,6 @@
 
 {% block content %}
     <h2>
-        Requirements
-    </h2>
-    <div class="row">
-        <div class="col-md-12">
-            <ul>
-                <li><strong>PHP 7.0</strong> or higher</li>
-                <li><strong>MariaDB/MySQL</strong></li>
-                <li><strong>git</strong> installed on server</li>
-                <li>the running web user has <strong>access</strong> to <strong>private</strong> git repositories over <strong>ssh</strong>.</li>
-            </ul>
-        </div>
-    </div>
-
-    <h2>
-        Installation Instruction
-    </h2>
-    <div class="row">
-        <div class="col-md-12">
-            <h4>Download</h4>
-            <p>... the project from github.com to your web directory.<br>
-                The document root of your vhost have to point to the public directory.</p>
-            <h4>Extract</h4>
-            <p>Login into your terminal and run following command in the project directory.</p>
-
-            <p><code>unzip release.zip -d ./</code></p>
-
-            <h4>Install</h4>
-            <p>Now run <code>php bin/composer install --no-dev --optimize-autoloader</code> and follow instructions.</p>
-            <h4>Database</h4>
-            <p>Update your database structure.<br>
-                <code>php bin/console doctrine:schema:update --force</code>
-            </p>
-            <h4>User</h4>
-            <p>Create an admin user.<br>
-                <code>php bin/console fos:user:create --super-admin</code><br>
-                Follow the instructions and your user will be created.</p>
-            <h4>Other users</h4>
-            <p>The packages.json is secured by basic http authentication. Add users in the Admin Panel with the role ROLE_REPO. These users have access to the packages.json and can download archives.</p>
-        </div>
-    </div>
-
-    <h2>
         Authentication
     </h2>
     <div class="row">
@@ -75,7 +33,7 @@
         "repositories": [
             {
                 "type": "composer",
-                "url": "{{ app.request.schemeAndHttpHost }}"
+                "url": "{{ app.request.uriForPath('') }}"
             }
         ]
     }
