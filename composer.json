@@ -77,9 +77,11 @@
             "@auto-scripts"
         ],
         "auto-scripts": {
-            "cache:clear": "symfony-cmd",
+            "cache:clear --no-warmup": "symfony-cmd",
             "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd",
-            "shapecode:cron:scan": "symfony-cmd"
+            "doctrine:schema:update --force": "symfony-cmd",
+            "shapecode:cron:scan": "symfony-cmd",
+            "cache:warmup": "symfony-cmd"
         },
         "parameter-scripts": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"

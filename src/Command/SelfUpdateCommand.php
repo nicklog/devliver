@@ -83,8 +83,6 @@ class SelfUpdateCommand extends Command
         $this->removeSources($io);
         $this->unzip($io, $filePath, $lastTag);
         $this->composerInstall($io);
-        $this->updateDatabase($io);
-        $this->scanForCronjobs($io);
         $this->removeUpdateFile($io, $filePath);
 
         $this->github->setVersionData($lastTag);
@@ -171,27 +169,6 @@ class SelfUpdateCommand extends Command
         $io->section('composer install');
 
         $this->executeCommand($io, 'install --no-dev --optimize-autoloader', 'composer.phar');
-    }
-
-    /**
-     * @param SymfonyStyle $io
-     */
-    protected function updateDatabase(SymfonyStyle $io)
-    {
-        $io->section('update database');
-
-        $this->executeCommand($io, 'doctrine:schema:update --dump-sql --force');
-    }
-
-    /**
-     * @param SymfonyStyle $io
-     */
-    protected function scanForCronjobs(SymfonyStyle $io)
-    {
-        $io->section('cronjobs');
-        $io->text('try to find new cronjobs');
-
-        $this->executeCommand($io, 'shapecode:cron:scan');
     }
 
     /**
