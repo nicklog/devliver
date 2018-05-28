@@ -6,6 +6,7 @@ use Composer\Config;
 use Composer\IO\BufferIO;
 use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryFactory;
+use Composer\Repository\RepositoryInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Repo;
@@ -77,28 +78,28 @@ class ComposerManager
      * @param IOInterface   $io
      * @param RepoInterface $repo
      *
-     * @return \Composer\Repository\RepositoryInterface
+     * @return RepositoryInterface
      */
-    public function createRepo(IOInterface $io, RepoInterface $repo)
+    public function createRepo(IOInterface $io = null, RepoInterface $repo)
     {
-        $config = $this->createRepoConfig($repo);
-        $repository = RepositoryFactory::createRepo($io, $config, $repo->getConfig());
+        if ($io === null) {
+            $io = $this->createIO();
+        }
 
-        return $repository;
+        $config = $this->createRepoConfig($repo);
+
+        return RepositoryFactory::createRepo($io, $config, $repo->getConfig());
     }
 
     /**
      * @param IOInterface      $io
      * @param PackageInterface $package
      *
-     * @return \Composer\Repository\RepositoryInterface[]
+     * @return RepositoryInterface
      */
-    public function createReposByPackage(IOInterface $io, PackageInterface $package)
+    public function createRepoByPackage(IOInterface $io = null, PackageInterface $package)
     {
-        $config = $this->createReposConfig($package->getRepos()->toArray());
-        $repository = RepositoryFactory::defaultRepos($io, $config);
-
-        return $repository;
+        return $this->createRepo($io, $package->getRepo());
     }
 
     /**
