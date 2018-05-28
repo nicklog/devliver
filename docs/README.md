@@ -24,7 +24,7 @@ Login into your terminal and run following command in the project directory.
 
 ### 3. Install
 
-Now run `php bin/composer install --no-dev --optimize-autoloader` and follow instructions.
+Now run `php bin/composer.phar install --no-dev --optimize-autoloader` and follow instructions.
 
 ### 4. Database
 
@@ -44,18 +44,9 @@ php bin/console fos:user:create --super-admin
 
 Follow the instructions and your user will be created.
 
-
 ### 6. Other users
 
 The packages.json is secured by basic http authentication. Add users in the Admin Panel with the role `ROLE_REPO`. These users have access to the packages.json and can download archives.
-
-### 7. Cronjob
-
-You have to run a background update task as a cronjob.  
-The background task is executed with the `bin/console shapecode:cron:run` shell command.  
-
-Just add a cronjob to your cron table that runs the command every 2 minutes like this to your cron table.  
-`*/2 * * * * /path/to/your/project/bin/console shapecode:cron:run -q`
 
 ## Authentication
 
