@@ -105,6 +105,10 @@ class RepoController extends Controller
 
             $em = $this->getDoctrine()->getManager();
 
+            if ($repo->getCreator() === null) {
+                $repo->setCreator($this->getUser());
+            }
+
             $em->persist($repo);
             $em->flush();
 
