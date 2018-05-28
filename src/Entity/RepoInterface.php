@@ -2,9 +2,6 @@
 
 namespace Shapecode\Devliver\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\PersistentCollection;
-
 /**
  * Interface RepoInterface
  *
@@ -15,31 +12,14 @@ interface RepoInterface extends BaseEntityInterface
 {
 
     /**
-     * @return ArrayCollection|PersistentCollection|Package[]
+     * @return Package|null
      */
-    public function getPackages();
-
-    /**
-     * @return bool
-     */
-    public function hasPackages();
-
-    /**
-     * @param Package $package
-     *
-     * @return bool
-     */
-    public function hasPackage(Package $package);
+    public function getPackage(): ?Package;
 
     /**
      * @param Package $package
      */
-    public function addPackage(Package $package);
-
-    /**
-     * @param Package $package
-     */
-    public function removePackage(Package $package);
+    public function setPackage(Package $package): void;
 
     /**
      * @return string

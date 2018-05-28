@@ -61,9 +61,9 @@
                                     </a>
                                 </td>
                                 <td>
-                                    {% for package in repo.packages %}
-                                        <div><a href="{{ path('devliver_package_view', { package: package.id }) }}">{{ package.name }}</a></div>
-                                    {% endfor %}
+                                    {% if repo.package %}
+                                        <div><a href="{{ path('devliver_package_view', { package: repo.package.id }) }}">{{ repo.package.name }}</a></div>
+                                    {% endif %}
                                 </td>
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">

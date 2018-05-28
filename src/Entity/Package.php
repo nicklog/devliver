@@ -21,10 +21,10 @@ class Package extends BaseEntity implements PackageInterface
 {
 
     /**
-     * @var ArrayCollection|PersistentCollection|Repo[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Repo", mappedBy="packages", cascade={"persist", "remove"})
+     * @var Repo
+     * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Repo", inversedBy="package", cascade={"persist"})
      */
-    protected $repos;
+    protected $repo;
 
     /**
      * @var ArrayCollection|PersistentCollection|Version[]
@@ -66,50 +66,19 @@ class Package extends BaseEntity implements PackageInterface
     protected $lastStable;
 
     /**
+     * @return Repo
      */
-    public function __construct()
+    public function getRepo(): Repo
     {
-        parent::__construct();
-
-        $this->repos = new ArrayCollection();
+        return $this->repo;
     }
 
     /**
-     * @inheritdoc
+     * @param Repo $repo
      */
-    public function getRepos(): Collection
+    public function setRepo(Repo $repo): void
     {
-        return $this->repos;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasRepo(Repo $repo): bool
-    {
-        return $this->repos->contains($repo);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function addRepo(Repo $repo): void
-    {
-        if (!$this->hasRepo($repo)) {
-            $repo->getPackages()->add($this);
-            $this->getRepos()->add($repo);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removeRepo(Repo $repo): void
-    {
-        if (!$this->hasRepo($repo)) {
-            $repo->getPackages()->removeElement($this);
-            $this->getRepos()->removeElement($repo);
-        }
+        $this->repo = $repo;
     }
 
     /**

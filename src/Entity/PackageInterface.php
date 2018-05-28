@@ -17,26 +17,14 @@ interface PackageInterface extends BaseEntityInterface
 {
 
     /**
-     * @return ArrayCollection|PersistentCollection|Collection|Repo[]
+     * @return Repo
      */
-    public function getRepos(): Collection;
-
-    /**
-     * @param Repo $repo
-     *
-     * @return bool
-     */
-    public function hasRepo(Repo $repo): bool;
+    public function getRepo(): Repo;
 
     /**
      * @param Repo $repo
      */
-    public function addRepo(Repo $repo): void;
-
-    /**
-     * @param Repo $repo
-     */
-    public function removeRepo(Repo $repo): void;
+    public function setRepo(Repo $repo): void;
 
     /**
      * @return string

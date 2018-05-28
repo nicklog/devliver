@@ -68,12 +68,8 @@ class PackageSynchronization implements PackageSynchronizationInterface
             $io = $this->composerManager->createIO();
         }
 
-        $repositories = $this->composerManager->createReposByPackage($io, $package);
-
-        $packages = [];
-        foreach ($repositories as $repository) {
-            $packages = array_merge($packages, $repository->getPackages());
-        }
+        $repository = $this->composerManager->createRepoByPackage($io, $package);
+        $packages = $repository->getPackages();
 
         if (!$packages) {
             return;
@@ -111,7 +107,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 $dbPackage->setLastUpdate(new \DateTime());
 
                 if ($repo) {
-                    $repo->addPackage($dbPackage);
+                    $dbPackage->setRepo($repo);
                 }
             }
 
@@ -216,6 +212,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
     {
         $cacheKey = 'user-packages-json-' . $user->getId();
         $item = $this->cache->getItem($cacheKey);
+        $em = $this->registry->getManager();
 
         if ($item->isHit()) {
             return $item->get();
@@ -230,22 +227,33 @@ class PackageSynchronization implements PackageSynchronizationInterface
         foreach ($repos as $repo) {
             $item->tag('packages-repo-' . $repo->getId());
 
-            if ($repo->hasPackages()) {
+            $package = $repo->getPackage();
 
-                foreach ($repo->getPackages() as $package) {
-                    $name = $package->getName();
+            if ($package === null) {
+                $repository = $this->composerManager->createRepo(null, $repo);
 
-                    $item->tag('packages-package-' . $package->getId());
+                $packages = $repository->getPackages();
 
-                    if (!isset($providers[$name])) {
-                        $providers[$name] = [
-                            'sha256' => null
-                        ];
-                    }
+                if (!$packages) {
+                    continue;
                 }
 
-                continue;
+                $this->save($packages, $repo);
+
+                $em->refresh($repo);
+                $package = $repo->getPackage();
             }
+
+            $name = $package->getName();
+
+            $item->tag('packages-package-' . $package->getId());
+
+            if (!isset($providers[$name])) {
+                $providers[$name] = [
+                    'sha256' => null
+                ];
+            }
+
         }
 
         $repo = [];

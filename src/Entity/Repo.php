@@ -2,9 +2,7 @@
 
 namespace Shapecode\Devliver\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\PersistentCollection;
 
 /**
  * Class Repo
@@ -18,10 +16,10 @@ class Repo extends BaseEntity implements RepoInterface
 {
 
     /**
-     * @var ArrayCollection|PersistentCollection|Package[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="repos", cascade={"persist", "remove"})
+     * @var Package
+     * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Package", mappedBy="repo", cascade={"persist", "remove"}, orphanRemoval=true)
      */
-    protected $packages;
+    protected $package;
 
     /**
      * @var string
@@ -36,58 +34,19 @@ class Repo extends BaseEntity implements RepoInterface
     protected $url;
 
     /**
+     * @inheritdoc
      */
-    public function __construct()
+    public function getPackage(): ?Package
     {
-        parent::__construct();
-
-        $this->packages = new ArrayCollection();
+        return $this->package;
     }
 
     /**
      * @inheritdoc
      */
-    public function getPackages()
+    public function setPackage(Package $package): void
     {
-        return $this->packages;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasPackages()
-    {
-        return ($this->getPackages()->count() > 0);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasPackage(Package $package)
-    {
-        return $this->packages->contains($package);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function addPackage(Package $package)
-    {
-        if (!$this->hasPackage($package)) {
-            $package->getRepos()->add($this);
-            $this->getPackages()->add($package);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removePackage(Package $package)
-    {
-        if (!$this->hasPackage($package)) {
-            $package->getRepos()->removeElement($this);
-            $this->getPackages()->removeElement($package);
-        }
+        $this->package = $package;
     }
 
     /**
@@ -138,6 +97,6 @@ class Repo extends BaseEntity implements RepoInterface
      */
     public function __toString()
     {
-        return implode(', ', $this->getPackages()->toArray());
+        return implode(', ', $this->getUrl());
     }
 }
