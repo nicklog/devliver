@@ -22,6 +22,16 @@ interface RepoInterface extends BaseEntityInterface
     public function setPackage(Package $package): void;
 
     /**
+     * @return null|User
+     */
+    public function getCreator(): ?User;
+
+    /**
+     * @param null|User $creator
+     */
+    public function setCreator(?User $creator): void;
+
+    /**
      * @return string
      */
     public function getType();

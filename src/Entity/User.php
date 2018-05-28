@@ -2,7 +2,9 @@
 
 namespace Shapecode\Devliver\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Sonata\UserBundle\Entity\BaseUser;
 
 /**
@@ -29,6 +31,21 @@ class User extends BaseUser
      * @ORM\Column(type="string", nullable=true, unique=true)
      */
     protected $apiToken;
+
+    /**
+     * @var ArrayCollection|PersistentCollection|Repo[]
+     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Repo", mappedBy="creator", cascade={"persist"})
+     */
+    protected $repos;
+
+    /**
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->repos = new ArrayCollection();
+    }
 
     /**
      * @return string|null

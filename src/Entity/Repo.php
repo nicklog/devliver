@@ -22,6 +22,13 @@ class Repo extends BaseEntity implements RepoInterface
     protected $package;
 
     /**
+     * @var User|null
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\User", inversedBy="repos", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     */
+    protected $creator;
+
+    /**
      * @var string
      * @ORM\Column(type="string", options={"default": "vcs"})
      */
@@ -47,6 +54,22 @@ class Repo extends BaseEntity implements RepoInterface
     public function setPackage(Package $package): void
     {
         $this->package = $package;
+    }
+
+    /**
+     * @return null|User
+     */
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    /**
+     * @param null|User $creator
+     */
+    public function setCreator(?User $creator): void
+    {
+        $this->creator = $creator;
     }
 
     /**

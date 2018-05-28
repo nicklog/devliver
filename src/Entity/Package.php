@@ -66,6 +66,16 @@ class Package extends BaseEntity implements PackageInterface
     protected $lastStable;
 
     /**
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->versions = new ArrayCollection();
+        $this->downloads = new ArrayCollection();
+    }
+
+    /**
      * @return Repo
      */
     public function getRepo(): Repo

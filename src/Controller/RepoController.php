@@ -60,7 +60,7 @@ class RepoController extends Controller
      *
      * @return JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function addMultipleAction(Request $request)
+    public function addAction(Request $request)
     {
         $repo = new Repo();
         $form = $this->createForm(RepoType::class, $repo);
@@ -68,6 +68,8 @@ class RepoController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
+            $repo->setCreator($this->getUser());
 
             $em->persist($repo);
 
