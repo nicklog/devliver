@@ -14,7 +14,7 @@
 
                     <form class="form-inline ml-auto mr-3">
                         {% if latest_release.name != current_release.name and is_granted('ROLE_USER') %}
-                            <a class="btn btn-warning" data-toggle="tooltip" title="{{ latest_release.name }}" href="https://github.com/shapecode/devliver/releases" target="_blank">
+                            <a class="btn btn-warning bs-tooltip" title="{{ latest_release.name }}" href="https://github.com/shapecode/devliver/releases" target="_blank">
                                 Update Available
                             </a>
                         {% endif %}

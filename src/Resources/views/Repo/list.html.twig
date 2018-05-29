@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block pageActions %}
-    <a class="btn btn-outline-primary" href="{{ path('devliver_repo_update_all') }}"><span class="fas fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
+    <a class="btn btn-outline-primary bs-confirmation" href="{{ path('devliver_repo_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time."><span class="fas fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
     <a class="btn btn-primary" href="{{ path('devliver_repo_add') }}"><span class="fas fa-plus fa-fw"></span> {{ 'repository.add_repositories'|trans }}</a>
 {% endblock %}
 
@@ -28,7 +28,7 @@
                     </div>
                     <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                        <button class="btn btn-outline-primary"type="submit">Search</button>
                         <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger">Reset</a>
                     </div>
 
@@ -67,9 +67,9 @@
                                 </td>
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">
-                                        <a href="{{ path('devliver_repo_edit', { id: repo.id }) }}" data-toggle="tooltip" title="{{ 'action.edit'|trans }}" class="btn btn-xs btn-outline-primary"><span class="fa fa-edit fa-fw"></span></a>
-                                        <a href="{{ path('devliver_repo_update', { id: repo.id, referer: true }) }}" data-toggle="tooltip" title="{{ 'action.update'|trans }}" class="btn btn-xs btn-outline-info"><span class="fa fa-sync fa-fw"></span></a>
-                                        <a href="{{ path('devliver_repo_delete', { id: repo.id }) }}" data-toggle="tooltip" title="{{ 'action.remove'|trans }}" class="btn btn-xs    btn-outline-danger"><span class="fa fa-trash fa-fw"></span></a>
+                                        <a href="{{ path('devliver_repo_edit', { id: repo.id }) }}" title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fa fa-edit fa-fw"></span></a>
+                                        <a href="{{ path('devliver_repo_update', { id: repo.id, referer: true }) }}" title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fa fa-sync fa-fw"></span></a>
+                                        <a href="{{ path('devliver_repo_delete', { id: repo.id }) }}" data-title="Remove?" title="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation bs-tooltip btn-outline-danger"><span class="fa fa-trash fa-fw"></span></a>
                                     </div>
                                 </td>
                             </tr>

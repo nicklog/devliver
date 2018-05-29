@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block pageActions %}
-    <a class="btn btn-outline-primary" href="{{ path('devliver_repo_update_all') }}"><span class="fa fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
+    <a class="btn btn-outline-primary bs-confirmation" href="{{ path('devliver_repo_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time."><span class="fa fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
 {% endblock %}
 
 {% block content %}
@@ -76,7 +76,7 @@
                                 </td>
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">
-                                        <a href="{{ path('devliver_package_update', { package: package.id, referer: true }) }}" data-toggle="tooltip" title="{{ 'action.update'|trans }}" class="btn btn-xs btn-outline-info"><span class="fa fa-sync fa-fw"></span></a>
+                                        <a href="{{ path('devliver_package_update', { package: package.id, referer: true }) }}" title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fa fa-sync fa-fw"></span></a>
                                     </div>
                                 </td>
                             </tr>
