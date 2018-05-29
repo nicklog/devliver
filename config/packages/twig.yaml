@@ -4,3 +4,6 @@ twig:
     strict_variables: '%kernel.debug%'
     form_themes:
         - 'bootstrap_4_layout.html.twig'
+    date:
+        format: d.m.Y H:i
+        interval_format: '%%d days'
