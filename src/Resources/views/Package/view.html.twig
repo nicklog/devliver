@@ -20,6 +20,21 @@
                     {% include '@Devliver/Package/_details.html.twig' with { info: version } %}
                 </div>
             {% endfor %}
+
+            {% if package.readme is not null %}
+                <div class="border-top mt-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-2">
+                                <div class="card-header py-1 px-2">Readme</div>
+                                <div class="card-body py-1 px-2">
+                                    {{ package.readme|raw }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="col-md-4">
             {% if info.authors and info.authors|length > 0 %}
@@ -117,8 +132,24 @@
     </div>
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css">
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 
     <script type="text/javascript">
         $(function () {

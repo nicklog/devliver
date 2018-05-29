@@ -22,6 +22,7 @@ services:
             - '@router'
             - '@devliver.composer_manager'
             - '@cache.app'
+            - '@devliver.repository_helper'
             - '%devliver_package_dir%'
 
     devliver.repository_synchronization:
@@ -93,6 +94,8 @@ services:
             - '@doctrine'
             - '@router'
             - '@devliver.github_release'
+            - '@devliver.composer_manager'
+            - '@devliver.repository_helper'
         tags:
             - { name: twig.extension }
 
@@ -103,6 +106,11 @@ services:
             - '@Github\Client'
             - '@cache.app'
             - '%version_file%'
+
+    devliver.repository_helper:
+        class: Shapecode\Devliver\Service\RepositoryHelper
+        arguments:
+            - '@demontpx_parsedown.parsedown'
 
     # command
     devliver.console_command.packages_update:

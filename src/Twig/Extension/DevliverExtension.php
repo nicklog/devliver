@@ -2,14 +2,16 @@
 
 namespace Shapecode\Devliver\Twig\Extension;
 
-use App\Devliver\Repository\DownloadRepository;
 use Composer\Package\CompletePackageInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Download;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\VersionInterface;
 use Shapecode\Devliver\Model\PackageAdapter;
+use Shapecode\Devliver\Repository\DownloadRepository;
 use Shapecode\Devliver\Service\GitHubRelease;
+use Shapecode\Devliver\Service\RepositoryHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
@@ -34,16 +36,32 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     /** @var GitHubRelease */
     protected $github;
 
+    /** @var ComposerManager */
+    protected $composerManager;
+
+    /** @var RepositoryHelper */
+    protected $repositoryHelper;
+
     /**
      * @param ManagerRegistry       $registry
      * @param UrlGeneratorInterface $router
      * @param GitHubRelease         $github
+     * @param ComposerManager       $composerManager
+     * @param RepositoryHelper      $repositoryHelper
      */
-    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, GitHubRelease $github)
+    public function __construct(
+        ManagerRegistry $registry,
+        UrlGeneratorInterface $router,
+        GitHubRelease $github,
+        ComposerManager $composerManager,
+        RepositoryHelper $repositoryHelper
+    )
     {
         $this->registry = $registry;
         $this->router = $router;
         $this->github = $github;
+        $this->composerManager = $composerManager;
+        $this->repositoryHelper = $repositoryHelper;
     }
 
     /**
@@ -55,7 +73,8 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('version_downloads', [$this, 'getVersionDownloadsCounter']),
             new TwigFunction('package_downloads', [$this, 'getPackageDownloadsCounter']),
             new TwigFunction('package_download_url', [$this, 'getPackageDownloadUrl']),
-            new TwigFunction('package_adapter', [$this, 'getPackageAdapter'])
+            new TwigFunction('package_adapter', [$this, 'getPackageAdapter']),
+            new TwigFunction('package_readme', [$this, 'getPackageReadme'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -121,6 +140,18 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             'ref'     => $package->getSourceReference(),
             'type'    => 'zip',
         ]);
+    }
+
+    /**
+     * @param PackageInterface $package
+     *
+     * @return null|string
+     */
+    public function getPackageReadme(PackageInterface $package)
+    {
+        $repository = $this->composerManager->createRepoByPackage(null, $package);
+
+        return $this->repositoryHelper->getReadme($repository);
     }
 
     /**

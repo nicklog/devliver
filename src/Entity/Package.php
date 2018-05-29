@@ -48,6 +48,12 @@ class Package extends BaseEntity implements PackageInterface
     protected $name;
 
     /**
+     * @var string|null
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $readme;
+
+    /**
      * @var bool
      * @ORM\Column(type="boolean", options={"default": false})
      */
@@ -73,6 +79,7 @@ class Package extends BaseEntity implements PackageInterface
 
         $this->versions = new ArrayCollection();
         $this->downloads = new ArrayCollection();
+        $this->lastUpdate = new \DateTime();
     }
 
     /**
@@ -105,6 +112,22 @@ class Package extends BaseEntity implements PackageInterface
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReadme(): ?string
+    {
+        return $this->readme;
+    }
+
+    /**
+     * @param string|null $readme
+     */
+    public function setReadme(?string $readme): void
+    {
+        $this->readme = $readme;
     }
 
     /**

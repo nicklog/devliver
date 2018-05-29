@@ -42,20 +42,31 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /** @var TagAwareAdapterInterface */
     protected $cache;
 
+    /** @var RepositoryHelper */
+    protected $repositoryHelper;
+
     /**
      * @param ManagerRegistry          $registry
      * @param UrlGeneratorInterface    $router
      * @param ComposerManager          $composerManager
      * @param TagAwareAdapterInterface $cache
+     * @param RepositoryHelper         $repositoryHelper
      * @param                          $packageDir
      */
-    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, ComposerManager $composerManager, TagAwareAdapterInterface $cache, $packageDir)
+    public function __construct(
+        ManagerRegistry $registry,
+        UrlGeneratorInterface $router,
+        ComposerManager $composerManager,
+        TagAwareAdapterInterface $cache,
+        RepositoryHelper $repositoryHelper,
+        $packageDir)
     {
         $this->registry = $registry;
         $this->router = $router;
         $this->composerManager = $composerManager;
         $this->packageDir = $packageDir;
         $this->cache = $cache;
+        $this->repositoryHelper = $repositoryHelper;
         $this->dumper = new ArrayDumper;
     }
 
@@ -87,34 +98,35 @@ class PackageSynchronization implements PackageSynchronizationInterface
         $em = $this->registry->getManager();
 
         if (count($packages)) {
-            foreach ($packages as $package) {
-                if ($package instanceof AliasPackage) {
-                    $package = $package->getAliasOf();
-                }
+            $package = $packages[0];
 
-                $dbPackage = $packageRepository->findOneBy([
-                    'name' => $package->getPrettyName()
-                ]);
-
-                if (!$dbPackage) {
-                    $dbPackage = new Package();
-                    $dbPackage->setName($package->getPrettyName());
-
-                    $em->persist($dbPackage);
-                    $em->flush();
-                }
-
-                $dbPackage->setLastUpdate(new \DateTime());
-
-                if ($repo) {
-                    $dbPackage->setRepo($repo);
-                }
+            if ($package instanceof AliasPackage) {
+                $package = $package->getAliasOf();
             }
+
+            $dbPackage = $packageRepository->findOneBy([
+                'name' => $package->getPrettyName()
+            ]);
+
+            if (!$dbPackage) {
+                $dbPackage = new Package();
+                $dbPackage->setName($package->getPrettyName());
+
+            } else {
+                $repo = $dbPackage->getRepo();
+            }
+
+            $dbPackage->setLastUpdate(new \DateTime());
 
             if ($repo) {
-                $em->persist($repo);
-                $em->flush();
+                $repository = $this->composerManager->createRepo(null, $repo);
+                $readme = $this->repositoryHelper->getReadme($repository);
+                $dbPackage->setReadme($readme);
+                $dbPackage->setRepo($repo);
             }
+
+            $em->persist($dbPackage);
+            $em->flush();
 
             $this->updateVersions($packages, $dbPackage);
         }

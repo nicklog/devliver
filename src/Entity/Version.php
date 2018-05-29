@@ -37,7 +37,7 @@ class Version extends BaseEntity implements VersionInterface
     protected $downloads;
 
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(type="string")
      */
     protected $name;
