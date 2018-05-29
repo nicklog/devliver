@@ -11,7 +11,6 @@ use Shapecode\Devliver\Entity\VersionInterface;
  *
  * @package Shapecode\Devliver\Repository
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class DownloadRepository extends EntityRepository
 {

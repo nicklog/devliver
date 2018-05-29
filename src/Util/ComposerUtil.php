@@ -10,7 +10,6 @@ use Shapecode\Devliver\Entity\VersionInterface;
  *
  * @package Shapecode\Devliver\Util
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class ComposerUtil
 {

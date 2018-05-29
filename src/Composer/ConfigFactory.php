@@ -11,7 +11,6 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @package Shapecode\Devliver\Composer
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class ConfigFactory
 {

@@ -11,7 +11,6 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class GitHubRelease
 {

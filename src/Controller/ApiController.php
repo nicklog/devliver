@@ -19,7 +19,6 @@ use Tenolo\Utilities\Utils\StringUtil;
  *
  * @package Shapecode\Devliver\Controller
  * @author  Nikita Loges
- * @company tenolo GbR
  *
  * @Route("/api", name="devliver_api_")
  */

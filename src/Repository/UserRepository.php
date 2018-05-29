@@ -10,7 +10,6 @@ use Shapecode\Devliver\Entity\User;
  *
  * @package Shapecode\Devliver\Repository
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class UserRepository extends EntityRepository
 {

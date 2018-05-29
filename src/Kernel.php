@@ -13,7 +13,6 @@ use Symfony\Component\Routing\RouteCollectionBuilder;
  *
  * @package App
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class Kernel extends BaseKernel
 {

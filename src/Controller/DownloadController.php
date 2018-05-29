@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @package Shapecode\Devliver\Controller
  * @author  Nikita Loges
- * @company tenolo GbR
  *
  * @Route("/", name="devliver_download_")
  */

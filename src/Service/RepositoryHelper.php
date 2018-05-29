@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\File\File;
  *
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class RepositoryHelper
 {

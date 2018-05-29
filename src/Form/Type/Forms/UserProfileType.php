@@ -15,7 +15,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  *
  * @package Shapecode\Devliver\Form\Type\Forms
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class UserProfileType extends AbstractType
 {

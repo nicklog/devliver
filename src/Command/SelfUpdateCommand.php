@@ -21,7 +21,6 @@ use Symfony\Component\Process\Process;
  *
  * @package Shapecode\Devliver\Command
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class SelfUpdateCommand extends Command
 {
