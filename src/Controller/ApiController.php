@@ -111,7 +111,9 @@ class ApiController extends Controller
         foreach ($repos as $repo) {
             $this->get('devliver.repository_synchronization')->syncRepo($repo);
 
-            foreach ($repo->getPackages() as $package) {
+            $package = $repo->getPackage();
+
+            if ($package !== null) {
                 $package->setAutoUpdate(true);
                 $em->persist($package);
             }
@@ -132,7 +134,7 @@ class ApiController extends Controller
         $username = $request->get('username');
         $token = $request->get('token');
 
-        if($username === null || $token === null) {
+        if ($username === null || $token === null) {
             return null;
         }
 
