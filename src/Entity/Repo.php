@@ -41,6 +41,18 @@ class Repo extends BaseEntity implements RepoInterface
     protected $url;
 
     /**
+     * @var boolean
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    protected $enable = true;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    protected $abandoned = false;
+
+    /**
      * @inheritdoc
      */
     public function getPackage(): ?Package
@@ -107,6 +119,38 @@ class Repo extends BaseEntity implements RepoInterface
     /**
      * @inheritdoc
      */
+    public function isEnable(): bool
+    {
+        return $this->enable;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setEnable(bool $enable): void
+    {
+        $this->enable = $enable;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAbandoned(): bool
+    {
+        return $this->abandoned;
+    }
+
+    /**
+     * @param bool $abandoned
+     */
+    public function setAbandoned(bool $abandoned): void
+    {
+        $this->abandoned = $abandoned;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getConfig()
     {
         return [
@@ -115,11 +159,4 @@ class Repo extends BaseEntity implements RepoInterface
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return implode(', ', $this->getUrl());
-    }
 }

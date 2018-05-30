@@ -158,6 +158,18 @@ class RepoController extends Controller
     }
 
     /**
+     * @Route("/{repo}/abandon", name="abandon")
+     *
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function abandonAction(Request $request, $id)
+    {
+    }
+
+    /**
      * @Route("/update-all", name="update_all")
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse

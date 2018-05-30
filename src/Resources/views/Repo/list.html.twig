@@ -65,8 +65,24 @@
                                         <div><a href="{{ path('devliver_package_view', { package: repo.package.id }) }}">{{ repo.package.name }}</a></div>
                                     {% endif %}
                                 </td>
+                                <td>
+                                    {% if repo.enable %}
+                                        <span class="badge badge-success">Enabled</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Disabled</span>
+                                    {% endif %}
+                                    {% if repo.abandoned %}
+                                        <span class="badge badge-warning">Abandoned</span>
+                                    {% endif %}
+                                </td>
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">
+                                        {% if repo.abandoned %}
+                                        <a href="{{ path('devliver_repo_abandon', { repo: repo.id }) }}" title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
+                                        {% else %}
+                                        <a href="{{ path('devliver_repo_unabandon', { repo: repo.id }) }}" title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
+                                        {% endif %}
+
                                         <a href="{{ path('devliver_repo_edit', { id: repo.id }) }}" title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
                                         <a href="{{ path('devliver_repo_update', { id: repo.id, referer: true }) }}" title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fas fa-sync fa-fw"></span></a>
                                         <a href="{{ path('devliver_repo_delete', { id: repo.id }) }}" data-title="Remove?" title="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation bs-tooltip btn-outline-danger"><span class="fas fa-trash fa-fw"></span></a>
