@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block pageActions %}
-    <a class="btn btn-outline-primary bs-confirmation" href="{{ path('devliver_repo_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time."><span class="fa fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
+    <a class="btn btn-outline-primary bs-confirmation" href="{{ path('devliver_repo_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time."><span class="fas fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
 {% endblock %}
 
 {% block content %}
@@ -17,12 +17,12 @@
             <form method="get">
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroupPrepend"><i class="fa fa-search"></i></span>
+                        <span class="input-group-text" id="inputGroupPrepend"><i class="fas fa-search"></i></span>
                     </div>
                     <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                        <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger">Reset</a>
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-fw"></i> Search</button>
+                        <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger"><i class="fas fa-undo fa-fw"></i> Reset</a>
                     </div>
 
                 </div>
@@ -76,7 +76,7 @@
                                 </td>
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">
-                                        <a href="{{ path('devliver_package_update', { package: package.id, referer: true }) }}" title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fa fa-sync fa-fw"></span></a>
+                                        <a href="{{ path('devliver_package_update', { package: package.id, referer: true }) }}" title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fas fa-sync fa-fw"></span></a>
                                     </div>
                                 </td>
                             </tr>
