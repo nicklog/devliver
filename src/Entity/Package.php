@@ -21,7 +21,7 @@ class Package extends BaseEntity implements PackageInterface
 {
 
     /**
-     * @var Repo
+     * @var Repo|null
      * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Repo", inversedBy="package", cascade={"persist"})
      */
     protected $repo;
@@ -83,15 +83,15 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return Repo
+     * @inheritdoc
      */
-    public function getRepo(): Repo
+    public function getRepo(): ?Repo
     {
         return $this->repo;
     }
 
     /**
-     * @param Repo $repo
+     * @inheritdoc
      */
     public function setRepo(Repo $repo): void
     {
@@ -115,7 +115,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return string|null
+     * @inheritdoc
      */
     public function getReadme(): ?string
     {
@@ -123,7 +123,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param string|null $readme
+     * @inheritdoc
      */
     public function setReadme(?string $readme): void
     {
@@ -131,7 +131,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isAutoUpdate(): bool
     {
@@ -139,7 +139,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param bool $autoUpdate
+     * @inheritdoc
      */
     public function setAutoUpdate(bool $autoUpdate): void
     {
@@ -147,7 +147,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @inheritdoc
      */
     public function getLastUpdate(): ?\DateTime
     {
@@ -155,7 +155,7 @@ class Package extends BaseEntity implements PackageInterface
     }
 
     /**
-     * @param \DateTime $lastUpdate
+     * @inheritdoc
      */
     public function setLastUpdate(\DateTime $lastUpdate): void
     {

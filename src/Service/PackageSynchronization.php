@@ -113,7 +113,9 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 $dbPackage->setName($package->getPrettyName());
 
             } else {
-                $repo = $dbPackage->getRepo();
+                if ($repo === null) {
+                    $repo = $dbPackage->getRepo();
+                }
             }
 
             $dbPackage->setLastUpdate(new \DateTime());

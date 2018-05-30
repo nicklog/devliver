@@ -17,9 +17,9 @@ interface PackageInterface extends BaseEntityInterface
 {
 
     /**
-     * @return Repo
+     * @return Repo|null
      */
-    public function getRepo(): Repo;
+    public function getRepo(): ?Repo;
 
     /**
      * @param Repo $repo
