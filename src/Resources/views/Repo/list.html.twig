@@ -28,7 +28,7 @@
                     </div>
                     <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-primary"type="submit"><i class="fas fa-search fa-fw"></i> Search</button>
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-fw"></i> Search</button>
                         <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger"><i class="fas fa-undo fa-fw"></i> Reset</a>
                     </div>
 
@@ -50,6 +50,7 @@
                             <th>{{ knp_pagination_sortable(pagination, '#', ['p.id']) }}</th>
                             <th>{{ knp_pagination_sortable(pagination, 'URL', ['p.url']) }}</th>
                             <th>{{ 'package.singular'|trans }}</th>
+                            <th></th>
                             <th></th>
                         </tr>
                         {% for repo in pagination %}
@@ -77,10 +78,10 @@
                                 </td>
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">
-                                        {% if repo.abandoned %}
-                                        <a href="{{ path('devliver_repo_abandon', { repo: repo.id }) }}" title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
+                                        {% if repo.abandoned != true %}
+                                            <a href="{{ path('devliver_repo_abandon', { repo: repo.id }) }}" title="{{ 'action.abandon'|trans }}" class="btn btn-xs btn-outline-warning"><span class="fas fa-archive fa-fw"></span></a>
                                         {% else %}
-                                        <a href="{{ path('devliver_repo_unabandon', { repo: repo.id }) }}" title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
+                                            <a href="{{ path('devliver_repo_unabandon', { repo: repo.id }) }}" title="{{ 'action.unabandon'|trans }}" class="btn btn-xs btn-outline-dark"><span class="fas fa-archive fa-fw"></span></a>
                                         {% endif %}
 
                                         <a href="{{ path('devliver_repo_edit', { id: repo.id }) }}" title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
