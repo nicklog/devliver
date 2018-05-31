@@ -16,24 +16,19 @@ profile:
         page_header: Passwort ändern
 
 repository:
-    list:
-        page_header: Repositories
-    add:
-        page_header: Repository hinzufügen
-    edit:
-        page_header: Repository bearbeiten
     singular: Repository
-    plural: Repositories
-    add_repositories: Repository hinzufügen
 
 package:
     list:
         page_header: Pakete
-
-    view:
+    add:
+        page_header: Paket hinzufügen
+    edit:
+        page_header: Pakete bearbeiten
 
     singular: Paket
     plural: Pakete
+    add_package: Paket hinzufügen
 
 action:
     add: Hinzufügen

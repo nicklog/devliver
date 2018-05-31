@@ -15,25 +15,17 @@ profile:
     change_password:
         page_header: Change Password
 
-repository:
-    list:
-        page_header: Repositories
-    add:
-        page_header: Add Repository
-    edit:
-        page_header: Edit Repository
-    singular: Repository
-    plural: Repositories
-    add_repositories: Add Repository
-
 package:
     list:
         page_header: Packages
-
-    view:
+    add:
+        page_header: Add Package
+    edit:
+        page_header: Edit Package
 
     singular: Package
     plural: Packages
+    add_package: Add Package
 
 action:
     add: Add
@@ -42,6 +34,10 @@ action:
     edit: Edit
     remove: Remove
     cancel: Cancel
+    enable: Enable
+    disable: Disable
+    abandon: Abandon
+    unabandon: Unabandon
 
 menu:
     repositories: Repositories

@@ -8,12 +8,8 @@ use Composer\Package\Dumper\ArrayDumper;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
-use Shapecode\Devliver\Entity\Repo;
-use Shapecode\Devliver\Entity\User;
 use Shapecode\Devliver\Entity\Version;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class PackageSynchronization
@@ -27,110 +23,77 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var UrlGeneratorInterface */
-    protected $router;
-
     /** @var ComposerManager */
     protected $composerManager;
-
-    /** @var string */
-    protected $packageDir;
-
-    /** @var ArrayDumper */
-    protected $dumper;
-
-    /** @var TagAwareAdapterInterface */
-    protected $cache;
 
     /** @var RepositoryHelper */
     protected $repositoryHelper;
 
     /**
-     * @param ManagerRegistry          $registry
-     * @param UrlGeneratorInterface    $router
-     * @param ComposerManager          $composerManager
-     * @param TagAwareAdapterInterface $cache
-     * @param RepositoryHelper         $repositoryHelper
-     * @param                          $packageDir
+     * @param ManagerRegistry  $registry
+     * @param ComposerManager  $composerManager
+     * @param RepositoryHelper $repositoryHelper
      */
     public function __construct(
         ManagerRegistry $registry,
-        UrlGeneratorInterface $router,
         ComposerManager $composerManager,
-        TagAwareAdapterInterface $cache,
-        RepositoryHelper $repositoryHelper,
-        $packageDir)
+        RepositoryHelper $repositoryHelper)
     {
         $this->registry = $registry;
-        $this->router = $router;
         $this->composerManager = $composerManager;
-        $this->packageDir = $packageDir;
-        $this->cache = $cache;
         $this->repositoryHelper = $repositoryHelper;
-        $this->dumper = new ArrayDumper;
     }
 
     /**
      * @inheritdoc
      */
-    public function sync(PackageInterface $package, IOInterface $io = null)
+    public function syncAll(IOInterface $io = null): void
     {
         if ($io === null) {
             $io = $this->composerManager->createIO();
         }
 
-        $repository = $this->composerManager->createRepoByPackage($io, $package);
+        $repository = $this->registry->getRepository(Package::class);
+        $packages = $repository->findAll();
+
+        foreach ($packages as $package) {
+            $this->sync($package, $io);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function sync(PackageInterface $package, IOInterface $io = null): void
+    {
+        if ($io === null) {
+            $io = $this->composerManager->createIO();
+        }
+
+        $repository = $this->composerManager->createRepository($package, $io);
         $packages = $repository->getPackages();
 
         if (!$packages) {
             return;
         }
 
-        $this->save($packages);
+        $this->save($package, $packages);
     }
 
     /**
      * @inheritdoc
      */
-    public function save(array $packages, Repo $repo = null)
+    public function save(PackageInterface $package, array $packages): void
     {
-        $packageRepository = $this->registry->getRepository(Package::class);
-        $em = $this->registry->getManager();
-
         if (count($packages)) {
-            $package = $packages[0];
+            $em = $this->registry->getManager();
 
-            if ($package instanceof AliasPackage) {
-                $package = $package->getAliasOf();
-            }
+            $package->setLastUpdate(new \DateTime());
 
-            $dbPackage = $packageRepository->findOneBy([
-                'name' => $package->getPrettyName()
-            ]);
-
-            if (!$dbPackage) {
-                $dbPackage = new Package();
-                $dbPackage->setName($package->getPrettyName());
-
-            } else {
-                if ($repo === null) {
-                    $repo = $dbPackage->getRepo();
-                }
-            }
-
-            $dbPackage->setLastUpdate(new \DateTime());
-
-            if ($repo) {
-                $repository = $this->composerManager->createRepo(null, $repo);
-                $readme = $this->repositoryHelper->getReadme($repository);
-                $dbPackage->setReadme($readme);
-                $dbPackage->setRepo($repo);
-            }
-
-            $em->persist($dbPackage);
+            $em->persist($package);
             $em->flush();
 
-            $this->updateVersions($packages, $dbPackage);
+            $this->updateVersions($packages, $package);
         }
     }
 
@@ -142,6 +105,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
     {
         $versionRepository = $this->registry->getRepository(Version::class);
         $em = $this->registry->getManager();
+        $dumper = new ArrayDumper();
 
         $knownVersions = $versionRepository->findBy([
             'package' => $dbPackage
@@ -171,13 +135,13 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 $new = true;
             }
 
-            $distUrl = $this->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
+            $distUrl = $this->repositoryHelper->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
 
             $package->setDistUrl($distUrl);
             $package->setDistType('zip');
             $package->setDistReference($package->getSourceReference());
 
-            $packageData = $this->dumper->dump($package);
+            $packageData = $dumper->dump($package);
 
             $dbVersion->setData($packageData);
 
@@ -198,124 +162,5 @@ class PackageSynchronization implements PackageSynchronizationInterface
         }
 
         $em->flush();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function dumpPackageJson(User $user, PackageInterface $package): string
-    {
-        $data = [];
-
-        foreach ($package->getVersions() as $version) {
-            $packageData = $this->dumper->dump($version->getPackageInformation());
-
-            $data[$version->getName()] = $packageData;
-            $data[$version->getName()]['uid'] = $version->getId();
-        }
-
-        $jsonData = ['packages' => [$package->getName() => $data]];
-
-        return json_encode($jsonData);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function dumpPackagesJson(User $user): string
-    {
-        $cacheKey = 'user-packages-json-' . $user->getId();
-        $item = $this->cache->getItem($cacheKey);
-        $em = $this->registry->getManager();
-
-        if ($item->isHit()) {
-            return $item->get();
-        }
-
-        $item->tag('packages.json');
-        $item->tag('packages-user-' . $user->getId());
-
-        $repos = $this->registry->getRepository(Repo::class)->findAll();
-        $providers = [];
-
-        foreach ($repos as $repo) {
-            $item->tag('packages-repo-' . $repo->getId());
-
-            $package = $repo->getPackage();
-
-            if ($package === null) {
-                $repository = $this->composerManager->createRepo(null, $repo);
-
-                $packages = $repository->getPackages();
-
-                if (!$packages) {
-                    continue;
-                }
-
-                $this->save($packages, $repo);
-
-                $em->refresh($repo);
-                $package = $repo->getPackage();
-            }
-
-            $name = $package->getName();
-
-            $item->tag('packages-package-' . $package->getId());
-
-            if (!isset($providers[$name])) {
-                $providers[$name] = [
-                    'sha256' => null
-                ];
-            }
-
-        }
-
-        $repo = [];
-
-        $distUrl = $this->getComposerDistUrl('%package%', '%reference%', '%type%');
-        $mirror = [
-            'dist-url'  => $distUrl,
-            'preferred' => true,
-        ];
-
-        $repo['packages'] = [];
-        $repo['notify-batch'] = $this->router->generate('devliver_download_track', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $repo['mirrors'] = [$mirror];
-        $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%package%.json';
-        $repo['providers'] = $providers;
-
-        $json = json_encode($repo);
-
-        $item->set($json);
-        $item->expiresAfter(96400);
-
-        $this->cache->save($item);
-
-        return $json;
-    }
-
-    /**
-     * @param                       $package
-     * @param                       $ref
-     * @param                       $type
-     *
-     * @return string
-     */
-    protected function getComposerDistUrl($package, $ref, $type = 'zip'): string
-    {
-        $distUrl = $this->router->generate('devliver_repository_dist', [
-            'vendor'  => 'PACK',
-            'project' => 'AGE',
-            'ref'     => 'REF',
-            'type'    => 'TYPE',
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $distUrl = str_replace(
-            ['PACK/AGE', 'REF', 'TYPE'],
-            [$package, $ref, $type],
-            $distUrl
-        );
-
-        return $distUrl;
     }
 }

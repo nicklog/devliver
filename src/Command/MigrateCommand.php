@@ -3,6 +3,7 @@
 namespace Shapecode\Devliver\Command;
 
 use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Repository\PackageRepository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,7 +35,10 @@ class MigrateCommand extends ContainerAwareCommand
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
 
+        /** @var PackageRepository $packageRepo */
         $packageRepo = $em->getRepository(Package::class);
+
+        /** @var Package[] $packages */
         $packages = $packageRepo->findWithRepos();
 
         foreach ($packages as $package) {

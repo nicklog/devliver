@@ -79,13 +79,14 @@ class PackageListener implements EventSubscriber
     }
 
     /**
-     * @param PackageInterface $repo
+     * @param PackageInterface $package
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    protected function deleteTags(PackageInterface $repo)
+    protected function deleteTags(PackageInterface $package)
     {
-        $this->cache->invalidateTags(['packages-package-' . $repo->getId()]);
+        $this->cache->clear();
+//        $this->cache->invalidateTags(['packages-package-' . $package->getId()]);
     }
 
 }

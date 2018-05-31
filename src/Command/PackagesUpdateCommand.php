@@ -4,7 +4,7 @@ namespace Shapecode\Devliver\Command;
 
 use Composer\IO\ConsoleIO;
 use Shapecode\Bundle\CronBundle\Annotation\CronJob;
-use Shapecode\Devliver\Service\RepositorySynchronizationInterface;
+use Shapecode\Devliver\Service\PackageSynchronizationInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,17 +22,17 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
 class PackagesUpdateCommand extends Command
 {
 
-    /** @var RepositorySynchronizationInterface */
-    protected $repositorySynchronization;
+    /** @var PackageSynchronizationInterface */
+    protected $packageSynchronization;
 
     /**
-     * @param RepositorySynchronizationInterface $repositorySynchronization
+     * @param PackageSynchronizationInterface $packageSynchronization
      */
-    public function __construct(RepositorySynchronizationInterface $repositorySynchronization)
+    public function __construct(PackageSynchronizationInterface $packageSynchronization)
     {
         parent::__construct();
 
-        $this->repositorySynchronization = $repositorySynchronization;
+        $this->packageSynchronization = $packageSynchronization;
     }
 
     /**
@@ -74,7 +74,7 @@ class PackagesUpdateCommand extends Command
     {
         $io = $this->createIO($input, $output);
 
-        $this->repositorySynchronization->sync($io);
+        $this->packageSynchronization->syncAll($io);
     }
 
     /**

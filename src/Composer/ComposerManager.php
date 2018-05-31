@@ -8,9 +8,8 @@ use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryFactory;
 use Composer\Repository\RepositoryInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
-use Shapecode\Devliver\Entity\Repo;
-use Shapecode\Devliver\Entity\RepoInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -58,8 +57,8 @@ class ComposerManager
     public function getConfig()
     {
         if ($this->config === null) {
-            $repositories = $this->registry->getRepository(Repo::class)->findAll();
-            $this->config = $this->createReposConfig($repositories);
+            $packages = $this->registry->getRepository(Package::class)->findAll();
+            $this->config = $this->createRepositoriesConfig($packages);
         }
 
         return $this->config;
@@ -75,56 +74,66 @@ class ComposerManager
     }
 
     /**
-     * @param IOInterface   $io
-     * @param RepoInterface $repo
+     * @param PackageInterface $package
+     * @param IOInterface|null $io
      *
      * @return RepositoryInterface
      */
-    public function createRepo(IOInterface $io = null, RepoInterface $repo)
+    public function createRepository(PackageInterface $package, IOInterface $io = null)
     {
         if ($io === null) {
             $io = $this->createIO();
         }
 
-        $config = $this->createRepoConfig($repo);
+        $config = $this->createRepositoryConfig($package);
 
-        return RepositoryFactory::createRepo($io, $config, $repo->getConfig());
+        return RepositoryFactory::createRepo($io, $config, $package->getConfig());
     }
 
     /**
-     * @param IOInterface      $io
+     * @param string           $url
+     * @param string           $type
+     * @param IOInterface|null $io
+     *
+     * @return RepositoryInterface|mixed
+     */
+    public function createRepositoryByUrl(string $url, string $type = 'vcs', IOInterface $io = null)
+    {
+        if ($io === null) {
+            $io = $this->createIO();
+        }
+
+        $config = $this->configFactory->create();
+
+        return RepositoryFactory::createRepo($io, $config, [
+            'type' => $type,
+            'url'  => $url
+        ]);
+    }
+
+    /**
      * @param PackageInterface $package
      *
-     * @return RepositoryInterface
+     * @return Config
      */
-    public function createRepoByPackage(IOInterface $io = null, PackageInterface $package)
+    public function createRepositoryConfig(PackageInterface $package)
     {
-        return $this->createRepo($io, $package->getRepo());
+        return $this->createRepositoriesConfig([$package]);
     }
 
     /**
-     * @param RepoInterface $repo
+     * @param PackageInterface[] $packages
      *
      * @return Config
      */
-    public function createRepoConfig(RepoInterface $repo)
-    {
-        return $this->createReposConfig([$repo]);
-    }
-
-    /**
-     * @param array $repos
-     *
-     * @return Config
-     */
-    public function createReposConfig(array $repos)
+    public function createRepositoriesConfig(array $packages)
     {
         $config = $this->configFactory->create();
         $config->merge(['repositories' => array_map(
-            function (Repo $r) {
+            function (PackageInterface $r) {
                 return $r->getConfig();
             },
-            $repos
+            $packages
         )]);
 
         return $config;

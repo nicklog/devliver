@@ -2,19 +2,18 @@
 
 namespace Shapecode\Devliver\Form\Type\Forms;
 
-use Shapecode\Devliver\Entity\RepoInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class RepoType
+ * Class PackageType
  *
  * @package Shapecode\Devliver\Form\Type\Forms
  * @author  Nikita Loges
  */
-class RepoType extends AbstractType
+class PackageType extends AbstractType
 {
 
     /**
@@ -22,9 +21,9 @@ class RepoType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('repo', \Shapecode\Devliver\Form\Type\Widgets\RepoType::class, [
+        $builder->add('package', \Shapecode\Devliver\Form\Type\Widgets\PackageType::class, [
             'inherit_data' => true,
-            'label' => false,
+            'label'        => false,
         ]);
 
         $builder->add('submit', SubmitType::class, [
@@ -37,9 +36,6 @@ class RepoType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => RepoInterface::class
-        ]);
     }
 
 }

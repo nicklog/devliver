@@ -3,8 +3,8 @@
 namespace Shapecode\Devliver\Service;
 
 use Composer\IO\IOInterface;
+use Composer\Package\CompletePackageInterface;
 use Shapecode\Devliver\Entity\PackageInterface;
-use Shapecode\Devliver\Entity\Repo;
 use Shapecode\Devliver\Entity\User;
 
 /**
@@ -17,29 +17,19 @@ interface PackageSynchronizationInterface
 {
 
     /**
+     * @param IOInterface|null $io
+     */
+    public function syncAll(IOInterface $io = null): void;
+
+    /**
      * @param PackageInterface $package
      * @param IOInterface|null $io
      */
-    public function sync(PackageInterface $package, IOInterface $io = null);
+    public function sync(PackageInterface $package, IOInterface $io = null): void;
 
     /**
-     * @param array|\Composer\Package\PackageInterface[] $packages
-     * @param Repo|null                                  $repo
+     * @param PackageInterface                 $package
+     * @param array|CompletePackageInterface[] $packages
      */
-    public function save(array $packages, Repo $repo = null);
-
-    /**
-     * @param User             $user
-     * @param PackageInterface $package
-     *
-     * @return string
-     */
-    public function dumpPackageJson(User $user, PackageInterface $package): string;
-
-    /**
-     * @param User $user
-     *
-     * @return string
-     */
-    public function dumpPackagesJson(User $user): string;
+    public function save(PackageInterface $package, array $packages): void;
 }

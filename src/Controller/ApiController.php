@@ -5,7 +5,6 @@ namespace Shapecode\Devliver\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\Repo;
 use Shapecode\Devliver\Entity\User;
 use Shapecode\Devliver\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,7 +28,7 @@ class ApiController extends Controller
      * @Route("/update-package", name="package_update", defaults={"_format" = "json"})
      * @Method({"POST"})
      */
-    public function updatePackageAction(Request $request)
+    public function updatePackageAction(Request $request): Response
     {
         // parse the payload
         $payload = json_decode($request->request->get('payload'), true);
@@ -89,7 +88,7 @@ class ApiController extends Controller
      *
      * @return Response
      */
-    protected function receiveWebhook(Request $request, array $urls)
+    protected function receiveWebhook(Request $request, array $urls): Response
     {
         // find the user
         $user = $this->findUser($request);
@@ -98,24 +97,20 @@ class ApiController extends Controller
             return new JsonResponse(['status' => 'error', 'message' => 'Invalid credentials'], 403);
         }
 
-        $repos = $this->findReposByUrl($urls);
+        $packages = $this->findPackages($urls);
 
-        if (!$repos) {
+        if (count($packages) === 0) {
             return new JsonResponse(['status' => 'error', 'message' => 'Could not find a package that matches this request'], 404);
         }
 
         $em = $this->getDoctrine()->getManager();
 
         /** @var Package $package */
-        foreach ($repos as $repo) {
-            $this->get('devliver.repository_synchronization')->syncRepo($repo);
+        foreach ($packages as $package) {
+            $this->get('devliver.package_synchronization')->sync($package);
 
-            $package = $repo->getPackage();
-
-            if ($package !== null) {
-                $package->setAutoUpdate(true);
-                $em->persist($package);
-            }
+            $package->setAutoUpdate(true);
+            $em->persist($package);
         }
 
         $em->flush();
@@ -128,7 +123,7 @@ class ApiController extends Controller
      *
      * @return null|User
      */
-    protected function findUser(Request $request)
+    protected function findUser(Request $request): ?User
     {
         $username = $request->get('username');
         $token = $request->get('token');
@@ -151,11 +146,11 @@ class ApiController extends Controller
     /**
      * @param array $urls
      *
-     * @return Repo[]
+     * @return Package[]
      */
-    protected function findReposByUrl(array $urls)
+    protected function findPackages(array $urls): array
     {
-        $repo = $this->getDoctrine()->getRepository(Repo::class);
+        $repo = $this->getDoctrine()->getRepository(Package::class);
 
         return $repo->findBy([
             'url' => $urls

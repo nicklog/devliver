@@ -19,19 +19,8 @@ services:
         public: true
         arguments:
             - '@doctrine'
-            - '@router'
             - '@devliver.composer_manager'
-            - '@cache.app'
             - '@devliver.repository_helper'
-            - '%devliver_package_dir%'
-
-    devliver.repository_synchronization:
-        class: Shapecode\Devliver\Service\RepositorySynchronization
-        public: true
-        arguments:
-            - '@doctrine'
-            - '@devliver.package_synchronization'
-            - '@devliver.composer_manager'
 
     devliver.dist_synchronization:
         class: Shapecode\Devliver\Service\DistSynchronization
@@ -75,13 +64,6 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
 
-    devliver.event_listener.repo:
-        class: Shapecode\Devliver\EventListener\RepoListener
-        arguments:
-            - '@cache.app'
-        tags:
-            - { name: doctrine.event_subscriber }
-
     devliver.event_listener.user:
         class: Shapecode\Devliver\EventListener\UserListener
         tags:
@@ -107,8 +89,17 @@ services:
             - '@cache.app'
             - '%version_file%'
 
+    devliver.packages_dumper:
+        class: Shapecode\Devliver\Service\PackagesDumper
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@router'
+            - '@cache.app'
+
     devliver.repository_helper:
         class: Shapecode\Devliver\Service\RepositoryHelper
+        public: true
         arguments:
             - '@demontpx_parsedown.parsedown'
 
@@ -121,7 +112,7 @@ services:
     devliver.console_command.packages_update:
         class: Shapecode\Devliver\Command\PackagesUpdateCommand
         arguments:
-            - '@devliver.repository_synchronization'
+            - '@devliver.package_synchronization'
         tags:
             - { name: console.command }
 

@@ -4,6 +4,7 @@ namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Form\Type\Forms\PackageType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,9 +58,9 @@ class PackageController extends Controller
      * @Route("/{package}/abandon", name="abandon")
      *
      * @param Request $request
-     * @param         $id
+     * @param Package $package
      */
-    public function abandonAction(Request $request, $id)
+    public function abandonAction(Request $request, Package $package)
     {
     }
 
@@ -67,10 +68,46 @@ class PackageController extends Controller
      * @Route("/{package}/unabandon", name="unabandon")
      *
      * @param Request $request
-     * @param         $id
+     * @param Package $package
      */
-    public function unabandonAction(Request $request, $id)
+    public function unabandonAction(Request $request, Package $package)
     {
+    }
+
+    /**
+     * @Route("/{package}/enable", name="enable")
+     *
+     * @param Request $request
+     * @param Package $package
+     */
+    public function enableAction(Request $request, Package $package)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $package->setEnable(true);
+
+        $em->persist($package);
+        $em->flush();
+
+        return $this->redirectToRoute('devliver_package_index');
+    }
+
+    /**
+     * @Route("/{package}/disable", name="disable")
+     *
+     * @param Request $request
+     * @param Package $package
+     */
+    public function disableAction(Request $request, Package $package)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $package->setEnable(false);
+
+        $em->persist($package);
+        $em->flush();
+
+        return $this->redirectToRoute('devliver_package_index');
     }
 
     /**
@@ -107,24 +144,52 @@ class PackageController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = $this->createForm(RepoType::class);
+        $form = $this->createForm(PackageType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $data = $form->getData();
 
-            $repo->setCreator($this->getUser());
+            $url = $data['url'];
+            $type = $data['type'];
 
-            $em->persist($repo);
+            $repository = $this->get('devliver.composer_manager')->createRepositoryByUrl($url, $type);
+            $info = $this->get('devliver.repository_helper')->getComposerInformation($repository);
 
+            if ($info === null) {
+                $this->get('session')->getFlashBag()->add('danger', 'Url invalid');
+
+                return $this->render('@Devliver/Package/add.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+
+            $package = $this->getDoctrine()->getRepository(Package::class)->findOneByName($info['name']);
+            if ($package !== null) {
+                $this->get('session')->getFlashBag()->add('danger', 'Package ' . $package->getName() . ' already exists');
+
+                return $this->render('@Devliver/Package/add.html.twig', [
+                    'form' => $form->createView()
+                ]);
+            }
+
+            $package = new Package();
+            $package->setUrl($url);
+            $package->setType($type);
+            $package->setName($info['name']);
+
+            $em->persist($package);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('success', 'Repositories added');
+            $this->get('devliver.package_synchronization')->sync($package);
 
-            return $this->redirectToRoute('devliver_repo_index');
+            $this->get('session')->getFlashBag()->add('success', 'Package added');
+
+            return $this->redirectToRoute('devliver_package_index');
         }
 
-        return $this->render('@Devliver/Repo/add.html.twig', [
+        return $this->render('@Devliver/Package/add.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -133,66 +198,84 @@ class PackageController extends Controller
      * @Route("/edit/{package}", name="edit")
      *
      * @param Request $request
-     * @param         $id
+     * @param Package $package
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, Package $package)
     {
-        $repository = $this->getDoctrine()->getRepository(Repo::class);
-        $repo = $repository->find($id);
-
-        $form = $this->createForm(RepoType::class, $repo);
+        $form = $this->createForm(PackageType::class, $package->getConfig());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $em = $this->getDoctrine()->getManager();
+            $data = $form->getData();
 
-            if ($repo->getCreator() === null) {
-                $repo->setCreator($this->getUser());
+            $url = $data['url'];
+            $type = $data['type'];
+
+            $repository = $this->get('devliver.composer_manager')->createRepositoryByUrl($url, $type);
+            $info = $this->get('devliver.repository_helper')->getComposerInformation($repository);
+
+            if ($info === null) {
+                $this->get('session')->getFlashBag()->add('danger', 'Url invalid');
+
+                return $this->render('@Devliver/Package/edit.html.twig', [
+                    'form'    => $form->createView(),
+                    'package' => $package
+                ]);
             }
 
-            $em->persist($repo);
-            $em->flush();
+            if ($package->getName() !== $info['name']) {
+                $this->get('session')->getFlashBag()->add('danger', 'Package ' . $package->getName() . ' is not accessible with this url.');
 
-            $this->get('session')->getFlashBag()->add('success', 'Repository updated');
+                return $this->render('@Devliver/Package/edit.html.twig', [
+                    'form'    => $form->createView(),
+                    'package' => $package
+                ]);
+            }
 
-            return $this->redirectToRoute('devliver_repo_edit', [
-                'id' => $repo->getId()
+            if ($url !== $package->getUrl()) {
+                $package->setUrl($url);
+                $package->setType($type);
+                $package->setAutoUpdate(false);
+
+                $em->persist($package);
+                $em->flush();
+
+                $this->get('devliver.package_synchronization')->sync($package);
+            }
+
+            $this->get('session')->getFlashBag()->add('success', 'Package updated');
+
+            return $this->redirectToRoute('devliver_package_edit', [
+                'package' => $package->getId()
             ]);
         }
 
-        return $this->render('@Devliver/Repo/edit.html.twig', [
-            'form' => $form->createView(),
-            'repo' => $repo
+        return $this->render('@Devliver/Package/edit.html.twig', [
+            'form'    => $form->createView(),
+            'package' => $package
         ]);
     }
 
     /**
      * @Route("/{package}/delete", name="delete")
      *
-     * @param         $id
+     * @param Package $package
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteAction($id)
+    public function deleteAction(Package $package)
     {
-        $repository = $this->getDoctrine()->getRepository(Repo::class);
-        $repo = $repository->find($id);
-
-        if (!$repo) {
-            return $this->redirectToRoute('devliver_repo_index');
-        }
-
         $em = $this->getDoctrine()->getManager();
 
-        $em->remove($repo);
+        $em->remove($package);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('success', 'Repository removed');
+        $this->get('session')->getFlashBag()->add('success', 'Package removed');
 
-        return $this->redirectToRoute('devliver_repo_index');
+        return $this->redirectToRoute('devliver_package_index');
     }
 
     /**
@@ -231,6 +314,6 @@ class PackageController extends Controller
 
         $this->get('session')->getFlashBag()->add('success', 'Repositories updated');
 
-        return $this->redirectToRoute('devliver_repo_index');
+        return $this->redirectToRoute('devliver_package_index');
     }
 }

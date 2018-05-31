@@ -52,6 +52,12 @@ class Package extends BaseEntity implements PackageInterface
     protected $abandoned = false;
 
     /**
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $replacementPackage;
+
+    /**
      * @var Repo|null
      * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Repo", inversedBy="package", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -192,6 +198,22 @@ class Package extends BaseEntity implements PackageInterface
     public function setAbandoned(bool $abandoned): void
     {
         $this->abandoned = $abandoned;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReplacementPackage(): ?string
+    {
+        return $this->replacementPackage;
+    }
+
+    /**
+     * @param string|null $replacementPackage
+     */
+    public function setReplacementPackage(?string $replacementPackage): void
+    {
+        $this->replacementPackage = $replacementPackage;
     }
 
     /**

@@ -27,7 +27,7 @@ class RepositoryController extends Controller
      */
     public function indexAction()
     {
-        $json = $this->get('devliver.package_synchronization')->dumpPackagesJson($this->getUser());
+        $json = $this->get('devliver.packages_dumper')->dumpPackagesJson($this->getUser());
 
         return new Response($json);
     }
@@ -45,8 +45,6 @@ class RepositoryController extends Controller
 
         $name = $vendor . '/' . $project;
 
-        $packageSynchronization = $this->get('devliver.package_synchronization');
-
         $repository = $doctrine->getRepository(Package::class);
         $package = $repository->findOneByName($name);
 
@@ -54,7 +52,7 @@ class RepositoryController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $json = $packageSynchronization->dumpPackageJson($user, $package);
+        $json = $this->get('devliver.packages_dumper')->dumpPackageJson($user, $package);
 
         return new Response($json);
     }

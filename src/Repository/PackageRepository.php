@@ -30,6 +30,18 @@ class PackageRepository extends EntityRepository
     /**
      * @return PackageInterface[]
      */
+    public function findDumps()
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->where($qb->expr()->eq('p.enable', true));
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return PackageInterface[]
+     */
     public function findWithRepos()
     {
         $qb = $this->createQueryBuilder('p');

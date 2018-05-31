@@ -10,12 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Class RepoType
+ * Class PackageType
  *
  * @package Shapecode\Devliver\Form\Type\Widgets
  * @author  Nikita Loges
  */
-class RepoType extends AbstractType
+class PackageType extends AbstractType
 {
 
     /**
@@ -23,7 +23,7 @@ class RepoType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('type', RepoTypeType::class, [
+        $builder->add('type', PackageTypeType::class, [
             'required'    => true,
             'label'       => 'Typ',
             'constraints' => [

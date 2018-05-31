@@ -1,15 +1,8 @@
 services:
 
-    devliver.admin.repo:
-        class: Shapecode\Devliver\Admin\RepoAdmin
-        arguments: [~, Shapecode\Devliver\Entity\Repo, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Repositories, group: Repositories }
-        public: true
-
     devliver.admin.package:
         class: Shapecode\Devliver\Admin\PackageAdmin
         arguments: [~, Shapecode\Devliver\Entity\Package, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Packages, group: Repositories }
+            - { name: sonata.admin, manager_type: orm, label: Packages, group: Packages }
         public: true

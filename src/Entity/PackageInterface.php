@@ -16,7 +16,6 @@ use Doctrine\ORM\PersistentCollection;
 interface PackageInterface extends BaseEntityInterface
 {
 
-
     /**
      * @return null|User
      */
@@ -61,6 +60,16 @@ interface PackageInterface extends BaseEntityInterface
      * @param bool $abandoned
      */
     public function setAbandoned(bool $abandoned): void;
+
+    /**
+     * @return string|null
+     */
+    public function getReplacementPackage(): ?string;
+
+    /**
+     * @param string|null $replacementPackage
+     */
+    public function setReplacementPackage(?string $replacementPackage): void;
 
     /**
      * @param bool $enable

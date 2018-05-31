@@ -7,12 +7,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class RepoTypeType
+ * Class PackageTypeType
  *
  * @package Shapecode\Devliver\Form\Type\Widgets
  * @author  Nikita Loges
  */
-class RepoTypeType extends AbstractType
+class PackageTypeType extends AbstractType
 {
 
     /**
@@ -24,9 +24,9 @@ class RepoTypeType extends AbstractType
             'required'          => true,
             'label'             => 'Type',
             'choices'           => [
-                'vcs'    => 'vcs',
-                'gitlab' => 'gitlab',
-                'github' => 'github',
+                'vcs'           => 'vcs',
+                'gitlab'        => 'gitlab',
+                'github'        => 'github',
                 'git-bitbucket' => 'git-bitbucket',
 //                'git'      => 'git',
 //                'hg'       => 'hg',
