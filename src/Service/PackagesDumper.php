@@ -27,18 +27,23 @@ class PackagesDumper implements PackagesDumperInterface
     /** @var UrlGeneratorInterface */
     protected $router;
 
+    /** @var RepositoryHelper */
+    protected $repositoryHelper;
+
     /** @var TagAwareAdapterInterface */
     protected $cache;
 
     /**
      * @param ManagerRegistry          $registry
      * @param UrlGeneratorInterface    $router
+     * @param RepositoryHelper         $repositoryHelper
      * @param TagAwareAdapterInterface $cache
      */
-    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, TagAwareAdapterInterface $cache)
+    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, RepositoryHelper $repositoryHelper, TagAwareAdapterInterface $cache)
     {
         $this->registry = $registry;
         $this->router = $router;
+        $this->repositoryHelper = $repositoryHelper;
         $this->cache = $cache;
     }
 
@@ -101,7 +106,7 @@ class PackagesDumper implements PackagesDumperInterface
 
         $repo = [];
 
-        $distUrl = $this->getComposerDistUrl('%package%', '%reference%', '%type%');
+        $distUrl = $this->repositoryHelper->getComposerDistUrl('%package%', '%reference%', '%type%');
         $mirror = [
             'dist-url'  => $distUrl,
             'preferred' => true,
@@ -121,30 +126,5 @@ class PackagesDumper implements PackagesDumperInterface
         $this->cache->save($item);
 
         return $json;
-    }
-
-    /**
-     * @param                       $package
-     * @param                       $ref
-     * @param                       $type
-     *
-     * @return string
-     */
-    protected function getComposerDistUrl($package, $ref, $type = 'zip'): string
-    {
-        $distUrl = $this->router->generate('devliver_repository_dist', [
-            'vendor'  => 'PACK',
-            'project' => 'AGE',
-            'ref'     => 'REF',
-            'type'    => 'TYPE',
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $distUrl = str_replace(
-            ['PACK/AGE', 'REF', 'TYPE'],
-            [$package, $ref, $type],
-            $distUrl
-        );
-
-        return $distUrl;
     }
 }

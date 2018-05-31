@@ -24,11 +24,13 @@ class RepositoryHelper
     protected $router;
 
     /**
-     * @param Parsedown $parsdown
+     * @param Parsedown             $parsdown
+     * @param UrlGeneratorInterface $router
      */
-    public function __construct(Parsedown $parsdown)
+    public function __construct(Parsedown $parsdown, UrlGeneratorInterface $router)
     {
         $this->parsdown = $parsdown;
+        $this->router = $router;
     }
 
     /**

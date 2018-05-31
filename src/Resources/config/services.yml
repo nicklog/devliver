@@ -95,6 +95,7 @@ services:
         arguments:
             - '@doctrine'
             - '@router'
+            - '@devliver.repository_helper'
             - '@cache.app'
 
     devliver.repository_helper:
@@ -102,6 +103,7 @@ services:
         public: true
         arguments:
             - '@demontpx_parsedown.parsedown'
+            - '@router'
 
     # command
     devliver.console_command.migrate:
