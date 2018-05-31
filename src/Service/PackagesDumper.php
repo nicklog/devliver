@@ -53,8 +53,14 @@ class PackagesDumper implements PackagesDumperInterface
         foreach ($package->getVersions() as $version) {
             $packageData = $dumper->dump($version->getPackageInformation());
 
+            $packageData['uid'] = $version->getId();
+
+            if ($package->isAbandoned()) {
+                $replacement = $package->getReplacementPackage() ?? true;
+                $packageData['abandoned'] = $replacement;
+            }
+
             $data[$version->getName()] = $packageData;
-            $data[$version->getName()]['uid'] = $version->getId();
         }
 
         $jsonData = ['packages' => [$package->getName() => $data]];
