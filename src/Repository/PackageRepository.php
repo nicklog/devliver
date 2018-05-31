@@ -28,6 +28,18 @@ class PackageRepository extends EntityRepository
     }
 
     /**
+     * @return PackageInterface[]
+     */
+    public function findWithRepos()
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->where($qb->expr()->isNotNull('p.repo'));
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param $name
      *
      * @return null|object|PackageInterface

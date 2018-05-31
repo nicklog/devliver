@@ -1,0 +1,17 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-plus fa-fw"></i> {{ 'package.add.page_header'|trans }}
+{% endblock %}
+
+{% block pageActions %}
+    <a href="{{ path('devliver_package_index') }}" title="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger bs-tooltip"><span class="fas fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    {{ form_widget(form) }}
+
+    {{ form_end(form) }}
+{% endblock %}

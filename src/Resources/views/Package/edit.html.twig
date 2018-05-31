@@ -1,0 +1,10 @@
+{% extends '@Devliver/Package/add.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-edit fa-fw"></i> {{ 'package.edit.page_header'|trans }}
+{% endblock %}
+
+{% block pageActions %}
+    <a href="{{ path('devliver_package_add') }}" title="{{ 'action.add'|trans }}" class="btn btn-primary bs-tooltip"><span class="fas fa-plus fa-fw"></span> {{ 'action.add'|trans }}</a>
+    {{ parent() }}
+{% endblock %}

@@ -23,7 +23,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->redirectToRoute('devliver_repo_index');
+        return $this->redirectToRoute('devliver_package_index');
     }
 
     /**

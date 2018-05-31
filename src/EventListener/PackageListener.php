@@ -3,7 +3,7 @@
 namespace Shapecode\Devliver\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
@@ -34,9 +34,9 @@ class PackageListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::postPersist => 'onPostPersist',
-            Events::postUpdate  => 'onPostUpdate',
-            Events::preRemove   => 'onPreRemove',
+            Events::postPersist,
+            Events::postUpdate,
+            Events::preRemove,
         ];
     }
 
@@ -45,7 +45,7 @@ class PackageListener implements EventSubscriber
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public function onPostPersist(LifecycleEventArgs $event)
+    public function postPersist(LifecycleEventArgs $event)
     {
         $entity = $event->getObject();
 
@@ -57,7 +57,7 @@ class PackageListener implements EventSubscriber
     /**
      * @param LifecycleEventArgs $event
      */
-    public function onPostUpdate(LifecycleEventArgs $event)
+    public function postUpdate(LifecycleEventArgs $event)
     {
         $entity = $event->getObject();
 
@@ -69,7 +69,7 @@ class PackageListener implements EventSubscriber
     /**
      * @param LifecycleEventArgs $event
      */
-    public function onPreRemove(LifecycleEventArgs $event)
+    public function preRemove(LifecycleEventArgs $event)
     {
         $entity = $event->getObject();
 

@@ -52,26 +52,6 @@ interface RepoInterface extends BaseEntityInterface
     public function setUrl($url);
 
     /**
-     * @return bool
-     */
-    public function isEnable(): bool;
-
-    /**
-     * @return bool
-     */
-    public function isAbandoned(): bool;
-
-    /**
-     * @param bool $abandoned
-     */
-    public function setAbandoned(bool $abandoned): void;
-
-    /**
-     * @param bool $enable
-     */
-    public function setEnable(bool $enable): void;
-
-    /**
      * @return array
      */
     public function getConfig();

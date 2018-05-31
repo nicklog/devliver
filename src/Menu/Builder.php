@@ -53,18 +53,6 @@ class Builder
             ]
         ]);
 
-        $repoTranslation = $this->translator->trans('menu.repositories');
-        $menu->addChild('devliver_repo_index', [
-            'label'  => '<i class="fab fa-git fa-fw" data-fa-mask="fas fa-circle"></i> ' . $repoTranslation,
-            'route'  => 'devliver_repo_index',
-            'extras' => [
-                'routes' => [
-                    'devliver_repo_add',
-                    'devliver_repo_edit',
-                ],
-            ]
-        ]);
-
         $menu->addChild('devliver_package_index', [
             'label'      => 'menu.packages',
             'route'      => 'devliver_package_index',
@@ -73,6 +61,8 @@ class Builder
             ],
             'extras'     => [
                 'routes' => [
+                    'devliver_package_add',
+                    'devliver_package_edit',
                     'devliver_package_view',
                 ],
             ]

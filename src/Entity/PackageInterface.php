@@ -16,15 +16,71 @@ use Doctrine\ORM\PersistentCollection;
 interface PackageInterface extends BaseEntityInterface
 {
 
+
+    /**
+     * @return null|User
+     */
+    public function getCreator(): ?User;
+
+    /**
+     * @param null|User $creator
+     */
+    public function setCreator(?User $creator): void;
+
+    /**
+     * @return string
+     */
+    public function getType();
+
+    /**
+     * @param string $type
+     */
+    public function setType($type);
+
+    /**
+     * @return string
+     */
+    public function getUrl();
+
+    /**
+     * @param string $url
+     */
+    public function setUrl($url);
+
+    /**
+     * @return bool
+     */
+    public function isEnable(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isAbandoned(): bool;
+
+    /**
+     * @param bool $abandoned
+     */
+    public function setAbandoned(bool $abandoned): void;
+
+    /**
+     * @param bool $enable
+     */
+    public function setEnable(bool $enable): void;
+
+    /**
+     * @return array
+     */
+    public function getConfig();
+
     /**
      * @return Repo|null
      */
     public function getRepo(): ?Repo;
 
     /**
-     * @param Repo $repo
+     * @param Repo|null $repo
      */
-    public function setRepo(Repo $repo): void;
+    public function setRepo(?Repo $repo): void;
 
     /**
      * @return string

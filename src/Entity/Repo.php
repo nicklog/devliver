@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @package Shapecode\Devliver\Entity
  * @author  Nikita Loges
+ * @deprecated
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\RepoRepository")
  */
@@ -39,18 +40,6 @@ class Repo extends BaseEntity implements RepoInterface
      * @ORM\Column(type="string")
      */
     protected $url;
-
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean", options={"default": true})
-     */
-    protected $enable = true;
-
-    /**
-     * @var bool
-     * @ORM\Column(type="boolean", options={"default": false})
-     */
-    protected $abandoned = false;
 
     /**
      * @inheritdoc
@@ -114,38 +103,6 @@ class Repo extends BaseEntity implements RepoInterface
     public function setUrl($url)
     {
         $this->url = $url;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isEnable(): bool
-    {
-        return $this->enable;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setEnable(bool $enable): void
-    {
-        $this->enable = $enable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAbandoned(): bool
-    {
-        return $this->abandoned;
-    }
-
-    /**
-     * @param bool $abandoned
-     */
-    public function setAbandoned(bool $abandoned): void
-    {
-        $this->abandoned = $abandoned;
     }
 
     /**

@@ -21,8 +21,40 @@ class Package extends BaseEntity implements PackageInterface
 {
 
     /**
+     * @var User|null
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\User", inversedBy="packages", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     */
+    protected $creator;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", options={"default": "vcs"})
+     */
+    protected $type = 'vcs';
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $url;
+
+    /**
+     * @var boolean
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    protected $enable = true;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+    protected $abandoned = false;
+
+    /**
      * @var Repo|null
      * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Repo", inversedBy="package", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     protected $repo;
 
@@ -31,9 +63,6 @@ class Package extends BaseEntity implements PackageInterface
      * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="package", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $versions;
-
-    /** @var ArrayCollection|Version[] */
-    protected $versionsSorted;
 
     /**
      * @var ArrayCollection|PersistentCollection|Collection|Download[]
@@ -65,6 +94,9 @@ class Package extends BaseEntity implements PackageInterface
      */
     protected $lastUpdate;
 
+    /** @var ArrayCollection|Version[] */
+    protected $versionsSorted;
+
     /** @var CompletePackage[] */
     protected $packages;
 
@@ -85,6 +117,97 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
+    public function getCreator(): ?User
+    {
+        return $this->creator;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setCreator(?User $creator): void
+    {
+        $this->creator = $creator;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isEnable(): bool
+    {
+        return $this->enable;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setEnable(bool $enable): void
+    {
+        $this->enable = $enable;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isAbandoned(): bool
+    {
+        return $this->abandoned;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setAbandoned(bool $abandoned): void
+    {
+        $this->abandoned = $abandoned;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfig()
+    {
+        return [
+            'type' => $this->getType(),
+            'url'  => $this->getUrl(),
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getRepo(): ?Repo
     {
         return $this->repo;
@@ -93,7 +216,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function setRepo(Repo $repo): void
+    public function setRepo(?Repo $repo): void
     {
         $this->repo = $repo;
     }

@@ -53,7 +53,7 @@ class UserListener implements EventSubscriber
         $done = $this->setApiToken($args);
 
         if ($done) {
-            $args->getEntityManager()->persist($args->getEntity());
+            $args->getObjectManager()->persist($args->getEntity());
         }
     }
 

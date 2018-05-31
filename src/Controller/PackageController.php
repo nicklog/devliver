@@ -54,28 +54,23 @@ class PackageController extends Controller
     }
 
     /**
-     * @Route("/{package}/update", name="update")
+     * @Route("/{package}/abandon", name="abandon")
      *
      * @param Request $request
-     * @param Package $package
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @param         $id
      */
-    public function updateAction(Request $request, Package $package)
+    public function abandonAction(Request $request, $id)
     {
-        $this->get('devliver.package_synchronization')->sync($package);
+    }
 
-        $this->get('session')->getFlashBag()->add('success', 'Package updated');
-
-        if ($request->get('referer')) {
-            $referer = $request->headers->get('referer');
-
-            return $this->redirect($referer);
-        }
-
-        return $this->redirectToRoute('devliver_package_view', [
-            'package' => $package->getId()
-        ]);
+    /**
+     * @Route("/{package}/unabandon", name="unabandon")
+     *
+     * @param Request $request
+     * @param         $id
+     */
+    public function unabandonAction(Request $request, $id)
+    {
     }
 
     /**
@@ -101,5 +96,141 @@ class PackageController extends Controller
             'info'     => $stable,
             'versions' => $packages
         ]);
+    }
+
+    /**
+     * @Route("/add", name="add")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function addAction(Request $request)
+    {
+        $form = $this->createForm(RepoType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $repo->setCreator($this->getUser());
+
+            $em->persist($repo);
+
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('success', 'Repositories added');
+
+            return $this->redirectToRoute('devliver_repo_index');
+        }
+
+        return $this->render('@Devliver/Repo/add.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/edit/{package}", name="edit")
+     *
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function editAction(Request $request, $id)
+    {
+        $repository = $this->getDoctrine()->getRepository(Repo::class);
+        $repo = $repository->find($id);
+
+        $form = $this->createForm(RepoType::class, $repo);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $em = $this->getDoctrine()->getManager();
+
+            if ($repo->getCreator() === null) {
+                $repo->setCreator($this->getUser());
+            }
+
+            $em->persist($repo);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('success', 'Repository updated');
+
+            return $this->redirectToRoute('devliver_repo_edit', [
+                'id' => $repo->getId()
+            ]);
+        }
+
+        return $this->render('@Devliver/Repo/edit.html.twig', [
+            'form' => $form->createView(),
+            'repo' => $repo
+        ]);
+    }
+
+    /**
+     * @Route("/{package}/delete", name="delete")
+     *
+     * @param         $id
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deleteAction($id)
+    {
+        $repository = $this->getDoctrine()->getRepository(Repo::class);
+        $repo = $repository->find($id);
+
+        if (!$repo) {
+            return $this->redirectToRoute('devliver_repo_index');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $em->remove($repo);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('success', 'Repository removed');
+
+        return $this->redirectToRoute('devliver_repo_index');
+    }
+
+    /**
+     * @Route("/{package}/update", name="update")
+     *
+     * @param Request $request
+     * @param Package $package
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function updateAction(Request $request, Package $package)
+    {
+        $this->get('devliver.package_synchronization')->sync($package);
+
+        $this->get('session')->getFlashBag()->add('success', 'Package updated');
+
+        if ($request->get('referer')) {
+            $referer = $request->headers->get('referer');
+
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('devliver_package_view', [
+            'package' => $package->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/update-all", name="update_all")
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function updateAllAction()
+    {
+        $this->get('devliver.repository_synchronization')->sync();
+
+        $this->get('session')->getFlashBag()->add('success', 'Repositories updated');
+
+        return $this->redirectToRoute('devliver_repo_index');
     }
 }

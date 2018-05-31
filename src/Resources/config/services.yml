@@ -113,6 +113,11 @@ services:
             - '@demontpx_parsedown.parsedown'
 
     # command
+    devliver.console_command.migrate:
+        class: Shapecode\Devliver\Command\MigrateCommand
+        tags:
+            - { name: console.command }
+
     devliver.console_command.packages_update:
         class: Shapecode\Devliver\Command\PackagesUpdateCommand
         arguments:
