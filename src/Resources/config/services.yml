@@ -146,3 +146,12 @@ services:
         factory: ["@devliver.menu_builder", rightNavbar]
         tags:
             - { name: knp_menu.menu, alias: main_right }
+
+    # form
+    devliver.form_validator.package:
+        class: Shapecode\Devliver\Form\Validator\PackageValidator
+        public: true
+        arguments:
+            - '@devliver.composer_manager'
+            - '@devliver.repository_helper'
+            - '@doctrine'

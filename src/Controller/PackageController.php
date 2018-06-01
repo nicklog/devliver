@@ -9,6 +9,7 @@ use Shapecode\Devliver\Form\Type\Forms\PackageType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints\Callback;
 
 /**
  * Class RepoController
@@ -174,7 +175,12 @@ class PackageController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = $this->createForm(PackageType::class);
+        $form = $this->createForm(PackageType::class, null, [
+            'constraints' => [
+                new Callback([$this->get('devliver.form_validator.package'), 'validateRepository']),
+                new Callback([$this->get('devliver.form_validator.package'), 'validateAddName']),
+            ]
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -186,23 +192,6 @@ class PackageController extends Controller
 
             $repository = $this->get('devliver.composer_manager')->createRepositoryByUrl($url, $type);
             $info = $this->get('devliver.repository_helper')->getComposerInformation($repository);
-
-            if ($info === null) {
-                $this->get('session')->getFlashBag()->add('danger', 'Url invalid');
-
-                return $this->render('@Devliver/Package/add.html.twig', [
-                    'form' => $form->createView()
-                ]);
-            }
-
-            $package = $this->getDoctrine()->getRepository(Package::class)->findOneByName($info['name']);
-            if ($package !== null) {
-                $this->get('session')->getFlashBag()->add('danger', 'Package ' . $package->getName() . ' already exists');
-
-                return $this->render('@Devliver/Package/add.html.twig', [
-                    'form' => $form->createView()
-                ]);
-            }
 
             $package = new Package();
             $package->setUrl($url);
@@ -234,7 +223,15 @@ class PackageController extends Controller
      */
     public function editAction(Request $request, Package $package)
     {
-        $form = $this->createForm(PackageType::class, $package->getConfig());
+        $form = $this->createForm(PackageType::class, $package->getConfig(), [
+            'constraints' => [
+                new Callback([$this->get('devliver.form_validator.package'), 'validateRepository']),
+                new Callback([
+                    'callback' => [$this->get('devliver.form_validator.package'), 'validateEditName'],
+                    'payload'  => ['package' => $package]
+                ]),
+            ]
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -244,28 +241,7 @@ class PackageController extends Controller
             $url = $data['url'];
             $type = $data['type'];
 
-            $repository = $this->get('devliver.composer_manager')->createRepositoryByUrl($url, $type);
-            $info = $this->get('devliver.repository_helper')->getComposerInformation($repository);
-
-            if ($info === null) {
-                $this->get('session')->getFlashBag()->add('danger', 'Url invalid');
-
-                return $this->render('@Devliver/Package/edit.html.twig', [
-                    'form'    => $form->createView(),
-                    'package' => $package
-                ]);
-            }
-
-            if ($package->getName() !== $info['name']) {
-                $this->get('session')->getFlashBag()->add('danger', 'Package ' . $package->getName() . ' is not accessible with this url.');
-
-                return $this->render('@Devliver/Package/edit.html.twig', [
-                    'form'    => $form->createView(),
-                    'package' => $package
-                ]);
-            }
-
-            if ($url !== $package->getUrl()) {
+            if ($url !== $package->getUrl() || $type !== $package->getType()) {
                 $package->setUrl($url);
                 $package->setType($type);
                 $package->setAutoUpdate(false);
