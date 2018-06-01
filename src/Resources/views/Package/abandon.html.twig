@@ -1,0 +1,21 @@
+{% extends '@Devliver/layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-archive fa-fw"></i> {{ 'package.abandon.page_header'|trans }}
+{% endblock %}
+
+{% block pageActions %}
+    <a href="{{ path('devliver_package_index') }}" title="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger bs-tooltip"><span class="fas fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-info">
+        You are about to mark this package as abandoned. This will alert users that this package will no longer be maintained.<br><br>
+        If you are handing this project over to a new maintainer or know of a package that replaces it, please use the field below to point users to the new package.<br>
+        In case you cannot point them to a new package, this one will be tagged as abandoned without a package that replace it.
+    </div>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}

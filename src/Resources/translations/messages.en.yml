@@ -18,6 +18,8 @@ profile:
 package:
     list:
         page_header: Packages
+    abandon:
+        page_header: Abandon Package
     add:
         page_header: Add Package
     edit:

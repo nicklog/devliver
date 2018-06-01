@@ -4,6 +4,7 @@ namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Form\Type\Forms\PackageAbandonType;
 use Shapecode\Devliver\Form\Type\Forms\PackageType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,6 +63,24 @@ class PackageController extends Controller
      */
     public function abandonAction(Request $request, Package $package)
     {
+        $form = $this->createForm(PackageAbandonType::class, $package);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $package->setAbandoned(true);
+            $em->persist($package);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('success', 'Package abandoned');
+
+            return $this->redirectToRoute('devliver_package_index');
+        }
+
+        return $this->render('@Devliver/Package/abandon.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**
@@ -72,6 +91,17 @@ class PackageController extends Controller
      */
     public function unabandonAction(Request $request, Package $package)
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $package->setAbandoned(false);
+        $package->setReplacementPackage(null);
+
+        $em->persist($package);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('success', 'Package unabandoned');
+
+        return $this->redirectToRoute('devliver_package_index');
     }
 
     /**
