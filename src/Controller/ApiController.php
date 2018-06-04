@@ -73,6 +73,11 @@ class ApiController extends Controller
             $urls[] = $git_ssh_url;
         }
 
+        // gogs
+        if (isset($payload['repository']['url'])) {
+            $urls[] = $payload['repository']['url'];
+        }
+
         if (empty($urls)) {
             return new JsonResponse(['status' => 'error', 'message' => 'Missing or invalid payload'], 406);
         }
