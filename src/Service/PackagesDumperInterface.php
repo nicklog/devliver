@@ -10,7 +10,6 @@ use Shapecode\Devliver\Entity\User;
  *
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 interface PackagesDumperInterface
 {

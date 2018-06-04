@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Shapecode\Devliver\Command
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class MigrateCommand extends ContainerAwareCommand
 {

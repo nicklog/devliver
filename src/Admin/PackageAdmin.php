@@ -18,7 +18,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  *
  * @package Shapecode\Devliver\Admin
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class PackageAdmin extends AbstractAdmin
 {

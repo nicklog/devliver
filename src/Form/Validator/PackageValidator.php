@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @package Shapecode\Devliver\Form\Validator
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class PackageValidator
 {

@@ -14,7 +14,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @package Shapecode\Devliver\Form\Type\Forms
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class PackageAbandonType extends AbstractType
 {

@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class PackagesDumper implements PackagesDumperInterface
 {
