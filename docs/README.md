@@ -4,7 +4,7 @@ Your private self-hosted composer repository.
 
 ##  Requirements
 
-* **PHP 7.0** or higher
+* **PHP 7.1** or higher
 * **MariaDB/MySQL**
 * **git** installed on server
 * the running web user has **access** to **private** git repositories over **ssh**.
