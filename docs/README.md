@@ -11,40 +11,16 @@ Your private self-hosted composer repository.
 
 ##  Installation Instruction
 
-### 1. Download
+1. Download the project from [github.com](https://github.com/shapecode/devliver/releases) to your web directory.  
+2. Extract: Login into your terminal and run following command in the project directory. `unzip release.zip -d ./`
+3. Run `php bin/composer.phar install --no-dev --optimize-autoloader` and follow instructions.
+4. Update your database structure. `php bin/console doctrine:schema:update --force`
+5. Create an admin user. `php bin/console fos:user:create --super-admin`. Follow instructions.
+7. Make a VirtualHost with DocumentRoot pointing to public/
 
-... the project from [github.com](https://github.com/shapecode/devliver/releases) to your web directory.  
-The document root of your vhost have to point to the `public` directory.
+You should now be able to access the site, create a user, etc.
 
-### 2. Extract
-
-Login into your terminal and run following command in the project directory.
-
-`unzip release.zip -d ./`
-
-### 3. Install
-
-Now run `php bin/composer.phar install --no-dev --optimize-autoloader` and follow instructions.
-
-### 4. Database
-
-Update your database structure.
- 
-```bash
-php bin/console doctrine:schema:update --force
-```
-
-### 5. User
-
-Create an admin user.
-
-```bash
-php bin/console fos:user:create --super-admin
-```
-
-Follow the instructions and your user will be created.
-
-### 6. Other users
+## Users
 
 The packages.json is secured by basic http authentication. Add users in the Admin Panel with the role `ROLE_REPO`. These users have access to the packages.json and can download archives.
 
