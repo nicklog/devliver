@@ -9,7 +9,7 @@ Your private self-hosted composer repository.
 * **git** installed on server
 * the running web user has **access** to **private** git repositories over **ssh**.
 
-##  Installation Instruction
+##  Installation
 
 1. Download the project from [github.com](https://github.com/shapecode/devliver/releases) to your web directory.  
 2. Extract: Login into your terminal and run following command in the project directory. `unzip release.zip -d ./`
@@ -49,7 +49,7 @@ This is your repository of private packages.
     }
 ```
 
-##  Update Instruction
+##  Update
 
 Login into your terminal and run following commands.
 
