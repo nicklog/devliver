@@ -96,7 +96,7 @@ class Package extends BaseEntity implements PackageInterface
 
     /**
      * @var \DateTime|null
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetimeutc")
      */
     protected $lastUpdate;
 

@@ -59,7 +59,8 @@
         "php-http/guzzle6-adapter": "^1.1",
         "knplabs/knp-paginator-bundle": "^2.7",
         "ornicar/gravatar-bundle": "^1.2",
-        "knplabs/knp-menu-bundle": "^2.0"
+        "knplabs/knp-menu-bundle": "^2.0",
+        "austinsmorris/doctrine-dbal-datetimeutc": "^2.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"

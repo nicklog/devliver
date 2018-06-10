@@ -25,13 +25,13 @@ class BaseEntity implements BaseEntityInterface
 
     /**
      * @var \DateTime
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetimeutc")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetimeutc")
      */
     protected $updatedAt;
 
