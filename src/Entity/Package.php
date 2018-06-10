@@ -22,7 +22,7 @@ class Package extends BaseEntity implements PackageInterface
 
     /**
      * @var User|null
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\User", inversedBy="packages", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\User", inversedBy="createdPackages", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     protected $creator;

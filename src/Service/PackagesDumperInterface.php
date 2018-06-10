@@ -28,4 +28,12 @@ interface PackagesDumperInterface
      * @return string
      */
     public function dumpPackagesJson(User $user): string;
+
+    /**
+     * @param User             $user
+     * @param PackageInterface $package
+     *
+     * @return string
+     */
+    public function hashPackageJson(User $user, PackageInterface $package): string;
 }

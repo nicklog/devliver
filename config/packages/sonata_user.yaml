@@ -5,3 +5,7 @@ sonata_user:
     class:
         user: Shapecode\Devliver\Entity\User
         group: Shapecode\Devliver\Entity\UserGroup
+
+    admin:
+        user:
+            class: Shapecode\Devliver\Admin\UserAdmin

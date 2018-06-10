@@ -7,9 +7,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\User;
+use Shapecode\Devliver\Entity\Version;
 use Shapecode\Devliver\Repository\PackageRepository;
+use Shapecode\Devliver\Repository\VersionRepository;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Tenolo\Utilities\Utils\CryptUtil;
 
 /**
  * Class PackagesDumper
@@ -51,10 +54,23 @@ class PackagesDumper implements PackagesDumperInterface
      */
     public function dumpPackageJson(User $user, PackageInterface $package): string
     {
+        $cacheKey = 'user-package-json-' . $package->getId();
+        $item = $this->cache->getItem($cacheKey);
+
+        if ($item->isHit()) {
+            return $item->get();
+        }
+
+        $item->tag('packages-package-' . $package->getId());
+
         $data = [];
         $dumper = new ArrayDumper();
 
-        foreach ($package->getVersions() as $version) {
+        /** @var VersionRepository $repo */
+        $repo = $this->registry->getRepository(Version::class);
+        $versions = $repo->findAccessibleForUser($user, $package);
+
+        foreach ($versions as $version) {
             $packageData = $dumper->dump($version->getPackageInformation());
 
             $packageData['uid'] = $version->getId();
@@ -68,8 +84,14 @@ class PackagesDumper implements PackagesDumperInterface
         }
 
         $jsonData = ['packages' => [$package->getName() => $data]];
+        $json = json_encode($jsonData);
 
-        return json_encode($jsonData);
+        $item->set($json);
+        $item->expiresAfter(96400);
+
+        $this->cache->save($item);
+
+        return $json;
     }
 
     /**
@@ -89,7 +111,7 @@ class PackagesDumper implements PackagesDumperInterface
 
         /** @var PackageRepository $repo */
         $repo = $this->registry->getRepository(Package::class);
-        $packages = $repo->findDumps();
+        $packages = $repo->findAccessibleForUser($user);
 
         $providers = [];
 
@@ -99,7 +121,7 @@ class PackagesDumper implements PackagesDumperInterface
             $item->tag('packages-package-' . $package->getId());
 
             $providers[$name] = [
-                'sha256' => null
+                'sha256' => $this->hashPackageJson($user, $package)
             ];
         }
 
@@ -125,5 +147,16 @@ class PackagesDumper implements PackagesDumperInterface
         $this->cache->save($item);
 
         return $json;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hashPackageJson(User $user, PackageInterface $package): string
+    {
+        $json = $this->dumpPackageJson($user, $package);
+        $hash = CryptUtil::sha256($json);
+
+        return $hash;
     }
 }

@@ -15,7 +15,7 @@ use Doctrine\ORM\PersistentCollection;
  * @package Shapecode\Devliver\Entity
  * @author  Nikita Loges
  *
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\VersionRepository")
  * @ORM\Table(indexes={
  *     @ORM\Index(columns={"package_id", "name"})
  * })
@@ -37,6 +37,12 @@ class Version extends BaseEntity implements VersionInterface
     protected $downloads;
 
     /**
+     * @var ArrayCollection|PersistentCollection|User[]
+     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\User", mappedBy="accessVersions", cascade={"persist"})
+     */
+    protected $accessUsers;
+
+    /**
      * @var string|null
      * @ORM\Column(type="string")
      */
@@ -47,6 +53,16 @@ class Version extends BaseEntity implements VersionInterface
      * @ORM\Column(type="json_array")
      */
     protected $data;
+
+    /**
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->accessUsers = new ArrayCollection();
+        $this->downloads = new ArrayCollection();
+    }
 
     /**
      * @return PackageInterface
@@ -110,5 +126,13 @@ class Version extends BaseEntity implements VersionInterface
         }
 
         return $p;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString()
+    {
+        return $this->getName();
     }
 }
