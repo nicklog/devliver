@@ -37,7 +37,7 @@ class PackageController extends Controller
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 10);
 
-        $sort = $request->query->get('sort', 'p.id');
+        $sort = $request->query->get('sort', 'p.name');
         $direction = $request->query->get('direction', 'asc');
         $filter = $request->query->get('filter');
 
