@@ -55,9 +55,11 @@
                             <th></th>
                             <th></th>
                         </tr>
+                        {% set counter = (pagination.getCurrentPageNumber - 1) * pagination.getItemNumberPerPage %}
                         {% for package in pagination %}
+                            {% set counter = counter + 1 %}
                             <tr class="">
-                                <td style="white-space: nowrap; width: 1px;">{{ package.id }}</td>
+                                <td style="white-space: nowrap; width: 1px;">{{ counter }}</td>
                                 <td>
                                     <a href="{{ path('devliver_package_view', {package: package.id}) }}" style="font-weight: bold;">
                                         {{ package.name }}
