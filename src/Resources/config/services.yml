@@ -57,6 +57,13 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    devliver.event_listener.package_access:
+        class: Shapecode\Devliver\EventListener\PackageAccessListener
+        arguments:
+            - '@cache.app'
+        tags:
+            - { name: doctrine.event_subscriber }
+
     devliver.event_listener.package:
         class: Shapecode\Devliver\EventListener\PackageListener
         arguments:

@@ -40,8 +40,14 @@ class User extends BaseUser
     protected $createdPackages;
 
     /**
+     * @var ArrayCollection|PersistentCollection|Package[]
+     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="accessUsers")
+     */
+    protected $accessPackages;
+
+    /**
      * @var ArrayCollection|PersistentCollection|Version[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="accessUsers", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="accessUsers")
      */
     protected $accessVersions;
 
@@ -76,6 +82,7 @@ class User extends BaseUser
         parent::__construct();
 
         $this->createdPackages = new ArrayCollection();
+        $this->accessPackages = new ArrayCollection();
         $this->accessVersions = new ArrayCollection();
         $this->repos = new ArrayCollection();
     }
@@ -93,7 +100,7 @@ class User extends BaseUser
      *
      * @return bool
      */
-    public function hasCreatedPackages(Package $package): bool
+    public function hasCreatedPackage(Package $package): bool
     {
         return $this->getCreatedPackages()->contains($package);
     }
@@ -101,9 +108,9 @@ class User extends BaseUser
     /**
      * @param Package $package
      */
-    public function addCreatedPackages(Package $package): void
+    public function addCreatedPackage(Package $package): void
     {
-        if (!$this->hasCreatedPackages($package)) {
+        if (!$this->hasCreatedPackage($package)) {
             $package->setCreator($this);
             $this->getCreatedPackages()->add($package);
         }
@@ -112,10 +119,57 @@ class User extends BaseUser
     /**
      * @param Package $package
      */
-    public function removeCreatedPackages(Package $package): void
+    public function removeCreatedPackage(Package $package): void
     {
-        if ($this->hasCreatedPackages($package)) {
+        if ($this->hasCreatedPackage($package)) {
             $package->setCreator(null);
+            $this->getCreatedPackages()->removeElement($package);
+        }
+    }
+
+    /**
+     * @return ArrayCollection|PersistentCollection|Collection|Package[]
+     */
+    public function getAccessPackages(): Collection
+    {
+        $packages = $this->accessPackages;
+
+        foreach ($this->getAccessVersions() as $version) {
+            $package = $version->getPackage();
+            if (!$packages->contains($package)) {
+                $packages->add($package);
+            }
+        }
+
+        return $packages;
+    }
+
+    /**
+     * @param PackageInterface $package
+     *
+     * @return bool
+     */
+    public function hasAccessPackage(PackageInterface $package): bool
+    {
+        return $this->getAccessPackages()->contains($package);
+    }
+
+    /**
+     * @param PackageInterface $package
+     */
+    public function addAccessPackage(PackageInterface $package): void
+    {
+        if (!$this->hasAccessPackage($package)) {
+            $this->getAccessPackages()->add($package);
+        }
+    }
+
+    /**
+     * @param PackageInterface $package
+     */
+    public function removeAccessPackage(PackageInterface $package): void
+    {
+        if ($this->hasAccessPackage($package)) {
             $this->getCreatedPackages()->removeElement($package);
         }
     }
@@ -129,48 +183,31 @@ class User extends BaseUser
     }
 
     /**
-     * @return ArrayCollection|Package[]
-     */
-    public function getAccessPackages(): ArrayCollection
-    {
-        $packages = new ArrayCollection();
-
-        foreach ($this->getAccessVersions() as $accessVersion) {
-            $package = $accessVersion->getPackage();
-            if (!$packages->contains($package)) {
-                $packages->add($package);
-            }
-        }
-
-        return $packages;
-    }
-
-    /**
-     * @param Version $version
+     * @param VersionInterface $version
      *
      * @return bool
      */
-    public function hasAccessVersions(Version $version): bool
+    public function hasAccessVersion(VersionInterface $version): bool
     {
         return $this->getAccessVersions()->contains($version);
     }
 
     /**
-     * @param Version $version
+     * @param VersionInterface $version
      */
-    public function addAccessVersions(Version $version): void
+    public function addAccessVersion(VersionInterface $version): void
     {
-        if (!$this->hasAccessVersions($version)) {
+        if (!$this->hasAccessVersion($version)) {
             $this->getAccessVersions()->add($version);
         }
     }
 
     /**
-     * @param Version $version
+     * @param VersionInterface $version
      */
-    public function removeAccessVersions(Version $version): void
+    public function removeAccessVersion(VersionInterface $version): void
     {
-        if ($this->hasAccessVersions($version)) {
+        if ($this->hasAccessVersion($version)) {
             $this->getCreatedPackages()->removeElement($version);
         }
     }

@@ -33,9 +33,11 @@ class UserAdmin extends \Sonata\UserBundle\Admin\Entity\UserAdmin
                 ->with('Versions')
                     ->add('accessVersions', EntityType::class, [
                         'class' => Version::class,
-                        'required' => false,
                         'multiple' => true,
-                        'expanded' => true,
+                        'sortable' => false,
+                        'group_by' => function($choiceValue, $key, $value) {
+                            $choiceValue->getPackage()->getName();
+                        },
                     ])
                 ->end()
             ->end();

@@ -133,6 +133,6 @@ class Version extends BaseEntity implements VersionInterface
      */
     public function __toString()
     {
-        return $this->getName();
+        return $this->getPackage()->getName() . ' - ' . $this->getName();
     }
 }
