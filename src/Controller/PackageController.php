@@ -102,6 +102,12 @@ class PackageController extends Controller
 
         $this->get('session')->getFlashBag()->add('success', 'Package unabandoned');
 
+        if ($request->headers->get('referer')) {
+            $referer = $request->headers->get('referer');
+
+            return $this->redirect($referer);
+        }
+
         return $this->redirectToRoute('devliver_package_index');
     }
 
@@ -120,6 +126,12 @@ class PackageController extends Controller
         $em->persist($package);
         $em->flush();
 
+        if ($request->headers->get('referer')) {
+            $referer = $request->headers->get('referer');
+
+            return $this->redirect($referer);
+        }
+
         return $this->redirectToRoute('devliver_package_index');
     }
 
@@ -137,6 +149,12 @@ class PackageController extends Controller
 
         $em->persist($package);
         $em->flush();
+
+        if ($request->headers->get('referer')) {
+            $referer = $request->headers->get('referer');
+
+            return $this->redirect($referer);
+        }
 
         return $this->redirectToRoute('devliver_package_index');
     }
@@ -298,7 +316,7 @@ class PackageController extends Controller
 
         $this->get('session')->getFlashBag()->add('success', 'Package updated');
 
-        if ($request->get('referer')) {
+        if ($request->headers->get('referer')) {
             $referer = $request->headers->get('referer');
 
             return $this->redirect($referer);
