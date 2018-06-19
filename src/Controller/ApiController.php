@@ -5,6 +5,7 @@ namespace Shapecode\Devliver\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Entity\UpdateQueue;
 use Shapecode\Devliver\Entity\User;
 use Shapecode\Devliver\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -109,13 +110,22 @@ class ApiController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
+        $queueRepo = $em->getRepository(UpdateQueue::class);
 
         /** @var Package $package */
         foreach ($packages as $package) {
-            $this->get('devliver.package_synchronization')->sync($package);
+            $updateQueue = $queueRepo->findOneByPackage($package);
+
+            if ($updateQueue === null) {
+                $updateQueue = new UpdateQueue();
+                $updateQueue->setPackage($package);
+            }
+
+            $updateQueue->setLastCalledAt(new \DateTime());
 
             $package->setAutoUpdate(true);
             $em->persist($package);
+            $em->persist($updateQueue);
         }
 
         $em->flush();
