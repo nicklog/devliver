@@ -100,6 +100,12 @@ class Package extends BaseEntity implements PackageInterface
      */
     protected $lastUpdate;
 
+    /**
+     * @var ArrayCollection|PersistentCollection|User[]
+     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\User", mappedBy="accessPackages", cascade={"persist"})
+     */
+    protected $accessUsers;
+
     /** @var ArrayCollection|Version[] */
     protected $versionsSorted;
 
@@ -117,6 +123,7 @@ class Package extends BaseEntity implements PackageInterface
 
         $this->versions = new ArrayCollection();
         $this->downloads = new ArrayCollection();
+        $this->accessUsers = new ArrayCollection();
         $this->lastUpdate = new \DateTime();
     }
 
