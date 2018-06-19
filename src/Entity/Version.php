@@ -43,6 +43,18 @@ class Version extends BaseEntity implements VersionInterface
     protected $accessUsers;
 
     /**
+     * @var ArrayCollection|PersistentCollection|Author[]
+     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Author", inversedBy="versions", cascade={"persist"})
+     */
+    protected $authors;
+
+    /**
+     * @var ArrayCollection|PersistentCollection|Tag[]
+     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Tag", inversedBy="versions", cascade={"persist"})
+     */
+    protected $tags;
+
+    /**
      * @var string|null
      * @ORM\Column(type="string")
      */
@@ -61,7 +73,9 @@ class Version extends BaseEntity implements VersionInterface
         parent::__construct();
 
         $this->accessUsers = new ArrayCollection();
+        $this->authors = new ArrayCollection();
         $this->downloads = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     /**
@@ -110,6 +124,82 @@ class Version extends BaseEntity implements VersionInterface
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return ArrayCollection|PersistentCollection|Author[]
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @param Author $author
+     *
+     * @return bool
+     */
+    public function hasAuthor(Author $author): bool
+    {
+        return $this->getAuthors()->contains($author);
+    }
+
+    /**
+     * @param Author $author
+     */
+    public function addAuthor(Author $author): void
+    {
+        if (!$this->hasAuthor($author)) {
+            $this->getAuthors()->add($author);
+        }
+    }
+
+    /**
+     * @param Author $author
+     */
+    public function removeAuthor(Author $author): void
+    {
+        if ($this->hasAuthor($author)) {
+            $this->getAuthors()->removeElement($author);
+        }
+    }
+
+    /**
+     * @return ArrayCollection|PersistentCollection|Tag[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param Tag $tag
+     *
+     * @return bool
+     */
+    public function hasTag(Tag $tag): bool
+    {
+        return $this->getTags()->contains($tag);
+    }
+
+    /**
+     * @param Tag $tag
+     */
+    public function addTag(Tag $tag): void
+    {
+        if (!$this->hasTag($tag)) {
+            $this->getTags()->add($tag);
+        }
+    }
+
+    /**
+     * @param Tag $tag
+     */
+    public function removeTag(Tag $tag): void
+    {
+        if ($this->hasTag($tag)) {
+            $this->getTags()->removeElement($tag);
+        }
     }
 
     /**

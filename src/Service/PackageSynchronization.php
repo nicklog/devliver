@@ -4,10 +4,13 @@ namespace Shapecode\Devliver\Service;
 
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
+use Composer\Package\CompletePackageInterface;
 use Composer\Package\Dumper\ArrayDumper;
 use Shapecode\Devliver\Composer\ComposerManager;
+use Shapecode\Devliver\Entity\Author;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\Tag;
 use Shapecode\Devliver\Entity\Version;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -135,6 +138,9 @@ class PackageSynchronization implements PackageSynchronizationInterface
                 $new = true;
             }
 
+            $this->updateTags($dbVersion, $package);
+            $this->updateAuthors($dbVersion, $package);
+
             $distUrl = $this->repositoryHelper->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
 
             $package->setDistUrl($distUrl);
@@ -162,5 +168,42 @@ class PackageSynchronization implements PackageSynchronizationInterface
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param Version                  $version
+     * @param CompletePackageInterface $completePackage
+     */
+    protected function updateTags(Version $version, CompletePackageInterface $completePackage)
+    {
+        $keywords = $completePackage->getKeywords();
+        $tagRepo = $this->registry->getRepository(Tag::class);
+
+        foreach ($keywords as $keyword) {
+            $tag = $tagRepo->findByName($keyword, true);
+            $version->addTag($tag);
+        }
+    }
+
+    /**
+     * @param Version                  $version
+     * @param CompletePackageInterface $completePackage
+     */
+    protected function updateAuthors(Version $version, CompletePackageInterface $completePackage)
+    {
+        $authors = $completePackage->getAuthors();
+        $authorRepo = $this->registry->getRepository(Author::class);
+
+        foreach ($authors as $a) {
+            $author = $authorRepo->findByNameOrEmail($a['name'], $a['email'], true);
+
+            if (isset($a['homepage'])) {
+                $author->setHomepage($a['homepage']);
+            }
+            if (isset($a['role'])) {
+                $author->setRole($a['role']);
+            }
+            $version->addAuthor($author);
+        }
     }
 }
