@@ -40,8 +40,12 @@
                 </div>
             {% endif %}
 
-            <div class="mb-3">
+            <div class="mb-1">
                 <i class="fas fa-download"></i> <span class="pl-2">composer require {{ package.name }}</span>
+            </div>
+
+            <div class="mb-3">
+                <i class="fab fa-git"></i> <span class="pl-2">{{ info.sourceUrl }}</span>
             </div>
 
             {% for version in versions %}
@@ -66,25 +70,21 @@
             {% endif %}
         </div>
         <div class="col-md-4">
-            {% if info.authors and info.authors|length > 0 %}
-                <p class="authors">
-                    {% for author in info.authors %}
-                        {% if author.email is defined and author.email is not empty %}
-                            {%- if author.homepage is defined and author.homepage is not empty -%}
-                                <a href="{{ author.homepage }}" target="_blank">
-                            {%- endif -%}
-                            <img src="{{ gravatar(author.email, 50) }}" title="{{ author.name }}"/>
-                        {% endif -%}
-                        {%- if author.homepage is defined and author.homepage is not empty -%}
-                            </a>
-                        {%- endif -%}
-                    {% endfor %}
-                </p>
-            {% endif %}
-
-            <p>
-                {{ info.sourceUrl }}
-            </p>
+            {#{% if info.authors and info.authors|length > 0 %}#}
+                {#<p class="authors">#}
+                    {#{% for author in info.authors %}#}
+                        {#{% if author.email is defined and author.email is not empty %}#}
+                            {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
+                                {#<a href="{{ author.homepage }}" target="_blank">#}
+                            {#{%- endif -%}#}
+                            {#<img src="{{ gravatar(author.email, 50) }}" title="{{ author.name }}"/>#}
+                        {#{% endif -%}#}
+                        {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
+                            {#</a>#}
+                        {#{%- endif -%}#}
+                    {#{% endfor %}#}
+                {#</p>#}
+            {#{% endif %}#}
 
             <div class="card mb-3">
                 <div class="card-header py-1 px-2">Infos</div>
