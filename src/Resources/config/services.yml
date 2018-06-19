@@ -121,6 +121,13 @@ services:
     devliver.console_command.packages_update:
         class: Shapecode\Devliver\Command\PackagesUpdateCommand
         arguments:
+            - '@devliver.package_synchronization'
+        tags:
+            - { name: console.command }
+
+    devliver.console_command.packages_queue:
+        class: Shapecode\Devliver\Command\PackagesQueueCommand
+        arguments:
             - '@doctrine'
             - '@devliver.package_synchronization'
         tags:

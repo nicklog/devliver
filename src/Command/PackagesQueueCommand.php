@@ -3,32 +3,40 @@
 namespace Shapecode\Devliver\Command;
 
 use Composer\IO\ConsoleIO;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Shapecode\Bundle\CronBundle\Annotation\CronJob;
+use Shapecode\Devliver\Entity\UpdateQueue;
 use Shapecode\Devliver\Service\PackageSynchronizationInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory;
-use Symfony\Component\Lock\Store\SemaphoreStore;
 
 /**
  * Class PackagesUpdateCommand
  *
  * @package Shapecode\Devliver\Command
  * @author  Nikita Loges
+ *
+ * @CronJob("* * * * *", arguments="-q")
  */
-class PackagesUpdateCommand extends Command
+class PackagesQueueCommand extends Command
 {
+
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /** @var PackageSynchronizationInterface */
     protected $packageSynchronization;
 
     /**
+     * @param ManagerRegistry                 $registry
      * @param PackageSynchronizationInterface $packageSynchronization
      */
-    public function __construct(PackageSynchronizationInterface $packageSynchronization)
+    public function __construct(ManagerRegistry $registry, PackageSynchronizationInterface $packageSynchronization)
     {
         parent::__construct();
 
+        $this->registry = $registry;
         $this->packageSynchronization = $packageSynchronization;
     }
 
@@ -37,8 +45,7 @@ class PackagesUpdateCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('devliver:packages:update');
-        $this->setHelp('Syncs all Packages');
+        $this->setName('devliver:queue:execute');
     }
 
     /**
@@ -46,23 +53,26 @@ class PackagesUpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $store = new SemaphoreStore();
-        $factory = new Factory($store);
+        $em = $this->registry->getManager();
+        $queueRepo = $em->getRepository(UpdateQueue::class);
 
-        $lock = $factory->createLock('devliver_packages_update');
+        $queues = $queueRepo->findUnlocked();
 
-        // another job is still active
-        if (!$lock->acquire()) {
-            $output->writeln('Aborting, lock file is present.');
-
-            return;
+        foreach ($queues as $queue) {
+            $queue->setLockedAt(new \DateTime());
+            $em->persist($queue);
         }
 
-        ini_set('memory_limit', -1);
-        set_time_limit(600);
+        $em->flush();
 
         $io = $this->createIO($input, $output);
-        $this->packageSynchronization->syncAll($io);
+
+        foreach ($queues as $queue) {
+            $this->packageSynchronization->sync($queue->getPackage(), $io);
+
+            $em->remove($queue);
+            $em->flush();
+        }
     }
 
     /**
