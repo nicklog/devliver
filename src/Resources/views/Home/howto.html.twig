@@ -54,11 +54,11 @@
         </div>
     </div>
 
-    <h2>
+    <h2 id="update-packages">
         How to update packages?
     </h2>
     <div class="alert alert-info">
-        You have to run a background update task as a cronjob and setup a system/web hook.
+        <i class="fas fa-exclamation-circle fa-fw"></i> You have to run a background update task as a cronjob and setup a system/web hook.
     </div>
 
     <h3>Cronjob</h3>
@@ -67,7 +67,8 @@
             <p>The background task is executed with the <code>bin/console shapecode:cron:run</code> shell command.</p>
 
             <p> Just add a cronjob to your cron table that runs the command every minute like this to your cron table.<br>
-                <code>* * * * * /path/to/your/project/bin/console shapecode:cron:run -q</code></p>
+                <code>* * * * * /path/to/your/project/bin/console shapecode:cron:run -q</code>
+            </p>
         </div>
     </div>
 
@@ -116,7 +117,7 @@
         <div class="col-md-12">
             <div class="alert alert-info">
                 Here you see tutorials only for the 3 frequently used web services, but even more providers are supported.
-                <ul>
+                <ul style="margin-bottom: 0px;">
                     <li><a href="https://github.com/" target="_blank" class="alert-link">GitHub</a></li>
                     <li><a href="https://gitlab.com/" target="_blank" class="alert-link">GitLab</a></li>
                     <li><a href="https://bitbucket.org/" target="_blank" class="alert-link">Bitbucket</a></li>

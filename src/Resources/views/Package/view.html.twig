@@ -32,7 +32,11 @@
         <div class="col-md-8">
             {% if package.autoUpdate == false %}
                 <div class="mb-3">
-                    <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> Up to now, the package was not updated with a hook.</div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle fa-fw"></i>
+                        Up to now, the package was not updated with a hook.
+                        <a href="{{ path('devliver_howto') }}#update-packages" class="alert-link">Learn how to do that!</a>
+                    </div>
                 </div>
             {% endif %}
 
