@@ -34,8 +34,7 @@
                         {% else %}
                             {{ author.name }}
                         {% endif %}
-                {% if author.email is defined and author.email is not empty %} &lt;<a href="mailto:{{ author.email }}">{{ author.email }}</a>&gt;{% endif %}
-                {% if loop.last != true %}, {% endif %}</span>
+                {% if author.email is defined and author.email is not empty %} &lt;<a href="mailto:{{ author.email }}">{{ author.email }}</a>&gt;{% endif %}{% if loop.last != true %}, {% endif %}</span>
         {% endfor %}
     </div>
     <div>
