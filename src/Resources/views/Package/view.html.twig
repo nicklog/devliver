@@ -137,7 +137,7 @@
                         {% set adapter = package_adapter(pi) %}
                         <li class="list-group-item py-1 px-2 clearfix">
                             <div class="float-left">
-                                <a href="#" class="package-link bs-tooltip" title="{{ pi.prettyVersion }}" data-package="details_{{ (pi.prettyVersion ~ pi.sourceReference)|sha1 }}">
+                                <a href="#" class="package-link" data-package="details_{{ (pi.prettyVersion ~ pi.sourceReference)|sha1 }}">
                                     {{ pi.prettyVersion|truncate(40) }}
 
                                     {% if adapter.alias is not null %}
