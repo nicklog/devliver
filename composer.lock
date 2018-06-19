@@ -3315,16 +3315,16 @@
         },
         {
             "name": "shapecode/cron-bundle",
-            "version": "3.2.0",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shapecode/cron-bundle.git",
-                "reference": "8e55ceec04e64db64cb32e200b86c69471ff82d1"
+                "reference": "55dd8a72f43c1e6d5697f3708450d6aa95a903d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/8e55ceec04e64db64cb32e200b86c69471ff82d1",
-                "reference": "8e55ceec04e64db64cb32e200b86c69471ff82d1",
+                "url": "https://api.github.com/repos/shapecode/cron-bundle/zipball/55dd8a72f43c1e6d5697f3708450d6aa95a903d8",
+                "reference": "55dd8a72f43c1e6d5697f3708450d6aa95a903d8",
                 "shasum": ""
             },
             "require": {
@@ -3353,7 +3353,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-develop": "3.2-dev"
+                    "dev-develop": "3.3-dev"
                 }
             },
             "autoload": {
@@ -3390,7 +3390,7 @@
                 "symfony",
                 "time"
             ],
-            "time": "2018-05-07T16:46:31+00:00"
+            "time": "2018-06-18T12:53:56+00:00"
         },
         {
             "name": "sonata-project/admin-bundle",
