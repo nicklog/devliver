@@ -6,8 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\UpdateQueue;
-use Shapecode\Devliver\Entity\User;
-use Shapecode\Devliver\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,9 +54,6 @@ class ApiController extends Controller
         if (isset($payload['repository']['git_url'])) {
             $urls[] = $payload['repository']['git_url'];
         }
-        if (isset($payload['repository']['ssh_url'])) {
-            $urls[] = $payload['repository']['ssh_url'];
-        }
         if (isset($payload['repository']['clone_url'])) {
             $urls[] = $payload['repository']['clone_url'];
         }
@@ -79,6 +74,16 @@ class ApiController extends Controller
             $urls[] = $payload['repository']['url'];
         }
 
+        // github/gitea
+        if (isset($payload['repository']['ssh_url'])) {
+            $urls[] = $payload['repository']['ssh_url'];
+        }
+
+        // gitea
+        if (isset($payload['repository']['clone_url'])) {
+            $urls[] = $payload['repository']['clone_url'];
+        }
+
         if (empty($urls)) {
             return new JsonResponse(['status' => 'error', 'message' => 'Missing or invalid payload'], 406);
         }
@@ -96,13 +101,6 @@ class ApiController extends Controller
      */
     protected function receiveWebhook(Request $request, array $urls): Response
     {
-        // find the user
-        $user = $this->findUser($request);
-
-        if (!$user) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Invalid credentials'], 403);
-        }
-
         $packages = $this->findPackages($urls);
 
         if (count($packages) === 0) {
@@ -131,31 +129,6 @@ class ApiController extends Controller
         $em->flush();
 
         return new JsonResponse(['status' => 'success'], 202);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return null|User
-     */
-    protected function findUser(Request $request): ?User
-    {
-        $username = $request->get('username');
-        $token = $request->get('token');
-
-        if ($username === null || $token === null) {
-            return null;
-        }
-
-        /** @var UserRepository $repo */
-        $repo = $this->getDoctrine()->getRepository(User::class);
-        $user = $repo->findOneByUsernameAndToken($username, $token);
-
-        if ($user && !$user->isEnabled()) {
-            return null;
-        }
-
-        return $user;
     }
 
     /**

@@ -171,3 +171,12 @@ services:
             - '@devliver.composer_manager'
             - '@devliver.repository_helper'
             - '@doctrine'
+
+    # security
+    devliver.security.token_authenticator:
+        class: Shapecode\Devliver\Security\TokenAuthenticator
+
+    devliver.security.token_user_provider:
+        class: Shapecode\Devliver\Security\TokenUserProvider
+        arguments:
+            - '@fos_user.user_manager'

@@ -14,6 +14,8 @@ security:
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username
+        token_provider:
+            id: devliver.security.token_user_provider
 
     firewalls:
         dev:
@@ -33,6 +35,13 @@ security:
                 path:           /admin/logout
                 target:         /admin/login
             anonymous:          true
+
+        api:
+            pattern: ^/api
+            stateless: true
+            simple_preauth:
+                authenticator: devliver.security.token_authenticator
+            provider: token_provider
 
         repo:
             pattern:            /repo/(.*)
