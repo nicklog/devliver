@@ -2,6 +2,7 @@
 
 namespace Shapecode\Devliver\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Form\Type\Forms\PackageAbandonType;
@@ -24,10 +25,11 @@ class PackageController extends Controller
 
     /**
      * @Route("", name="index")
+     * @Template()
      *
      * @param Request $request
      *
-     * @return Response
+     * @return Response|array
      */
     public function listAction(Request $request)
     {
@@ -51,16 +53,19 @@ class PackageController extends Controller
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate($qb, $page, $limit);
 
-        return $this->render('@Devliver/Package/list.html.twig', [
+        return [
             'pagination' => $pagination,
-        ]);
+        ];
     }
 
     /**
      * @Route("/{package}/abandon", name="abandon")
+     * @Template()
      *
      * @param Request $request
      * @param Package $package
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse|array
      */
     public function abandonAction(Request $request, Package $package)
     {
@@ -79,9 +84,9 @@ class PackageController extends Controller
             return $this->redirectToRoute('devliver_package_index');
         }
 
-        return $this->render('@Devliver/Package/abandon.html.twig', [
+        return [
             'form' => $form->createView()
-        ]);
+        ];
     }
 
     /**
@@ -161,10 +166,11 @@ class PackageController extends Controller
 
     /**
      * @Route("/{package}/view", name="view")
+     * @Template()
      *
      * @param Package $package
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
      */
     public function viewAction(Package $package)
     {
@@ -177,19 +183,20 @@ class PackageController extends Controller
         $packages = $package->getPackages();
         $stable = $package->getLastStablePackage();
 
-        return $this->render('@Devliver/Package/view.html.twig', [
+        return [
             'package'  => $package,
             'info'     => $stable,
             'versions' => $packages
-        ]);
+        ];
     }
 
     /**
      * @Route("/add", name="add")
+     * @Template()
      *
      * @param Request $request
      *
-     * @return Response
+     * @return Response|array
      */
     public function addAction(Request $request)
     {
@@ -226,18 +233,19 @@ class PackageController extends Controller
             return $this->redirectToRoute('devliver_package_index');
         }
 
-        return $this->render('@Devliver/Package/add.html.twig', [
+        return [
             'form' => $form->createView()
-        ]);
+        ];
     }
 
     /**
      * @Route("/edit/{package}", name="edit")
+     * @Template()
      *
      * @param Request $request
      * @param Package $package
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
      */
     public function editAction(Request $request, Package $package)
     {
@@ -277,10 +285,10 @@ class PackageController extends Controller
             ]);
         }
 
-        return $this->render('@Devliver/Package/edit.html.twig', [
+        return [
             'form'    => $form->createView(),
             'package' => $package
-        ]);
+        ];
     }
 
     /**

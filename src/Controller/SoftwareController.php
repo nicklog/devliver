@@ -4,8 +4,11 @@ namespace Shapecode\Devliver\Controller;
 
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Loader\ArrayLoader;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class SoftwareController
@@ -20,8 +23,9 @@ class SoftwareController extends Controller
 
     /**
      * @Route("/", name="index")
+     * @Template()
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response|array
      */
     public function indexAction()
     {
@@ -43,8 +47,8 @@ class SoftwareController extends Controller
             $packages[] = $package;
         }
 
-        return $this->render('@Devliver/Software/index.html.twig', [
+        return [
             'packages' => $packages
-        ]);
+        ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Shapecode\Devliver\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Shapecode\Devliver\Form\Type\Forms\UserProfileType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,16 +21,24 @@ class ProfileController extends Controller
 
     /**
      * @Route("", name="index")
+     * @Template()
+     *
+     * @return array
      */
     public function profileAction()
     {
-        return $this->render('@Devliver/Profile/profile.html.twig', [
+        return [
             'user' => $this->getUser()
-        ]);
+        ];
     }
 
     /**
      * @Route("/edit", name="edit")
+     * @Template()
+     *
+     * @param Request $request
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function editAction(Request $request)
     {
@@ -47,9 +56,9 @@ class ProfileController extends Controller
             return $this->redirectToRoute($request->get('_route'));
         }
 
-        return $this->render('@Devliver/Profile/edit.html.twig', [
+        return [
             'user' => $this->getUser(),
             'form' => $form->createView(),
-        ]);
+        ];
     }
 }
