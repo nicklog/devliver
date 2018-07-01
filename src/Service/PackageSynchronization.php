@@ -80,6 +80,8 @@ class PackageSynchronization implements PackageSynchronizationInterface
             return;
         }
 
+        $package->setReadme($this->repositoryHelper->getReadme($repository));
+
         $this->save($package, $packages);
     }
 
@@ -90,7 +92,6 @@ class PackageSynchronization implements PackageSynchronizationInterface
     {
         if (count($packages)) {
             $em = $this->registry->getManager();
-
             $package->setLastUpdate(new \DateTime());
 
             $em->persist($package);
