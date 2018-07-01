@@ -60,7 +60,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @var Repo|null
      * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Repo", inversedBy="package", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(nullable=true)
      */
     protected $repo;
 
