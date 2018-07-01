@@ -55,12 +55,12 @@
             {% endfor %}
 
             {% if package.readme is not null %}
-                <div class="border-top mt-3">
+                <div class="border-top mt-3 pt-3">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card mb-2">
                                 <div class="card-header py-1 px-2">Readme</div>
-                                <div class="card-body py-1 px-2">
+                                <div class="card-body p-3">
                                     {{ package.readme|raw }}
                                 </div>
                             </div>
