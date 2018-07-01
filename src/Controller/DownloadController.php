@@ -2,7 +2,7 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Shapecode\Devliver\Entity\Download;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\Version;

@@ -2,8 +2,7 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\UpdateQueue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,8 +23,7 @@ class ApiController extends Controller
 {
 
     /**
-     * @Route("/update-package", name="package_update", defaults={"_format" = "json"})
-     * @Method({"POST"})
+     * @Route("/update-package", name="package_update", defaults={"_format" = "json"}, methods={"POST"})
      */
     public function updatePackageAction(Request $request): Response
     {
