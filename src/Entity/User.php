@@ -52,12 +52,6 @@ class User extends BaseUser
     protected $accessVersions;
 
     /**
-     * @var ArrayCollection|PersistentCollection|Repo[]
-     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Repo", mappedBy="creator", cascade={"persist"})
-     */
-    protected $repos;
-
-    /**
      * @var boolean
      * @ORM\Column(type="boolean", options={"default": true})
      */
@@ -84,7 +78,6 @@ class User extends BaseUser
         $this->createdPackages = new ArrayCollection();
         $this->accessPackages = new ArrayCollection();
         $this->accessVersions = new ArrayCollection();
-        $this->repos = new ArrayCollection();
     }
 
     /**
