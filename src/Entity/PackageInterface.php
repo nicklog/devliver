@@ -102,6 +102,16 @@ interface PackageInterface extends BaseEntityInterface
     public function setName(string $name): void;
 
     /**
+     * @return null|string
+     */
+    public function getReadme(): ?string;
+
+    /**
+     * @param null|string $readme
+     */
+    public function setReadme(?string $readme): void;
+
+    /**
      * @return bool
      */
     public function isAutoUpdate(): bool;
