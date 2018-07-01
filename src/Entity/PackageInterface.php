@@ -82,6 +82,16 @@ interface PackageInterface extends BaseEntityInterface
     public function getConfig();
 
     /**
+     * @return Repo|null
+     */
+    public function getRepo(): ?Repo;
+
+    /**
+     * @param Repo|null $repo
+     */
+    public function setRepo(?Repo $repo): void;
+
+    /**
      * @return string
      */
     public function getName(): string;

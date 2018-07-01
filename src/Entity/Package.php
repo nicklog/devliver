@@ -58,6 +58,13 @@ class Package extends BaseEntity implements PackageInterface
     protected $replacementPackage;
 
     /**
+     * @var Repo|null
+     * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Repo", inversedBy="package", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     */
+    protected $repo;
+
+    /**
      * @var ArrayCollection|PersistentCollection|Version[]
      * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="package", cascade={"persist", "remove"}, orphanRemoval=true)
      */
@@ -225,6 +232,22 @@ class Package extends BaseEntity implements PackageInterface
             'type' => $this->getType(),
             'url'  => $this->getUrl(),
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRepo(): ?Repo
+    {
+        return $this->repo;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setRepo(?Repo $repo): void
+    {
+        $this->repo = $repo;
     }
 
     /**
