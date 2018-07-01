@@ -2,6 +2,7 @@
 
 namespace Shapecode\Devliver\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -40,12 +41,12 @@ class DefaultController extends Controller
 
     /**
      * @Route("/how-to", name="howto")
+     * @Template
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function howtoAction()
     {
-        return $this->render('@Devliver/Home/howto.html.twig', [
-        ]);
+        return [];
     }
 }
