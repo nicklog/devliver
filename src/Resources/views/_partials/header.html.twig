@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ path('devliver_index') }}"><i class="fas fa-cubes fa-fw"></i> Devliver</a>
+    {% if is_granted('ROLE_MANAGER') %}
+        <form class="form-inline ml-3 mr-auto">
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-info" target="_blank" href="{{ path('devliver_repository_index') }}">
+                        <span class="fas fa-cubes fa-fw"></span>
+                        {{ 'repository.singular'|trans }}
+                    </a>
+                    {% if latest_release.name != current_release.name and is_granted('ROLE_USER') %}
+                        <a class="btn btn-warning bs-tooltip" title="{{ latest_release.name }}" href="https://github.com/shapecode/devliver/releases" target="_blank">
+                            <span class="fas fa-chevron-circle-up fa-fw"></span>
+                            Update Available
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+        <ul class="navbar-nav mr-3">
+            <li class="nav-item dropdown">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                    <i class="fas fa-user fa-fw"></i>
+                    {{ app.user.username }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a href="{{ path('devliver_profile_index') }}" class="dropdown-item">
+                        <i class="fas fa-user fa-fw"></i>
+                        Profile
+                    </a>
+                    <a href="{{ path('fos_user_change_password') }}" class="dropdown-item">
+                        <i class="fas fa-key fa-fw"></i>
+                        Passwort ändern
+                    </a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ path('sonata_admin_dashboard') }}" class="dropdown-item">
+                            <i class="fas fa-lock fa-fw"></i>
+                            Admin
+                        </a>
+                    {% endif %}
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ path('fos_user_security_logout') }}" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt fa-fw"></i>
+                        Abmelden
+                    </a>
+                </div>
+            </li>
+        </ul>
+    {% endif %}
+</nav>

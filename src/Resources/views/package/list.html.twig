@@ -4,12 +4,6 @@
     <i class="fas fa-cube fa-fw"></i> {{ 'package.list.page_header'|trans }}
 {% endblock %}
 
-{% block pageActionsGroup %}
-    <a class="btn btn-info mr-1" target="_blank" href="{{ path('devliver_repository_index') }}"><span class="fas fa-cubes fa-fw"></span> {{ 'repository.singular'|trans }}</a>
-
-    {{ parent() }}
-{% endblock %}
-
 {% block pageActions %}
     <a class="btn btn-outline-primary bs-confirmation" href="{{ path('devliver_package_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time."><span class="fas fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
     <a class="btn btn-primary" href="{{ path('devliver_package_add') }}"><span class="fas fa-plus fa-fw"></span> {{ 'package.add_package'|trans }}</a>

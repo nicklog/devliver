@@ -1,0 +1,16 @@
+<footer class="footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <a href="https://github.com/shapecode/devliver" target="_blank">
+                    <i class="fas fa-cubes"></i>
+                    Devliver
+                </a>
+                {% if is_granted('ROLE_USER') %}
+                    v{{ current_release.name }}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</footer>
