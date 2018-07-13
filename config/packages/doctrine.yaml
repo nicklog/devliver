@@ -18,6 +18,7 @@ doctrine:
 
         types:
             json: Sonata\Doctrine\Types\JsonType
+            datetime: ASM\Doctrine\DBAL\Types\DateTimeUTCType
             datetimeutc: ASM\Doctrine\DBAL\Types\DateTimeUTCType
 
         # With Symfony 3.3, remove the `resolve:` prefix
