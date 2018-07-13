@@ -118,7 +118,10 @@
 
     <script type="text/javascript">
         $(function () {
-            $('.bs-tooltip').tooltip();
+            $('.bs-tooltip').tooltip({
+                container: 'body',
+                trigger: 'hover'
+            });
             $('.bs-confirmation').confirmation({
                 rootSelector: '.bs-confirmation',
                 popout: true,

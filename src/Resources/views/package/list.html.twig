@@ -93,18 +93,18 @@
                                 <td style="white-space: nowrap; width: 1px;">
                                     <div class="btn-group">
                                         {% if package.enable != true %}
-                                            <a href="{{ path('devliver_package_enable', { package: package.id }) }}" title="{{ 'action.enable'|trans }}" class="bs-tooltip btn btn-xs btn-outline-danger"><span class="fas fa-circle fa-fw"></span></a>
+                                            <a href="{{ path('devliver_package_enable', { package: package.id }) }}" data-title="{{ 'action.enable'|trans }}" class="bs-tooltip btn btn-xs btn-outline-danger"><span class="fas fa-circle fa-fw"></span></a>
                                         {% else %}
-                                            <a href="{{ path('devliver_package_disable', { package: package.id }) }}" title="{{ 'action.disable'|trans }}" class="bs-tooltip btn btn-xs btn-outline-success"><span class="fas fa-circle fa-fw"></span></a>
+                                            <a href="{{ path('devliver_package_disable', { package: package.id }) }}" data-title="{{ 'action.disable'|trans }}" class="bs-tooltip btn btn-xs btn-outline-success"><span class="fas fa-circle fa-fw"></span></a>
                                         {% endif %}
-                                        <a href="{{ path('devliver_package_edit', { package: package.id }) }}" title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
-                                        <a href="{{ path('devliver_package_update', { package: package.id, referer: true }) }}" title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fas fa-sync fa-fw"></span></a>
-                                        <a href="{{ path('devliver_package_delete', { package: package.id }) }}" data-title="Remove?" title="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation bs-tooltip btn-outline-danger"><span class="fas fa-trash fa-fw"></span></a>
+                                        <a href="{{ path('devliver_package_edit', { package: package.id }) }}" data-title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-xs btn-outline-primary"><span class="fas fa-edit fa-fw"></span></a>
+                                        <a href="{{ path('devliver_package_update', { package: package.id, referer: true }) }}" data-title="{{ 'action.update'|trans }}" class="bs-tooltip btn btn-xs btn-outline-info"><span class="fas fa-sync fa-fw"></span></a>
+                                        <a href="{{ path('devliver_package_delete', { package: package.id }) }}" data-confirmation="Remove?" data-title="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation bs-tooltip btn-outline-danger"><span class="fas fa-trash fa-fw"></span></a>
 
                                         {% if package.abandoned != true %}
-                                            <a href="{{ path('devliver_package_abandon', { package: package.id }) }}" title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-warning"><span class="fas fa-archive fa-fw"></span></a>
+                                            <a href="{{ path('devliver_package_abandon', { package: package.id }) }}" data-title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-warning"><span class="fas fa-archive fa-fw"></span></a>
                                         {% else %}
-                                            <a href="{{ path('devliver_package_unabandon', { package: package.id }) }}" title="{{ 'action.unabandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-dark"><span class="fas fa-archive fa-fw"></span></a>
+                                            <a href="{{ path('devliver_package_unabandon', { package: package.id }) }}" data-title="{{ 'action.unabandon'|trans }}" class="bs-tooltip btn btn-xs btn-outline-dark"><span class="fas fa-archive fa-fw"></span></a>
                                         {% endif %}
                                     </div>
                                 </td>

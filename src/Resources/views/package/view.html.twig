@@ -6,24 +6,24 @@
 
 {% block pageActionsGroup %}
     <div class="btn-group mr-2">
-        <a href="{{ path('devliver_package_delete', { package: package.id }) }}" data-title="Remove?" title="{{ 'action.remove'|trans }}" class="btn bs-confirmation bs-tooltip btn-danger"><span class="fas fa-trash fa-fw"></span></a>
+        <a href="{{ path('devliver_package_delete', { package: package.id }) }}" data-confirmation="Remove?" data-title="{{ 'action.remove'|trans }}" class="btn bs-confirmation bs-tooltip btn-danger"><span class="fas fa-trash fa-fw"></span></a>
 
         {% if package.abandoned != true %}
-            <a href="{{ path('devliver_package_abandon', { package: package.id }) }}" title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-warning"><span class="fas fa-archive fa-fw"></span></a>
+            <a href="{{ path('devliver_package_abandon', { package: package.id }) }}" data-title="{{ 'action.abandon'|trans }}" class="bs-tooltip btn btn-warning"><span class="fas fa-archive fa-fw"></span></a>
         {% else %}
-            <a href="{{ path('devliver_package_unabandon', { package: package.id }) }}" title="{{ 'action.unabandon'|trans }}" class="bs-tooltip btn btn-dark"><span class="fas fa-archive fa-fw"></span></a>
+            <a href="{{ path('devliver_package_unabandon', { package: package.id }) }}" data-title="{{ 'action.unabandon'|trans }}" class="bs-tooltip btn btn-dark"><span class="fas fa-archive fa-fw"></span></a>
         {% endif %}
     </div>
     <div class="btn-group mr-2">
         {% if package.enable != true %}
-            <a href="{{ path('devliver_package_enable', { package: package.id }) }}" title="{{ 'action.enable'|trans }}" class="bs-tooltip btn btn-danger"><span class="fas fa-circle fa-fw"></span></a>
+            <a href="{{ path('devliver_package_enable', { package: package.id }) }}" data-title="{{ 'action.enable'|trans }}" class="bs-tooltip btn btn-danger"><span class="fas fa-circle fa-fw"></span></a>
         {% else %}
-            <a href="{{ path('devliver_package_disable', { package: package.id }) }}" title="{{ 'action.disable'|trans }}" class="bs-tooltip btn btn-success"><span class="fas fa-circle fa-fw"></span></a>
+            <a href="{{ path('devliver_package_disable', { package: package.id }) }}" data-title="{{ 'action.disable'|trans }}" class="bs-tooltip btn btn-success"><span class="fas fa-circle fa-fw"></span></a>
         {% endif %}
-        <a href="{{ path('devliver_package_edit', { package: package.id }) }}" title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-primary"><span class="fas fa-edit fa-fw"></span></a>
+        <a href="{{ path('devliver_package_edit', { package: package.id }) }}" data-title="{{ 'action.edit'|trans }}" class="bs-tooltip btn btn-primary"><span class="fas fa-edit fa-fw"></span></a>
     </div>
     <div class="btn-group">
-        <a href="{{ path('devliver_package_update', { package: package.id }) }}" title="{{ 'action.update'|trans }}" class="btn btn-info bs-tooltip"><i class="fas fa-sync fa-fw"></i></a>
+        <a href="{{ path('devliver_package_update', { package: package.id }) }}" data-title="{{ 'action.update'|trans }}" class="btn btn-info bs-tooltip"><i class="fas fa-sync fa-fw"></i></a>
     </div>
 {% endblock %}
 
@@ -77,7 +77,7 @@
                             {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
                                 {#<a href="{{ author.homepage }}" target="_blank">#}
                             {#{%- endif -%}#}
-                            {#<img src="{{ gravatar(author.email, 50) }}" title="{{ author.name }}"/>#}
+                            {#<img src="{{ gravatar(author.email, 50) }}" data-title="{{ author.name }}"/>#}
                         {#{% endif -%}#}
                         {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
                             {#</a>#}
@@ -150,8 +150,8 @@
                                 </a>
                             </div>
                             <div class="float-right">
-                                <span class="badge badge-primary badge-pill" title="Downloads">{{ version_downloads(version)|number_format }}</span>
-                                <a href="{{ package_download_url(pi) }}" title="Download"><i class="fas fa-download bs-tooltip"></i></a>
+                                <span class="badge badge-primary badge-pill" data-title="Downloads">{{ version_downloads(version)|number_format }}</span>
+                                <a href="{{ package_download_url(pi) }}" data-title="Download"><i class="fas fa-download bs-tooltip"></i></a>
                             </div>
                         </li>
                     {% endfor %}
