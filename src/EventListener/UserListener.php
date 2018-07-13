@@ -54,6 +54,7 @@ class UserListener implements EventSubscriber
 
         if ($done) {
             $args->getObjectManager()->persist($args->getEntity());
+            $args->getObjectManager()->flush();
         }
     }
 
@@ -73,6 +74,12 @@ class UserListener implements EventSubscriber
             $token = CryptUtil::getRandomHash();
 
             $user->setApiToken($token);
+        }
+
+        if ($user->getRepositoryToken() === null) {
+            $token = CryptUtil::getRandomHash();
+
+            $user->setRepositoryToken($token);
         }
 
         return true;

@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  * @author  Nikita Loges
  * @company tenolo GbR
  */
-class TokenUserProvider implements UserProviderInterface
+abstract class TokenUserProvider implements UserProviderInterface
 {
 
     /** @var UserManager */
@@ -34,19 +34,7 @@ class TokenUserProvider implements UserProviderInterface
      *
      * @return null
      */
-    public function getUsernameForToken($token)
-    {
-        /** @var User $user */
-        $user = $this->userManager->findUserBy([
-            'apiToken' => $token
-        ]);
-
-        if ($user) {
-            return $user->getUsername();
-        }
-
-        return null;
-    }
+    abstract public function getUsernameForToken($token);
 
     /**
      * @inheritdoc
@@ -75,5 +63,4 @@ class TokenUserProvider implements UserProviderInterface
     {
         return User::class === $class;
     }
-
 }

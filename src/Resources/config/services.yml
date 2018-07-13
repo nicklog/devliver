@@ -176,7 +176,12 @@ services:
     devliver.security.token_authenticator:
         class: Shapecode\Devliver\Security\TokenAuthenticator
 
-    devliver.security.token_user_provider:
-        class: Shapecode\Devliver\Security\TokenUserProvider
+    devliver.security.api_token_user_provider:
+        class: Shapecode\Devliver\Security\ApiTokenUserProvider
+        arguments:
+            - '@fos_user.user_manager'
+
+    devliver.security.repository_token_user_provider:
+        class: Shapecode\Devliver\Security\RepositoryTokenUserProvider
         arguments:
             - '@fos_user.user_manager'

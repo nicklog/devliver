@@ -31,7 +31,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
         $token = $request->query->get('token');
 
         if (!$token) {
-            throw new BadCredentialsException();
+            return null;
         }
 
         return new PreAuthenticatedToken(

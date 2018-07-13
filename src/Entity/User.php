@@ -34,6 +34,12 @@ class User extends BaseUser
     protected $apiToken;
 
     /**
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true, unique=true)
+     */
+    protected $repositoryToken;
+
+    /**
      * @var ArrayCollection|PersistentCollection|Package[]
      * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Package", mappedBy="creator", cascade={"persist"})
      */
@@ -226,6 +232,22 @@ class User extends BaseUser
     public function setApiToken(string $apiToken)
     {
         $this->apiToken = $apiToken;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRepositoryToken(): ?string
+    {
+        return $this->repositoryToken;
+    }
+
+    /**
+     * @param null|string $repositoryToken
+     */
+    public function setRepositoryToken(?string $repositoryToken): void
+    {
+        $this->repositoryToken = $repositoryToken;
     }
 
     /**

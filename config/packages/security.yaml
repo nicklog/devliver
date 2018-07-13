@@ -14,8 +14,10 @@ security:
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username
-        token_provider:
-            id: devliver.security.token_user_provider
+        api_token_provider:
+            id: devliver.security.api_token_user_provider
+        repository_token_provider:
+            id: devliver.security.repository_token_user_provider
 
     firewalls:
         dev:
@@ -41,14 +43,18 @@ security:
             stateless: true
             simple_preauth:
                 authenticator: devliver.security.token_authenticator
-            provider: token_provider
+            provider: api_token_provider
 
         repo:
             pattern:            /repo/(.*)
             context:            repo
             anonymous:          false
+            stateless: true
             http_basic:
                 provider:       fos_userbundle
+            simple_preauth:
+                authenticator: devliver.security.token_authenticator
+                provider: repository_token_provider
 
         main:
             pattern:             .*
