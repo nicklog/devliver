@@ -3,6 +3,7 @@
 namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -34,9 +35,9 @@ class DefaultController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function packagesAction()
+    public function packagesAction(Request $request)
     {
-        return $this->redirectToRoute('devliver_repository_index');
+        return $this->redirectToRoute('devliver_repository_index', $request->query->all());
     }
 
     /**
