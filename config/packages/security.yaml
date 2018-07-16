@@ -48,7 +48,7 @@ security:
         repo:
             pattern:            /repo/(.*)
             context:            repo
-            anonymous:          false
+            anonymous:          true
             stateless: false
             http_basic:
                 provider:       fos_userbundle
@@ -69,10 +69,10 @@ security:
             anonymous:          true
 
     access_control:
+        - { path: ^/repo/t/, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/packages.json, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/repo/t, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
