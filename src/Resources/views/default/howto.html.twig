@@ -25,9 +25,10 @@
     </h2>
     <div class="row">
         <div class="col-md-12">
+
+            <h3>Use username and password</h3>
             <p>To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json in your projects.
-                Composer will you ask for credentials to access the packages.json when you update your project.</p>
-            <p>This is your repository of private packages.</p>
+                This is your repository of private packages.</p>
             <pre>
     {
         "repositories": [
@@ -38,6 +39,20 @@
         ]
     }
             </pre>
+            <p>Composer will you ask for credentials to access the packages.json when you update your project.</p>
+            <h3>Use token</h3>
+            <p>Or you use your Repository-Token</p>
+            <pre>
+    {
+        "repositories": [
+            {
+                "type": "composer",
+                "url": "{{ app.request.uriForPath('') }}/?token=REPOSITORY_TOKEN"
+            }
+        ]
+    }
+            </pre>
+            <p>You can find your Repository-Token on <a href="{{ path('devliver_profile_index') }}">your profile page</a>.</p>
         </div>
     </div>
 
