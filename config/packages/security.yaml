@@ -69,7 +69,6 @@ security:
             anonymous:          true
 
     access_control:
-        - { path: ^/repo/t/, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/packages.json, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }

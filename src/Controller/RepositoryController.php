@@ -33,19 +33,6 @@ class RepositoryController extends Controller
     }
 
     /**
-     * @Route("/repo/t/{token}/", name="token_index")
-     * @Route("/repo/t/{token}/packages.json", name="token_index_wp")
-     *
-     * @return Response
-     */
-    public function tokenAction(Request $request)
-    {
-        return $this->redirectToRoute('devliver_repository_index', [
-            'token' => $request->get('token')
-        ]);
-    }
-
-    /**
      * @Route("/repo/provider/{vendor}/{project}.json", name="provider")
      * @Route("/repo/provider", name="provider_base")
      *
