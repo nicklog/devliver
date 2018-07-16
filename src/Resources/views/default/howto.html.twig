@@ -47,7 +47,14 @@
         "repositories": [
             {
                 "type": "composer",
-                "url": "{{ url('devliver_repository_token_index', { token: 'REPOSITORY_TOKEN' }) }}"
+                "url": "{{ app.request.uriForPath('') }}",
+                "options":  {
+                    "http": {
+                        "header": [
+                            "token: REPOSITORY_TOKEN"
+                        ]
+                    }
+                }
             }
         ]
     }
