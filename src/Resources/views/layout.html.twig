@@ -23,49 +23,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky">
-                {% if is_granted('ROLE_MANAGER') %}
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Navigation</span>
-                    </h6>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('devliver_package_index') }}">
-                                <i class="fas fa-cube fa-fw"></i>
-                                {{ 'menu.packages'|trans }}
-                            </a>
-                        </li>
-                    </ul>
-                {% endif %}
-
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>About</span>
-                </h6>
-                <ul class="nav flex-column">
-                    {% if is_granted('ROLE_USER') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('devliver_howto') }}">
-                                <i class="fas fa-question-circle fa-fw"></i>
-                                How-To
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('devliver_software_index') }}">
-                                <i class="fas fa-cube fa-fw"></i>
-                                Used Software
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/shapecode/devliver" target="_blank">
-                            <i class="fas fa-code-branch fa-fw"></i>
-                            Contribute
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        {% include '@Devliver/_partials/sidebar.html.twig' %}
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             {% block pageHeaderWrapper %}

@@ -9,6 +9,16 @@
                 {% if is_granted('ROLE_USER') %}
                     v{{ current_release.name }}
                 {% endif %}
+                <a class="ml-2" href="https://github.com/shapecode/devliver" target="_blank">
+                    <i class="fas fa-code-branch fa-fw"></i>
+                    Contribute
+                </a>
+                {% if is_granted('ROLE_USER') %}
+                    <a class="ml-2" href="{{ path('devliver_software_index') }}">
+                        <i class="fas fa-cube fa-fw"></i>
+                        Used Software
+                    </a>
+                {% endif %}
             </div>
         </div>
 
