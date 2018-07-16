@@ -2,6 +2,8 @@
 
 Your private self-hosted composer repository.
 
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/nicklog/donate)
+
 ##  Requirements
 
 * **PHP 7.1** or higher
