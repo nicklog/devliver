@@ -29,7 +29,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-9">
             {% if package.autoUpdate == false %}
                 <div class="mb-3">
                     <div class="alert alert-warning">
@@ -54,7 +54,7 @@
                 </div>
             {% endfor %}
 
-            {% if package.readme is not null %}
+            {% if package.readme %}
                 <div class="border-top mt-3 pt-3">
                     <div class="row">
                         <div class="col-md-12">
@@ -69,30 +69,30 @@
                 </div>
             {% endif %}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             {#{% if info.authors and info.authors|length > 0 %}#}
-                {#<p class="authors">#}
-                    {#{% for author in info.authors %}#}
-                        {#{% if author.email is defined and author.email is not empty %}#}
-                            {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
-                                {#<a href="{{ author.homepage }}" target="_blank">#}
-                            {#{%- endif -%}#}
-                            {#<img src="{{ gravatar(author.email, 50) }}" data-title="{{ author.name }}"/>#}
-                        {#{% endif -%}#}
-                        {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
-                            {#</a>#}
-                        {#{%- endif -%}#}
-                    {#{% endfor %}#}
-                {#</p>#}
+            {#<p class="authors">#}
+            {#{% for author in info.authors %}#}
+            {#{% if author.email is defined and author.email is not empty %}#}
+            {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
+            {#<a href="{{ author.homepage }}" target="_blank">#}
+            {#{%- endif -%}#}
+            {#<img src="{{ gravatar(author.email, 50) }}" data-title="{{ author.name }}"/>#}
+            {#{% endif -%}#}
+            {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
+            {#</a>#}
+            {#{%- endif -%}#}
+            {#{% endfor %}#}
+            {#</p>#}
             {#{% endif %}#}
 
             <div class="card mb-3">
                 <div class="card-header py-1 px-2">Infos</div>
                 <div class="list-group list-group-flush">
                     {% if info.homepage %}
-                        <a href="{{ info.homepage }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
+                        <a href="{{ info.homepage }}" title="{{ info.homepage }}" class="list-group-item list-group-item-action py-1 px-2" target="_blank">
                             <i class="fas fa-home fa-fw"></i>
-                            Homepage
+                            Homepage ({{ info.homepage }})
                         </a>
                     {% endif %}
                     {% if info.support.source is defined %}
@@ -169,16 +169,18 @@
 {% block javascripts %}
     {{ parent() }}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/markdown.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/html.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    {% if package.readme %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/php.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/css.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/markdown.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/html.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    {% endif %}
 
     <script type="text/javascript">
         $(function () {
