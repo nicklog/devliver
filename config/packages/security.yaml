@@ -49,7 +49,7 @@ security:
             pattern:            /repo/(.*)
             context:            repo
             anonymous:          false
-            stateless: true
+            stateless: false
             http_basic:
                 provider:       fos_userbundle
             simple_preauth:
