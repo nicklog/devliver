@@ -2,12 +2,12 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
 use Shapecode\Devliver\Entity\Package;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class RepositoryController
@@ -30,6 +30,19 @@ class RepositoryController extends Controller
         $json = $this->get('devliver.packages_dumper')->dumpPackagesJson($this->getUser());
 
         return new Response($json);
+    }
+
+    /**
+     * @Route("/repo/t/{token}/", name="token_index")
+     * @Route("/repo/t/{token}/packages.json", name="token_index_wp")
+     *
+     * @return Response
+     */
+    public function tokenAction(Request $request)
+    {
+        return $this->redirectToRoute('devliver_repository_index', [
+            'token' => $request->get('token')
+        ]);
     }
 
     /**

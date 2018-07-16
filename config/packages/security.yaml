@@ -72,6 +72,7 @@ security:
         - { path: ^/packages.json, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/repo/t, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
