@@ -46,7 +46,10 @@ class PackageController extends Controller
         $qb->orderBy($sort, $direction);
 
         if (!empty($filter)) {
-            $qb->andWhere($qb->expr()->like('p.name', ':filter'));
+            $qb->orWhere($qb->expr()->like('p.name', ':filter'));
+            $qb->orWhere($qb->expr()->like('p.readme', ':filter'));
+            $qb->orWhere($qb->expr()->like('p.url', ':filter'));
+            $qb->orWhere($qb->expr()->like('p.replacementPackage', ':filter'));
             $qb->setParameter('filter', '%' . $filter . '%');
         }
 
