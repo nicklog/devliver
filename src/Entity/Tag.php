@@ -16,7 +16,7 @@ use Doctrine\ORM\PersistentCollection;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\TagRepository")
  */
-class Tag extends BaseEntity
+class Tag extends BaseEntity implements TagInterface
 {
 
     /**
@@ -41,7 +41,7 @@ class Tag extends BaseEntity
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getName(): string
     {
@@ -49,7 +49,7 @@ class Tag extends BaseEntity
     }
 
     /**
-     * @param string $name
+     * @inheritdoc
      */
     public function setName(string $name): void
     {

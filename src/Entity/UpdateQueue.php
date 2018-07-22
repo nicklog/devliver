@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\UpdateQueueRepository")
  */
-class UpdateQueue extends BaseEntity
+class UpdateQueue extends BaseEntity implements UpdateQueueInterface
 {
 
     /**
@@ -36,7 +36,7 @@ class UpdateQueue extends BaseEntity
     protected $lastCalledAt;
 
     /**
-     * @return PackageInterface
+     * @inheritdoc
      */
     public function getPackage(): PackageInterface
     {
@@ -44,7 +44,7 @@ class UpdateQueue extends BaseEntity
     }
 
     /**
-     * @param PackageInterface $package
+     * @inheritdoc
      */
     public function setPackage(PackageInterface $package): void
     {
@@ -52,7 +52,7 @@ class UpdateQueue extends BaseEntity
     }
 
     /**
-     * @return \DateTime|null
+     * @inheritdoc
      */
     public function getLockedAt(): ?\DateTime
     {
@@ -60,7 +60,7 @@ class UpdateQueue extends BaseEntity
     }
 
     /**
-     * @param \DateTime|null $lockedAt
+     * @inheritdoc
      */
     public function setLockedAt(?\DateTime $lockedAt): void
     {
@@ -68,7 +68,7 @@ class UpdateQueue extends BaseEntity
     }
 
     /**
-     * @return \DateTime
+     * @inheritdoc
      */
     public function getLastCalledAt(): \DateTime
     {
@@ -76,7 +76,7 @@ class UpdateQueue extends BaseEntity
     }
 
     /**
-     * @param \DateTime $lastCalledAt
+     * @inheritdoc
      */
     public function setLastCalledAt(\DateTime $lastCalledAt): void
     {
