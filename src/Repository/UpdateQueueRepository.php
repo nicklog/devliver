@@ -11,7 +11,6 @@ use Shapecode\Devliver\Entity\UpdateQueue;
  *
  * @package Shapecode\Devliver\Repository
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class UpdateQueueRepository extends EntityRepository
 {

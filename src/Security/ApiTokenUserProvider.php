@@ -9,7 +9,6 @@ use Shapecode\Devliver\Entity\User;
  *
  * @package Shapecode\Devliver\Security
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class ApiTokenUserProvider extends TokenUserProvider
 {

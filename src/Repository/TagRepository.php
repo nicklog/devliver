@@ -10,7 +10,6 @@ use Shapecode\Devliver\Entity\Tag;
  *
  * @package Shapecode\Devliver\Repository
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class TagRepository extends EntityRepository
 {

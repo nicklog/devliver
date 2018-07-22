@@ -7,7 +7,6 @@ namespace Shapecode\Devliver\Entity;
  *
  * @package Shapecode\Devliver\Entity
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 interface AuthorInterface extends BaseEntityInterface
 {

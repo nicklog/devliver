@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  *
  * @package Shapecode\Devliver\Security
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 abstract class TokenUserProvider implements UserProviderInterface
 {
