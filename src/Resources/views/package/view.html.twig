@@ -70,22 +70,6 @@
             {% endif %}
         </div>
         <div class="col-md-3">
-            {#{% if info.authors and info.authors|length > 0 %}#}
-            {#<p class="authors">#}
-            {#{% for author in info.authors %}#}
-            {#{% if author.email is defined and author.email is not empty %}#}
-            {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
-            {#<a href="{{ author.homepage }}" target="_blank">#}
-            {#{%- endif -%}#}
-            {#<img src="{{ gravatar(author.email, 50) }}" data-title="{{ author.name }}"/>#}
-            {#{% endif -%}#}
-            {#{%- if author.homepage is defined and author.homepage is not empty -%}#}
-            {#</a>#}
-            {#{%- endif -%}#}
-            {#{% endfor %}#}
-            {#</p>#}
-            {#{% endif %}#}
-
             <div class="card mb-3">
                 <div class="card-header py-1 px-2">Infos</div>
                 <div class="list-group list-group-flush">

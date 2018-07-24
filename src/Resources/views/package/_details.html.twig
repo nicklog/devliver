@@ -19,23 +19,29 @@
 </div>
 
 <div class="border-bottom py-2">
+    {% if info.authors and info.authors|length > 0 %}
+        <span class="mr-2">
+            {% for author in info.authors %}
+                {% if author.email is defined and author.email is not empty %}
+                    {%- if author.homepage is defined and author.homepage is not empty -%}
+                        <a href="{{ author.homepage }}" target="_blank" style="text-decoration: none;">
+                    {%- endif -%}
+                    <img src="{{ gravatar(author.email, 50) }}" class="bs-tooltip" data-title="{{ author.name }}"/>
+                {% endif -%}
+                {%- if author.homepage is defined and author.homepage is not empty -%}
+                    </a>
+                {%- endif -%}
+            {% endfor %}
+        </span>
+    {% endif %}
+</div>
+
+<div class="border-bottom py-2">
     <div>
         <i class="fas fa-bookmark fa-fw"></i> {{ info.sourceReference }}
     </div>
     <div>
         <i class="fas fa-copyright fa-fw"></i> {{ info.license ? info.license|join(', ') : 'Unknown' }}
-    </div>
-    <div>
-        <i class="fas fa-users fa-fw"></i>
-        {% for author in info.authors %}
-            <span>
-                        {% if author.homepage is defined and author.homepage is not empty %}
-                            <a href="{{ author.homepage }}" target="_blank">{{ author.name }}</a>
-                        {% else %}
-                            {{ author.name }}
-                        {% endif %}
-                {% if author.email is defined and author.email is not empty %} &lt;<a href="mailto:{{ author.email }}">{{ author.email }}</a>&gt;{% endif %}{% if loop.last != true %}, {% endif %}</span>
-        {% endfor %}
     </div>
     <div>
         <i class="fas fa-hashtag fa-fw"></i>
