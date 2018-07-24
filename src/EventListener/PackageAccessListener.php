@@ -15,7 +15,6 @@ use Shapecode\Devliver\Repository\UserRepository;
  *
  * @package Shapecode\Devliver\EventListener
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class PackageAccessListener implements EventSubscriber
 {

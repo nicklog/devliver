@@ -10,7 +10,6 @@ use Shapecode\Devliver\Entity\Author;
  *
  * @package Shapecode\Devliver\Repository
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class AuthorRepository extends EntityRepository
 {

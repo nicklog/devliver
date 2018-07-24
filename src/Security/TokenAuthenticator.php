@@ -17,7 +17,6 @@ use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterfa
  *
  * @package Shapecode\Devliver\Security
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class TokenAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {

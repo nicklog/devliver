@@ -12,7 +12,6 @@ use Doctrine\ORM\PersistentCollection;
  *
  * @package Shapecode\Devliver\Entity
  * @author  Nikita Loges
- * @company tenolo GbR
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\AuthorRepository")
  */

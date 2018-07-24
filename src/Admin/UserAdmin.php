@@ -11,7 +11,6 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  *
  * @package Shapecode\Devliver\Admin
  * @author  Nikita Loges
- * @company tenolo GbR
  */
 class UserAdmin extends \Sonata\UserBundle\Admin\Entity\UserAdmin
 {
