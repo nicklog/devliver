@@ -4,8 +4,6 @@ framework:
     translator:
         fallbacks: ['en']
     secret: '%env(APP_SECRET)%'
-    router:
-        strict_requirements: ~
     form: ~
     templating:
         engines: ['twig']
