@@ -1,6 +1,4 @@
 {
-    "name": "shapecode/devliver",
-    "description": "Your private self hosted composer repository with user management",
     "license": "LGPL-3.0",
     "type": "project",
     "autoload": {
