@@ -6,6 +6,7 @@ use Composer\Package\CompletePackageInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Download;
+use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\VersionInterface;
 use Shapecode\Devliver\Model\PackageAdapter;
@@ -73,6 +74,7 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('version_downloads', [$this, 'getVersionDownloadsCounter']),
             new TwigFunction('package_downloads', [$this, 'getPackageDownloadsCounter']),
             new TwigFunction('package_download_url', [$this, 'getPackageDownloadUrl']),
+            new TwigFunction('package_url', [$this, 'getPackageUrl']),
             new TwigFunction('package_adapter', [$this, 'getPackageAdapter']),
             new TwigFunction('package_readme', [$this, 'getPackageReadme'], ['is_safe' => ['html']]),
         ];
@@ -123,6 +125,28 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     public function getPackageAdapter(CompletePackageInterface $package)
     {
         return new PackageAdapter($package);
+    }
+
+    /**
+     * @param $name
+     *
+     * @return string
+     */
+    public function getPackageUrl($name)
+    {
+        $repo = $this->registry->getRepository(Package::class);
+
+        $package = $repo->findOneBy([
+            'name' => $name
+        ]);
+
+        if ($package) {
+            return $this->router->generate('devliver_package_view', [
+                'package' => $package->getId()
+            ]);
+        }
+
+        return 'https://packagist.org/packages/' . $name;
     }
 
     /**

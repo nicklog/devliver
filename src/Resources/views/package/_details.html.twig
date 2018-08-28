@@ -60,9 +60,12 @@
                     {% if attribute(info, type)|length > 0 %}
                         <ul class="list-group list-group-flush">
                             {% for name, version in attribute(info, type) %}
-                                {% if type != 'suggests' %}{% set version  = version.prettyConstraint %}{% endif %}
+                                {% if type != 'suggests' %}
+                                    {% set version = version.prettyConstraint %}
+                                {% endif %}
+
                                 <li class="list-group-item d-flex justify-content-between align-items-center py-1 px-2">
-                                    <a href="https://packagist.org/packages/{{ name }}" target="_blank">
+                                    <a href="{{ package_url(name) }}" target="_blank">
                                         {{ name }}
                                     </a>
                                     <span class="badge badge-primary badge-pill">
