@@ -60,11 +60,25 @@
         "knplabs/knp-paginator-bundle": "^2.7",
         "ornicar/gravatar-bundle": "^1.2",
         "knplabs/knp-menu-bundle": "^2.0",
-        "austinsmorris/doctrine-dbal-datetimeutc": "^2.0"
+        "austinsmorris/doctrine-dbal-datetimeutc": "^2.0",
+
+        "oomphinc/composer-installers-extender": "^1.1",
+        "npm-asset/fortawesome--fontawesome-free": "~5.2",
+        "npm-asset/jquery": "~3.3",
+        "npm-asset/popper.js": "~1.14",
+        "npm-asset/bootstrap-confirmation2": "~4.0",
+        "npm-asset/bootswatch": "~4.1",
+        "npm-asset/bootstrap": "~4.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "conflict": {
         "symfony/symfony": "*"
     },
@@ -101,6 +115,16 @@
         },
         "incenteev-parameters": {
             "file": "parameters.yml"
+        },
+        "installer-types": [
+            "bower-asset",
+            "npm-asset"
+        ],
+        "installer-paths": {
+            "public/vendor/{$name}/": [
+                "type:bower-asset",
+                "type:npm-asset"
+            ]
         }
     },
     "minimum-stability": "dev",
