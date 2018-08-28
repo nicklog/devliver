@@ -3,13 +3,13 @@
 namespace Shapecode\Devliver\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\Routing\Annotation\Route;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Form\Type\Forms\PackageAbandonType;
 use Shapecode\Devliver\Form\Type\Forms\PackageType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Callback;
 
 /**
@@ -18,13 +18,13 @@ use Symfony\Component\Validator\Constraints\Callback;
  * @package Shapecode\Devliver\Controller
  * @author  Nikita Loges
  *
- * @Route("/packages", name="devliver_package_")
+ * @Route("/package", name="devliver_package_")
  */
 class PackageController extends Controller
 {
 
     /**
-     * @Route("", name="index")
+     * @Route("s", name="index")
      * @Template()
      *
      * @param Request $request
@@ -168,18 +168,26 @@ class PackageController extends Controller
     }
 
     /**
-     * @Route("/{package}/view", name="view")
+     * @Route("/{package}/view", name="view", requirements={"package"="\d+"})
+     * @Route("/{package}/{slug}", name="view_slug", requirements={"package"="\d+"})
      * @Template()
      *
      * @param Package $package
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
      */
-    public function viewAction(Package $package)
+    public function viewAction(Request $request, Package $package)
     {
         if (!$package->getVersions()->count()) {
             return $this->redirectToRoute('devliver_package_update', [
                 'package' => $package->getId()
+            ]);
+        }
+
+        if ($request->get('_route') === 'devliver_package_view') {
+            return $this->redirectToRoute('devliver_package_view_slug', [
+                'package' => $package->getId(),
+                'slug'    => $this->get('cocur_slugify_custom')->slugify($package->getName())
             ]);
         }
 

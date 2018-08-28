@@ -61,6 +61,7 @@
         "ornicar/gravatar-bundle": "^1.2",
         "knplabs/knp-menu-bundle": "^2.0",
         "austinsmorris/doctrine-dbal-datetimeutc": "^2.0",
+        "cocur/slugify": "^3.1",
 
         "oomphinc/composer-installers-extender": "^1.1",
         "npm-asset/fortawesome--fontawesome-free": "~5.2",

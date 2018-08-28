@@ -8,6 +8,10 @@ parameters:
 
 services:
 
+    cocur_slugify_custom:
+        class: Cocur\Slugify\Slugify
+        public: true
+
     cache.tag.app:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
         decorates: cache.app
