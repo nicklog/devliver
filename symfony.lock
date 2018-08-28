@@ -164,9 +164,6 @@
     "npm-asset/fortawesome--fontawesome-free": {
         "version": "5.2.0"
     },
-    "npm-asset/highlight.js": {
-        "version": "9.12.0"
-    },
     "npm-asset/jquery": {
         "version": "3.3.1"
     },
