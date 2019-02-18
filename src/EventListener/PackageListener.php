@@ -5,7 +5,7 @@ namespace Shapecode\Devliver\EventListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\Package;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
 /**
@@ -49,7 +49,7 @@ class PackageListener implements EventSubscriber
     {
         $entity = $event->getObject();
 
-        if ($entity instanceof PackageInterface) {
+        if ($entity instanceof Package) {
             $this->cache->invalidateTags(['packages.json']);
         }
     }
@@ -61,7 +61,7 @@ class PackageListener implements EventSubscriber
     {
         $entity = $event->getObject();
 
-        if ($entity instanceof PackageInterface) {
+        if ($entity instanceof Package) {
             $this->deleteTags($entity);
         }
     }
@@ -73,17 +73,17 @@ class PackageListener implements EventSubscriber
     {
         $entity = $event->getObject();
 
-        if ($entity instanceof PackageInterface) {
+        if ($entity instanceof Package) {
             $this->deleteTags($entity);
         }
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    protected function deleteTags(PackageInterface $package)
+    protected function deleteTags(Package $package)
     {
         $this->cache->clear();
 //        $this->cache->invalidateTags(['packages-package-' . $package->getId()]);

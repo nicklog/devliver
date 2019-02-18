@@ -3,7 +3,7 @@
 namespace Shapecode\Devliver\Util;
 
 use Composer\Package\CompletePackage;
-use Shapecode\Devliver\Entity\VersionInterface;
+use Shapecode\Devliver\Entity\Version;
 
 /**
  * Class ComposerUtil
@@ -15,13 +15,13 @@ class ComposerUtil
 {
 
     /**
-     * @param VersionInterface[] $versions
+     * @param Version[] $versions
      *
-     * @return VersionInterface[]
+     * @return Version[]
      */
     public static function sortPackagesByVersion(array $versions): array
     {
-        uasort($versions, function (VersionInterface $a, VersionInterface $b) {
+        uasort($versions, function (Version $a, Version $b) {
             $a = $a->getPackageInformation();
             $b = $b->getPackageInformation();
 

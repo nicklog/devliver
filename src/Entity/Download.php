@@ -12,18 +12,18 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\DownloadRepository")
  */
-class Download extends BaseEntity implements DownloadInterface
+class Download extends BaseEntity
 {
 
     /**
-     * @var PackageInterface
+     * @var Package
      * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="downloads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     protected $package;
 
     /**
-     * @var VersionInterface
+     * @var Version
      * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="downloads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
@@ -38,7 +38,7 @@ class Download extends BaseEntity implements DownloadInterface
     /**
      * @inheritdoc
      */
-    public function getPackage(): PackageInterface
+    public function getPackage(): Package
     {
         return $this->package;
     }
@@ -46,7 +46,7 @@ class Download extends BaseEntity implements DownloadInterface
     /**
      * @inheritdoc
      */
-    public function setPackage(PackageInterface $package)
+    public function setPackage(Package $package)
     {
         $this->package = $package;
     }
@@ -62,7 +62,7 @@ class Download extends BaseEntity implements DownloadInterface
     /**
      * @inheritdoc
      */
-    public function setVersion(VersionInterface $version)
+    public function setVersion(Version $version)
     {
         $this->version = $version;
     }

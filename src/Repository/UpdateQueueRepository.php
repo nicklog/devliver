@@ -3,7 +3,7 @@
 namespace Shapecode\Devliver\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\UpdateQueue;
 
 /**
@@ -16,11 +16,11 @@ class UpdateQueueRepository extends EntityRepository
 {
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @return null|object|UpdateQueue
      */
-    public function findOneByPackage(PackageInterface $package): ?UpdateQueue
+    public function findOneByPackage(Package $package): ?UpdateQueue
     {
         return $this->findOneBy([
             'package' => $package->getId()

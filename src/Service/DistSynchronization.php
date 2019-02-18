@@ -8,7 +8,7 @@ use Composer\Package\Archiver\ArchiveManager;
 use Composer\Package\CompletePackageInterface;
 use Composer\Util\ComposerMirror;
 use Shapecode\Devliver\Composer\ComposerManager;
-use Shapecode\Devliver\Entity\PackageInterface as EntityPackageInterface;
+use Shapecode\Devliver\Entity\Package as EntityPackage;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -17,8 +17,10 @@ use Symfony\Component\Filesystem\Filesystem;
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
  */
-class DistSynchronization implements DistSynchronizationInterface
+class DistSynchronization
 {
+
+    public const DIST_FORMAT = '/%package%/%reference%.%type%';
 
     /** @var ComposerManager */
     protected $composerManager;
@@ -42,7 +44,7 @@ class DistSynchronization implements DistSynchronizationInterface
     /**
      * @inheritdoc
      */
-    public function getDistFilename(EntityPackageInterface $dbPackage, $ref): string
+    public function getDistFilename(EntityPackage $dbPackage, $ref): string
     {
         $cacheFile = $this->getCacheFile($dbPackage, $ref);
 
@@ -66,12 +68,12 @@ class DistSynchronization implements DistSynchronizationInterface
     }
 
     /**
-     * @param EntityPackageInterface   $dbPackage
-     * @param CompletePackageInterface $package
+     * @param EntityPackage   $dbPackage
+     * @param CompletePackage $package
      *
      * @return string
      */
-    protected function downloadPackage(EntityPackageInterface $dbPackage, CompletePackageInterface $package)
+    protected function downloadPackage(EntityPackage $dbPackage, CompletePackageInterface $package)
     {
         $cacheFile = $this->getCacheFile($dbPackage, $package->getSourceReference());
         $cacheDir = dirname($cacheFile);
@@ -110,9 +112,9 @@ class DistSynchronization implements DistSynchronizationInterface
      *
      * @return string
      */
-    protected function getCacheFile(EntityPackageInterface $dbPackage, $ref): string
+    protected function getCacheFile(EntityPackage $dbPackage, $ref): string
     {
-        $targetDir = $this->distDir.DistSynchronizationInterface::DIST_FORMAT;
+        $targetDir = $this->distDir.DistSynchronization::DIST_FORMAT;
 
         $name = $dbPackage->getName();
         $type = $this->format;

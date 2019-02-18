@@ -20,11 +20,11 @@ use Doctrine\ORM\PersistentCollection;
  *     @ORM\Index(columns={"package_id", "name"})
  * })
  */
-class Version extends BaseEntity implements VersionInterface
+class Version extends BaseEntity
 {
 
     /**
-     * @var PackageInterface
+     * @var Package
      * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="versions", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
@@ -79,17 +79,17 @@ class Version extends BaseEntity implements VersionInterface
     }
 
     /**
-     * @return PackageInterface
+     * @return Package
      */
-    public function getPackage(): PackageInterface
+    public function getPackage(): Package
     {
         return $this->package;
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      */
-    public function setPackage(PackageInterface $package)
+    public function setPackage(Package $package)
     {
         $this->package = $package;
     }

@@ -7,6 +7,10 @@ parameters:
     devliver_composer_dir:  '%devliver_dir%/composer'
 
 services:
+    _default:
+        autowire: true
+        autoconfigure: true
+        public: true
 
     cocur_slugify_custom:
         class: Cocur\Slugify\Slugify
@@ -117,38 +121,11 @@ services:
             - '@router'
 
     # command
-    devliver.console_command.migrate:
-        class: Shapecode\Devliver\Command\MigrateCommand
-        tags:
-            - { name: console.command }
-
-    devliver.console_command.packages_update:
-        class: Shapecode\Devliver\Command\PackagesUpdateCommand
-        arguments:
-            - '@doctrine'
-            - '@devliver.package_synchronization'
-        tags:
-            - { name: console.command }
-
-    devliver.console_command.packages_queue:
-        class: Shapecode\Devliver\Command\PackagesQueueCommand
-        arguments:
-            - '@doctrine'
-            - '@devliver.package_synchronization'
-        tags:
-            - { name: console.command }
-
-    devliver.console_command.self_update:
-        class: Shapecode\Devliver\Command\SelfUpdateCommand
-        arguments:
-            - '@devliver.github_release'
-            - '@kernel'
-        tags:
-            - { name: console.command }
+    Shapecode\Devliver\Command\:
+        resource: '../../Command/*'
 
     # menu
-    devliver.menu_builder:
-        class: Shapecode\Devliver\Menu\Builder
+    Shapecode\Devliver\Menu\Builder:
         arguments:
             - "@translator"
             - "@knp_menu.factory"
@@ -168,13 +145,7 @@ services:
             - { name: knp_menu.menu, alias: main_right }
 
     # form
-    devliver.form_validator.package:
-        class: Shapecode\Devliver\Form\Validator\PackageValidator
-        public: true
-        arguments:
-            - '@devliver.composer_manager'
-            - '@devliver.repository_helper'
-            - '@doctrine'
+    Shapecode\Devliver\Form\Validator\PackageValidator: ~
 
     # security
     devliver.security.token_authenticator:

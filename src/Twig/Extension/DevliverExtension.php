@@ -7,8 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Download;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\PackageInterface;
-use Shapecode\Devliver\Entity\VersionInterface;
+use Shapecode\Devliver\Entity\Version;
 use Shapecode\Devliver\Model\PackageAdapter;
 use Shapecode\Devliver\Repository\DownloadRepository;
 use Shapecode\Devliver\Service\GitHubRelease;
@@ -56,8 +55,7 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
         GitHubRelease $github,
         ComposerManager $composerManager,
         RepositoryHelper $repositoryHelper
-    )
-    {
+    ) {
         $this->registry = $registry;
         $this->router = $router;
         $this->github = $github;
@@ -87,16 +85,16 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFilter('sha1', 'sha1'),
-            new TwigFilter('package_adapter', [$this, 'getPackageAdapter'])
+            new TwigFilter('package_adapter', [$this, 'getPackageAdapter']),
         ];
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @return int
      */
-    public function getPackageDownloadsCounter(PackageInterface $package)
+    public function getPackageDownloadsCounter(Package $package)
     {
         /** @var DownloadRepository $repo */
         $repo = $this->registry->getRepository(Download::class);
@@ -105,11 +103,11 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
-     * @param PackageInterface $version
+     * @param Version $version
      *
      * @return int
      */
-    public function getVersionDownloadsCounter(VersionInterface $version)
+    public function getVersionDownloadsCounter(Version $version)
     {
         /** @var DownloadRepository $repo */
         $repo = $this->registry->getRepository(Download::class);
@@ -137,16 +135,16 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
         $repo = $this->registry->getRepository(Package::class);
 
         $package = $repo->findOneBy([
-            'name' => $name
+            'name' => $name,
         ]);
 
         if ($package) {
             return $this->router->generate('devliver_package_view', [
-                'package' => $package->getId()
+                'package' => $package->getId(),
             ]);
         }
 
-        return 'https://packagist.org/packages/' . $name;
+        return 'https://packagist.org/packages/'.$name;
     }
 
     /**
@@ -167,11 +165,11 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @return null|string
      */
-    public function getPackageReadme(PackageInterface $package)
+    public function getPackageReadme(Package $package)
     {
         $repository = $this->composerManager->createRepoByPackage(null, $package);
 

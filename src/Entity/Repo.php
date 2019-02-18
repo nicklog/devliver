@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\RepoRepository")
  */
-class Repo extends BaseEntity implements RepoInterface
+class Repo extends BaseEntity
 {
 
     /**

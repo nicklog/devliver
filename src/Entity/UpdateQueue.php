@@ -12,11 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\UpdateQueueRepository")
  */
-class UpdateQueue extends BaseEntity implements UpdateQueueInterface
+class UpdateQueue extends BaseEntity
 {
 
     /**
-     * @var PackageInterface
+     * @var Package
      * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
@@ -37,7 +37,7 @@ class UpdateQueue extends BaseEntity implements UpdateQueueInterface
     /**
      * @inheritdoc
      */
-    public function getPackage(): PackageInterface
+    public function getPackage(): Package
     {
         return $this->package;
     }
@@ -45,7 +45,7 @@ class UpdateQueue extends BaseEntity implements UpdateQueueInterface
     /**
      * @inheritdoc
      */
-    public function setPackage(PackageInterface $package): void
+    public function setPackage(Package $package): void
     {
         $this->package = $package;
     }

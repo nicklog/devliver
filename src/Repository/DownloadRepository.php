@@ -3,8 +3,8 @@
 namespace Shapecode\Devliver\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\PackageInterface;
-use Shapecode\Devliver\Entity\VersionInterface;
+use Shapecode\Devliver\Entity\Package;
+use Shapecode\Devliver\Entity\Version;
 
 /**
  * Class DownloadRepository
@@ -16,11 +16,11 @@ class DownloadRepository extends EntityRepository
 {
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @return mixed
      */
-    public function countPackageDownloads(PackageInterface $package)
+    public function countPackageDownloads(Package $package)
     {
         $qb = $this->createQueryBuilder('p');
         $qb->select('count(p.id)');
@@ -32,11 +32,11 @@ class DownloadRepository extends EntityRepository
     }
 
     /**
-     * @param VersionInterface $version
+     * @param Version $version
      *
      * @return mixed
      */
-    public function countVersionDownloads(VersionInterface $version)
+    public function countVersionDownloads(Version $version)
     {
         $qb = $this->createQueryBuilder('p');
         $qb->select('count(p.id)');

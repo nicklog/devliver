@@ -9,7 +9,6 @@ use Composer\Repository\RepositoryFactory;
 use Composer\Repository\RepositoryInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\PackageInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -74,12 +73,12 @@ class ComposerManager
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      * @param IOInterface|null $io
      *
      * @return RepositoryInterface
      */
-    public function createRepository(PackageInterface $package, IOInterface $io = null)
+    public function createRepository(Package $package, IOInterface $io = null)
     {
         if ($io === null) {
             $io = $this->createIO();
@@ -112,17 +111,17 @@ class ComposerManager
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @return Config
      */
-    public function createRepositoryConfig(PackageInterface $package)
+    public function createRepositoryConfig(Package $package)
     {
         return $this->createRepositoriesConfig([$package]);
     }
 
     /**
-     * @param PackageInterface[] $packages
+     * @param Package[] $packages
      *
      * @return Config
      */
@@ -130,7 +129,7 @@ class ComposerManager
     {
         $config = $this->configFactory->create();
         $config->merge(['repositories' => array_map(
-            function (PackageInterface $r) {
+            function (Package $r) {
                 return $r->getConfig();
             },
             $packages

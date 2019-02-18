@@ -4,7 +4,7 @@ namespace Shapecode\Devliver\Repository;
 
 use Composer\Package\PackageInterface as ComposerPackageInterface;
 use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\User;
 
 /**
@@ -19,7 +19,7 @@ class PackageRepository extends EntityRepository
     /**
      * @param User $user
      *
-     * @return array|PackageInterface[]
+     * @return array|Package[]
      */
     public function findAccessibleForUser(User $user): array
     {
@@ -28,7 +28,7 @@ class PackageRepository extends EntityRepository
 
         if (!$user->isPackageRootAccess()) {
             $packages = $user->getAccessPackages();
-            $packageIds = $packages->map(function (PackageInterface $package) {
+            $packageIds = $packages->map(function (Package $package) {
                 return $package->getId();
             })->toArray();
 
@@ -46,7 +46,7 @@ class PackageRepository extends EntityRepository
     /**
      * @param ComposerPackageInterface $package
      *
-     * @return null|object|PackageInterface
+     * @return null|object|Package
      */
     public function findOneByComposerPackage(ComposerPackageInterface $package)
     {
@@ -56,7 +56,7 @@ class PackageRepository extends EntityRepository
     }
 
     /**
-     * @return PackageInterface[]
+     * @return Package[]
      */
     public function findWithRepos()
     {
@@ -70,7 +70,7 @@ class PackageRepository extends EntityRepository
     /**
      * @param $name
      *
-     * @return null|object|PackageInterface
+     * @return null|object|Package
      */
     public function findOneByName($name)
     {

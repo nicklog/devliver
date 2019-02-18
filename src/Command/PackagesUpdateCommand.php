@@ -5,7 +5,7 @@ namespace Shapecode\Devliver\Command;
 use Composer\IO\ConsoleIO;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Service\PackageSynchronizationInterface;
+use Shapecode\Devliver\Service\PackageSynchronization;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,14 +25,14 @@ class PackagesUpdateCommand extends Command
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var PackageSynchronizationInterface */
+    /** @var PackageSynchronization */
     protected $packageSynchronization;
 
     /**
      * @param ManagerRegistry                 $registry
-     * @param PackageSynchronizationInterface $packageSynchronization
+     * @param PackageSynchronization $packageSynchronization
      */
-    public function __construct(ManagerRegistry $registry, PackageSynchronizationInterface $packageSynchronization)
+    public function __construct(ManagerRegistry $registry, PackageSynchronization $packageSynchronization)
     {
         parent::__construct();
 

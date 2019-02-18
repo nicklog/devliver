@@ -151,19 +151,19 @@ class User extends BaseUser
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      *
      * @return bool
      */
-    public function hasAccessPackage(PackageInterface $package): bool
+    public function hasAccessPackage(Package $package): bool
     {
         return $this->getAccessPackages()->contains($package);
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      */
-    public function addAccessPackage(PackageInterface $package): void
+    public function addAccessPackage(Package $package): void
     {
         if (!$this->hasAccessPackage($package)) {
             $this->getAccessPackages()->add($package);
@@ -171,9 +171,9 @@ class User extends BaseUser
     }
 
     /**
-     * @param PackageInterface $package
+     * @param Package $package
      */
-    public function removeAccessPackage(PackageInterface $package): void
+    public function removeAccessPackage(Package $package): void
     {
         if ($this->hasAccessPackage($package)) {
             $this->getCreatedPackages()->removeElement($package);
@@ -189,19 +189,19 @@ class User extends BaseUser
     }
 
     /**
-     * @param VersionInterface $version
+     * @param Version $version
      *
      * @return bool
      */
-    public function hasAccessVersion(VersionInterface $version): bool
+    public function hasAccessVersion(Version $version): bool
     {
         return $this->getAccessVersions()->contains($version);
     }
 
     /**
-     * @param VersionInterface $version
+     * @param Version $version
      */
-    public function addAccessVersion(VersionInterface $version): void
+    public function addAccessVersion(Version $version): void
     {
         if (!$this->hasAccessVersion($version)) {
             $this->getAccessVersions()->add($version);
@@ -209,9 +209,9 @@ class User extends BaseUser
     }
 
     /**
-     * @param VersionInterface $version
+     * @param Version $version
      */
-    public function removeAccessVersion(VersionInterface $version): void
+    public function removeAccessVersion(Version $version): void
     {
         if ($this->hasAccessVersion($version)) {
             $this->getCreatedPackages()->removeElement($version);

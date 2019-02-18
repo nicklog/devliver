@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\MappedSuperclass()
  */
-class BaseEntity implements BaseEntityInterface
+class BaseEntity
 {
 
     /**

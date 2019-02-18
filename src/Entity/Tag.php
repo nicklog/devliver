@@ -15,7 +15,7 @@ use Doctrine\ORM\PersistentCollection;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\TagRepository")
  */
-class Tag extends BaseEntity implements TagInterface
+class Tag extends BaseEntity
 {
 
     /**

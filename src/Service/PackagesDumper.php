@@ -5,7 +5,6 @@ namespace Shapecode\Devliver\Service;
 use Composer\Package\Dumper\ArrayDumper;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\User;
 use Shapecode\Devliver\Entity\Version;
 use Shapecode\Devliver\Repository\PackageRepository;
@@ -20,7 +19,7 @@ use Tenolo\Utilities\Utils\CryptUtil;
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
  */
-class PackagesDumper implements PackagesDumperInterface
+class PackagesDumper
 {
 
     /** @var ManagerRegistry */
@@ -52,7 +51,7 @@ class PackagesDumper implements PackagesDumperInterface
     /**
      * @inheritdoc
      */
-    public function dumpPackageJson(User $user, PackageInterface $package): string
+    public function dumpPackageJson(User $user, Package $package): string
     {
         $cacheKey = 'user-package-json-' . $package->getId();
         $item = $this->cache->getItem($cacheKey);
@@ -152,7 +151,7 @@ class PackagesDumper implements PackagesDumperInterface
     /**
      * @inheritdoc
      */
-    public function hashPackageJson(User $user, PackageInterface $package): string
+    public function hashPackageJson(User $user, Package $package): string
     {
         $json = $this->dumpPackageJson($user, $package);
         $hash = CryptUtil::sha256($json);

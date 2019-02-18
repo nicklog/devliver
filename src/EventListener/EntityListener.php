@@ -5,7 +5,7 @@ namespace Shapecode\Devliver\EventListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\BaseEntityInterface;
+use Shapecode\Devliver\Entity\BaseEntity;
 
 /**
  * Class EntityListener
@@ -30,6 +30,8 @@ class EntityListener implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
+     *
+     * @throws \Exception
      */
     public function prePersist(LifecycleEventArgs $args)
     {
@@ -41,6 +43,8 @@ class EntityListener implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
+     *
+     * @throws \Exception
      */
     public function preUpdate(LifecycleEventArgs $args)
     {
@@ -52,6 +56,8 @@ class EntityListener implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
+     *
+     * @throws \Doctrine\ORM\ORMException
      */
     public function postLoad(LifecycleEventArgs $args)
     {
@@ -65,10 +71,12 @@ class EntityListener implements EventSubscriber
 
     /**
      * @param $entity
+     *
+     * @throws \Exception
      */
     protected function updateCreatedAt($entity)
     {
-        if (!($entity instanceof BaseEntityInterface)) {
+        if (!($entity instanceof BaseEntity)) {
             return;
         }
 
@@ -82,10 +90,12 @@ class EntityListener implements EventSubscriber
 
     /**
      * @param $entity
+     *
+     * @throws \Exception
      */
     protected function updateUpdatedAt($entity)
     {
-        if (!($entity instanceof BaseEntityInterface)) {
+        if (!($entity instanceof BaseEntity)) {
             return;
         }
 

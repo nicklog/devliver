@@ -5,9 +5,9 @@ namespace Shapecode\Devliver\EventListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\User;
-use Shapecode\Devliver\Entity\VersionInterface;
+use Shapecode\Devliver\Entity\Version;
 use Shapecode\Devliver\Repository\UserRepository;
 
 /**
@@ -31,28 +31,32 @@ class PackageAccessListener implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
+     *
+     * @throws \Doctrine\ORM\ORMException
      */
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
 
-        if ($entity instanceof PackageInterface) {
+        if ($entity instanceof Package) {
             $this->addUsersToPackage($args);
         }
 
-        if ($entity instanceof VersionInterface) {
+        if ($entity instanceof Version) {
             $this->addUsersToVersion($args);
         }
     }
 
     /**
      * @param LifecycleEventArgs $args
+     *
+     * @throws \Doctrine\ORM\ORMException
      */
     protected function addUsersToPackage(LifecycleEventArgs $args)
     {
         $em = $args->getEntityManager();
 
-        /** @var PackageInterface $package */
+        /** @var Package $package */
         $package = $args->getEntity();
 
         /** @var UserRepository $userRepo */
@@ -71,12 +75,14 @@ class PackageAccessListener implements EventSubscriber
 
     /**
      * @param LifecycleEventArgs $args
+     *
+     * @throws \Doctrine\ORM\ORMException
      */
     protected function addUsersToVersion(LifecycleEventArgs $args)
     {
         $em = $args->getEntityManager();
 
-        /** @var VersionInterface $version */
+        /** @var Version $version */
         $version = $args->getEntity();
         $package = $version->getPackage();
 

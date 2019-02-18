@@ -15,7 +15,7 @@ use Doctrine\ORM\PersistentCollection;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\AuthorRepository")
  */
-class Author extends BaseEntity implements AuthorInterface
+class Author extends BaseEntity
 {
 
     /**

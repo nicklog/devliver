@@ -46,6 +46,8 @@ class RepositoryController extends Controller
         $name = $vendor . '/' . $project;
 
         $repository = $doctrine->getRepository(Package::class);
+
+        /** @var Package|null $package */
         $package = $repository->findOneByName($name);
 
         if ($package === null) {

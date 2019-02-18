@@ -6,7 +6,7 @@ use Composer\IO\ConsoleIO;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Bundle\CronBundle\Annotation\CronJob;
 use Shapecode\Devliver\Entity\UpdateQueue;
-use Shapecode\Devliver\Service\PackageSynchronizationInterface;
+use Shapecode\Devliver\Service\PackageSynchronization;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,14 +25,14 @@ class PackagesQueueCommand extends Command
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var PackageSynchronizationInterface */
+    /** @var PackageSynchronization */
     protected $packageSynchronization;
 
     /**
      * @param ManagerRegistry                 $registry
-     * @param PackageSynchronizationInterface $packageSynchronization
+     * @param PackageSynchronization $packageSynchronization
      */
-    public function __construct(ManagerRegistry $registry, PackageSynchronizationInterface $packageSynchronization)
+    public function __construct(ManagerRegistry $registry, PackageSynchronization $packageSynchronization)
     {
         parent::__construct();
 

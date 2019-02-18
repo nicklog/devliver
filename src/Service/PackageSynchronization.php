@@ -9,7 +9,6 @@ use Composer\Package\Dumper\ArrayDumper;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Author;
 use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\PackageInterface;
 use Shapecode\Devliver\Entity\Tag;
 use Shapecode\Devliver\Entity\Version;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -20,7 +19,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  * @package Shapecode\Devliver\Service
  * @author  Nikita Loges
  */
-class PackageSynchronization implements PackageSynchronizationInterface
+class PackageSynchronization
 {
 
     /** @var ManagerRegistry */
@@ -67,7 +66,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /**
      * @inheritdoc
      */
-    public function sync(PackageInterface $package, IOInterface $io = null): void
+    public function sync(Package $package, IOInterface $io = null): void
     {
         if ($io === null) {
             $io = $this->composerManager->createIO();
@@ -88,7 +87,7 @@ class PackageSynchronization implements PackageSynchronizationInterface
     /**
      * @inheritdoc
      */
-    public function save(PackageInterface $package, array $packages): void
+    public function save(Package $package, array $packages): void
     {
         if (count($packages)) {
             $em = $this->registry->getManager();
@@ -103,9 +102,9 @@ class PackageSynchronization implements PackageSynchronizationInterface
 
     /**
      * @param array            $packages
-     * @param PackageInterface $dbPackage
+     * @param Package $dbPackage
      */
-    protected function updateVersions(array $packages, PackageInterface $dbPackage)
+    protected function updateVersions(array $packages, Package $dbPackage)
     {
         $versionRepository = $this->registry->getRepository(Version::class);
         $em = $this->registry->getManager();

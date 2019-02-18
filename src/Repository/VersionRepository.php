@@ -3,9 +3,9 @@
 namespace Shapecode\Devliver\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\PackageInterface;
+use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\User;
-use Shapecode\Devliver\Entity\VersionInterface;
+use Shapecode\Devliver\Entity\Version;
 
 /**
  * Class VersionRepository
@@ -18,11 +18,11 @@ class VersionRepository extends EntityRepository
 
     /**
      * @param User                  $user
-     * @param PackageInterface|null $package
+     * @param Package|null $package
      *
-     * @return array|VersionInterface[]
+     * @return array|Version[]
      */
-    public function findAccessibleForUser(User $user, PackageInterface $package = null): array
+    public function findAccessibleForUser(User $user, Package $package = null): array
     {
         $qb = $this->createQueryBuilder('v');
         $expr = $qb->expr();
@@ -37,7 +37,7 @@ class VersionRepository extends EntityRepository
 
         if (!$user->isPackageRootAccess()) {
             $versions = $user->getAccessVersions();
-            $versionIds = $versions->map(function (VersionInterface $version) {
+            $versionIds = $versions->map(function (Version $version) {
                 return $version->getId();
             })->toArray();
 

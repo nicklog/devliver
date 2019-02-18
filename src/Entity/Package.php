@@ -17,7 +17,7 @@ use Shapecode\Devliver\Util\ComposerUtil;
  *
  * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\PackageRepository")
  */
-class Package extends BaseEntity implements PackageInterface
+class Package extends BaseEntity
 {
 
     /**
@@ -348,7 +348,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function hasVersion(VersionInterface $version): bool
+    public function hasVersion(Version $version): bool
     {
         return $this->getVersions()->contains($version);
     }
@@ -356,7 +356,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function addVersion(VersionInterface $version): void
+    public function addVersion(Version $version): void
     {
         if (!$this->hasVersion($version)) {
             $version->setPackage($this);
@@ -367,7 +367,7 @@ class Package extends BaseEntity implements PackageInterface
     /**
      * @inheritdoc
      */
-    public function removePackage(VersionInterface $version): void
+    public function removePackage(Version $version): void
     {
         if (!$this->hasVersion($version)) {
             $this->getVersions()->removeElement($version);
