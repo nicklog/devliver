@@ -13,7 +13,7 @@ use Shapecode\Devliver\Entity\PackageInterface;
 interface DistSynchronizationInterface
 {
 
-    const DIST_FORMAT = '/%package%/%version%/%reference%.%type%';
+    const DIST_FORMAT = '/%package%/%reference%.%type%';
 
     /**
      * @param PackageInterface $dbPackage

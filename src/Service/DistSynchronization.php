@@ -9,7 +9,6 @@ use Composer\Package\CompletePackageInterface;
 use Composer\Util\ComposerMirror;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\PackageInterface as EntityPackageInterface;
-use Shapecode\Devliver\Model\PackageAdapter;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -45,19 +44,19 @@ class DistSynchronization implements DistSynchronizationInterface
      */
     public function getDistFilename(EntityPackageInterface $dbPackage, $ref): string
     {
+        $cacheFile = $this->getCacheFile($dbPackage, $ref);
+
+        if (file_exists($cacheFile)) {
+            return $cacheFile;
+        }
+
         if (!$dbPackage->getVersions()->count()) {
             return '';
         }
 
         foreach ($dbPackage->getPackages() as $package) {
             if ($package->getSourceReference() == $ref) {
-                $cacheFile = $this->getCacheFile($package);
-
-                if (file_exists($cacheFile)) {
-                    return $cacheFile;
-                }
-
-                $this->downloadPackage($package);
+                $this->downloadPackage($dbPackage, $package);
 
                 return $cacheFile;
             }
@@ -67,13 +66,14 @@ class DistSynchronization implements DistSynchronizationInterface
     }
 
     /**
+     * @param EntityPackageInterface   $dbPackage
      * @param CompletePackageInterface $package
      *
-     * @return mixed|null
+     * @return string
      */
-    protected function downloadPackage(CompletePackageInterface $package)
+    protected function downloadPackage(EntityPackageInterface $dbPackage, CompletePackageInterface $package)
     {
-        $cacheFile = $this->getCacheFile($package);
+        $cacheFile = $this->getCacheFile($dbPackage, $package->getSourceReference());
         $cacheDir = dirname($cacheFile);
 
         $fs = new Filesystem();
@@ -110,16 +110,13 @@ class DistSynchronization implements DistSynchronizationInterface
      *
      * @return string
      */
-    protected function getCacheFile(CompletePackageInterface $package): string
+    protected function getCacheFile(EntityPackageInterface $dbPackage, $ref): string
     {
-        $targetDir = $this->distDir . DistSynchronizationInterface::DIST_FORMAT;
+        $targetDir = $this->distDir.DistSynchronizationInterface::DIST_FORMAT;
 
-        $adapter = new PackageAdapter($package);
-
-        $name = $package->getName();
-        $ref = $package->getDistReference() ?: $package->getSourceReference();
-        $type = $package->getDistType() ?: $this->format;
-        $version = $adapter->getVersionName();
+        $name = $dbPackage->getName();
+        $type = $this->format;
+        $version = 'placeholder';
 
         return ComposerMirror::processUrl($targetDir, $name, $version, $ref, $type);
     }
