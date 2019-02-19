@@ -4,7 +4,7 @@ namespace Shapecode\Devliver\Service;
 
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
-use Composer\Package\CompletePackageInterface;
+use Composer\Package\CompletePackage;
 use Composer\Package\Dumper\ArrayDumper;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Composer\ComposerManager;
@@ -104,7 +104,7 @@ class PackageSynchronization
      * @param array   $packages
      * @param Package $dbPackage
      */
-    protected function updateVersions(array $packages, Package $dbPackage)
+    protected function updateVersions(array $packages, Package $dbPackage): void
     {
         $versionRepository = $this->registry->getRepository(Version::class);
         $em = $this->registry->getManager();
@@ -171,25 +171,28 @@ class PackageSynchronization
     }
 
     /**
-     * @param Version                  $version
-     * @param CompletePackageInterface $completePackage
+     * @param Version         $version
+     * @param CompletePackage $completePackage
      */
-    protected function updateTags(Version $version, CompletePackageInterface $completePackage)
+    protected function updateTags(Version $version, CompletePackage $completePackage): void
     {
         $keywords = $completePackage->getKeywords();
         $tagRepo = $this->registry->getRepository(Tag::class);
 
         foreach ($keywords as $keyword) {
             $tag = $tagRepo->findByName($keyword, true);
-            $version->addTag($tag);
+
+            if ($tag) {
+                $version->addTag($tag);
+            }
         }
     }
 
     /**
-     * @param Version                  $version
-     * @param CompletePackageInterface $completePackage
+     * @param Version         $version
+     * @param CompletePackage $completePackage
      */
-    protected function updateAuthors(Version $version, CompletePackageInterface $completePackage)
+    protected function updateAuthors(Version $version, CompletePackage $completePackage): void
     {
         $authors = $completePackage->getAuthors();
         $authorRepo = $this->registry->getRepository(Author::class);
@@ -197,13 +200,15 @@ class PackageSynchronization
         foreach ($authors as $a) {
             $author = $authorRepo->findByNameOrEmail($a['name'], $a['email'], true);
 
-            if (isset($a['homepage'])) {
-                $author->setHomepage($a['homepage']);
+            if ($author) {
+                if (isset($a['homepage'])) {
+                    $author->setHomepage($a['homepage']);
+                }
+                if (isset($a['role'])) {
+                    $author->setRole($a['role']);
+                }
+                $version->addAuthor($author);
             }
-            if (isset($a['role'])) {
-                $author->setRole($a['role']);
-            }
-            $version->addAuthor($author);
         }
     }
 }

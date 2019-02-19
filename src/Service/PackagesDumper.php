@@ -158,8 +158,7 @@ class PackagesDumper
     public function hashPackageJson(User $user, Package $package): string
     {
         $json = $this->dumpPackageJson($user, $package);
-        $hash = CryptUtil::sha256($json);
 
-        return $hash;
+        return CryptUtil::sha256($json);
     }
 }

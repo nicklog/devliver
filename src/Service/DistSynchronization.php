@@ -32,10 +32,11 @@ class DistSynchronization
     protected $distDir;
 
     /**
+     *
      * @param ComposerManager $composerManager
      * @param                 $distDir
      */
-    public function __construct(ComposerManager $composerManager, $distDir)
+    public function __construct(ComposerManager $composerManager, string $distDir)
     {
         $this->composerManager = $composerManager;
         $this->distDir = $distDir;
@@ -73,7 +74,7 @@ class DistSynchronization
      *
      * @return string
      */
-    protected function downloadPackage(EntityPackage $dbPackage, CompletePackage $package)
+    protected function downloadPackage(EntityPackage $dbPackage, CompletePackage $package): string
     {
         $cacheFile = $this->getCacheFile($dbPackage, $package->getSourceReference());
         $cacheDir = dirname($cacheFile);

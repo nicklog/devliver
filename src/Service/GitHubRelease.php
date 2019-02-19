@@ -28,11 +28,11 @@ class GitHubRelease
     protected $tags;
 
     /**
-     * @param Client            $client
-     * @param AdapterInterface  $cache
-     * @param                   $versionFile
+     * @param Client           $client
+     * @param AdapterInterface $cache
+     * @param string           $versionFile
      */
-    public function __construct(Client $client, AdapterInterface $cache, $versionFile)
+    public function __construct(Client $client, AdapterInterface $cache, string $versionFile)
     {
         $this->client = $client;
         $this->cache = $cache;
@@ -40,9 +40,9 @@ class GitHubRelease
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getVersionData()
+    public function getVersionData(): string
     {
         $fs = new Filesystem();
 
@@ -60,21 +60,21 @@ class GitHubRelease
     /**
      * @param $tag
      */
-    public function setVersionData($tag)
+    public function setVersionData($tag): void
     {
         $fs = new Filesystem();
         $fs->dumpFile($this->versionFile, json_encode($tag));
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getCurrentTag()
+    public function getCurrentTag(): ?array
     {
         $current = $this->getVersionData();
 
         foreach ($this->getAllTags() as $release) {
-            if ($release['name'] == $current['name']) {
+            if ($release['name'] === $current['name']) {
                 return $release;
             }
         }
@@ -91,11 +91,11 @@ class GitHubRelease
     }
 
     /**
-     * @return mixed
+     * @return array|mixed
      */
-    public function getAllTags()
+    public function getAllTags(): array
     {
-        if (!is_null($this->tags)) {
+        if ($this->tags !== null) {
             return $this->tags;
         }
 
@@ -125,7 +125,7 @@ class GitHubRelease
     public function getTagByTagName($tagName)
     {
         foreach ($this->getAllTags() as $tag) {
-            if ($tag['name'] == $tagName) {
+            if ($tag['name'] === $tagName) {
                 return $tag;
             }
         }
