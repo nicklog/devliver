@@ -27,4 +27,5 @@ return [
     Tenolo\Bundle\DoctrineTablePrefixBundle\TenoloDoctrineTablePrefixBundle::class => ['all' => true],
     Tenolo\Bundle\IgnoreDoctrineAnnotationsBundle\TenoloIgnoreDoctrineAnnotationsBundle::class => ['all' => true],
     Demontpx\ParsedownBundle\DemontpxParsedownBundle::class => ['all' => true],
+    Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
 ];

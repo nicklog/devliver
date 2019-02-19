@@ -1,0 +1,15 @@
+// vars
+@import "./variables";
+
+// core ui
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+@import "../../public/bundles/devliver/css/dashboard.scss";
+@import "../../public/bundles/devliver/css/style.scss";
+@import "../../public/bundles/devliver/css/sticky-footer-navbar.scss";
+
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/brands";
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/regular";
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/solid";
+@import "../../node_modules/@fortawesome/fontawesome-free/scss/v4-shims";

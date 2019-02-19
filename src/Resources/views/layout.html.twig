@@ -7,11 +7,11 @@
     <link rel="shortcut icon" href="{{ asset('bundles/devliver/images/logo_black.png') }}"/>
 
     {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('vendor/bootswatch/dist/lumen/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('bundles/devliver/css/dashboard.css') }}">
-        <link rel="stylesheet" href="{{ asset('bundles/devliver/css/style.css') }}">
-        <link rel="stylesheet" href="{{ asset('bundles/devliver/css/sticky-footer-navbar.css') }}">
-        <link rel="stylesheet" href="{{ asset('vendor/fortawesome--fontawesome-free/css/all.min.css') }}">
+        {{ encore_entry_link_tags('app') }}
+
+        {#<link rel="stylesheet" href="{{ asset('bundles/devliver/css/dashboard.css') }}">#}
+        {#<link rel="stylesheet" href="{{ asset('bundles/devliver/css/style.css') }}">#}
+        {#<link rel="stylesheet" href="{{ asset('bundles/devliver/css/sticky-footer-navbar.css') }}">#}
     {% endblock %}
 
     <title>{% block title %}Devliver{% endblock %}</title>
@@ -68,10 +68,7 @@
 </div>
 
 {% block javascripts %}
-    <script type="text/javascript" src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendor/popper.js/dist/umd/popper.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendor/bootstrap-confirmation2/dist/bootstrap-confirmation.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/app.js') }}"></script>
 
     <script type="text/javascript">
         $(function () {
