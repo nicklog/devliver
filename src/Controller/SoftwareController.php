@@ -5,7 +5,6 @@ namespace Shapecode\Devliver\Controller;
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Loader\ArrayLoader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,8 +17,19 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/software", name="devliver_software_")
  */
-class SoftwareController extends Controller
+class SoftwareController
 {
+
+    /** @var string */
+    protected $projectDir;
+
+    /**
+     * @param string $projectDir
+     */
+    public function __construct(string $projectDir)
+    {
+        $this->projectDir = $projectDir;
+    }
 
     /**
      * @Route("/", name="index")
@@ -29,9 +39,7 @@ class SoftwareController extends Controller
      */
     public function indexAction()
     {
-        $kernel = $this->get('kernel');
-        $projectDir = $kernel->getProjectDir();
-        $lock = $projectDir . '/composer.lock';
+        $lock = $this->projectDir.'/composer.lock';
 
         $json = file_get_contents($lock);
         $data = json_decode($json, true);
@@ -48,7 +56,7 @@ class SoftwareController extends Controller
         }
 
         return [
-            'packages' => $packages
+            'packages' => $packages,
         ];
     }
 }

@@ -2,13 +2,22 @@
 
 namespace Shapecode\Devliver\Controller;
 
+use Cocur\Slugify\Slugify;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Form\Type\Forms\PackageAbandonType;
 use Shapecode\Devliver\Form\Type\Forms\PackageType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Shapecode\Devliver\Form\Validator\PackageValidator;
+use Shapecode\Devliver\Service\PackageSynchronization;
+use Shapecode\Devliver\Service\RepositoryHelper;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Callback;
 
@@ -20,8 +29,68 @@ use Symfony\Component\Validator\Constraints\Callback;
  *
  * @Route("/package", name="devliver_package_")
  */
-class PackageController extends Controller
+class PackageController extends AbstractController
 {
+
+    /** @var PackageValidator */
+    protected $packageValidator;
+
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /** @var PaginatorInterface */
+    protected $paginator;
+
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+
+    /** @var FlashBagInterface */
+    protected $flashBag;
+
+    /** @var ComposerManager */
+    protected $composerManager;
+
+    /** @var RepositoryHelper */
+    protected $repositoryHelper;
+
+    /** @var PackageSynchronization */
+    protected $packageSynchronization;
+
+    /** @var Slugify */
+    protected $slugify;
+
+    /**
+     * @param PackageValidator       $packageValidator
+     * @param ManagerRegistry        $registry
+     * @param PaginatorInterface     $paginator
+     * @param FormFactoryInterface   $formFactory
+     * @param FlashBagInterface      $flashBag
+     * @param ComposerManager        $composerManager
+     * @param RepositoryHelper       $repositoryHelper
+     * @param Slugify                $slugify
+     * @param PackageSynchronization $packageSynchronization
+     */
+    public function __construct(
+        PackageValidator $packageValidator,
+        ManagerRegistry $registry,
+        PaginatorInterface $paginator,
+        FormFactoryInterface $formFactory,
+        FlashBagInterface $flashBag,
+        ComposerManager $composerManager,
+        RepositoryHelper $repositoryHelper,
+        Slugify $slugify,
+        PackageSynchronization $packageSynchronization
+    ) {
+        $this->packageValidator = $packageValidator;
+        $this->registry = $registry;
+        $this->paginator = $paginator;
+        $this->formFactory = $formFactory;
+        $this->flashBag = $flashBag;
+        $this->composerManager = $composerManager;
+        $this->repositoryHelper = $repositoryHelper;
+        $this->slugify = $slugify;
+        $this->packageSynchronization = $packageSynchronization;
+    }
 
     /**
      * @Route("s", name="index")
@@ -33,7 +102,7 @@ class PackageController extends Controller
      */
     public function listAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Package::class);
+        $repository = $this->registry->getRepository(Package::class);
         $qb = $repository->createQueryBuilder('p');
 
         $page = $request->query->getInt('page', 1);
@@ -50,11 +119,10 @@ class PackageController extends Controller
             $qb->orWhere($qb->expr()->like('p.readme', ':filter'));
             $qb->orWhere($qb->expr()->like('p.url', ':filter'));
             $qb->orWhere($qb->expr()->like('p.replacementPackage', ':filter'));
-            $qb->setParameter('filter', '%' . $filter . '%');
+            $qb->setParameter('filter', '%'.$filter.'%');
         }
 
-        $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate($qb, $page, $limit);
+        $pagination = $this->paginator->paginate($qb, $page, $limit);
 
         return [
             'pagination' => $pagination,
@@ -72,23 +140,23 @@ class PackageController extends Controller
      */
     public function abandonAction(Request $request, Package $package)
     {
-        $form = $this->createForm(PackageAbandonType::class, $package);
+        $form = $this->formFactory->create(PackageAbandonType::class, $package);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->registry->getManager();
 
             $package->setAbandoned(true);
             $em->persist($package);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('success', 'Package abandoned');
+            $this->flashBag->add('success', 'Package abandoned');
 
             return $this->redirectToRoute('devliver_package_index');
         }
 
         return [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
@@ -100,7 +168,7 @@ class PackageController extends Controller
      */
     public function unabandonAction(Request $request, Package $package)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->registry->getManager();
 
         $package->setAbandoned(false);
         $package->setReplacementPackage(null);
@@ -108,7 +176,7 @@ class PackageController extends Controller
         $em->persist($package);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('success', 'Package unabandoned');
+        $this->flashBag->add('success', 'Package unabandoned');
 
         if ($request->headers->get('referer')) {
             $referer = $request->headers->get('referer');
@@ -127,7 +195,7 @@ class PackageController extends Controller
      */
     public function enableAction(Request $request, Package $package)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->registry->getManager();
 
         $package->setEnable(true);
 
@@ -151,7 +219,7 @@ class PackageController extends Controller
      */
     public function disableAction(Request $request, Package $package)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->registry->getManager();
 
         $package->setEnable(false);
 
@@ -168,40 +236,6 @@ class PackageController extends Controller
     }
 
     /**
-     * @Route("/{package}/view", name="view", requirements={"package"="\d+"})
-     * @Route("/{package}/{slug}", name="view_slug", requirements={"package"="\d+"})
-     * @Template()
-     *
-     * @param Package $package
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
-     */
-    public function viewAction(Request $request, Package $package)
-    {
-        if (!$package->getVersions()->count()) {
-            return $this->redirectToRoute('devliver_package_update', [
-                'package' => $package->getId()
-            ]);
-        }
-
-        if ($request->get('_route') === 'devliver_package_view') {
-            return $this->redirectToRoute('devliver_package_view_slug', [
-                'package' => $package->getId(),
-                'slug'    => $this->get('cocur_slugify_custom')->slugify($package->getName())
-            ]);
-        }
-
-        $packages = $package->getPackages();
-        $stable = $package->getLastStablePackage();
-
-        return [
-            'package'  => $package,
-            'info'     => $stable,
-            'versions' => $packages
-        ];
-    }
-
-    /**
      * @Route("/add", name="add")
      * @Template()
      *
@@ -211,23 +245,23 @@ class PackageController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = $this->createForm(PackageType::class, null, [
+        $form = $this->formFactory->create(PackageType::class, null, [
             'constraints' => [
-                new Callback([$this->get('devliver.form_validator.package'), 'validateRepository']),
-                new Callback([$this->get('devliver.form_validator.package'), 'validateAddName']),
-            ]
+                new Callback([$this->packageValidator, 'validateRepository']),
+                new Callback([$this->packageValidator, 'validateAddName']),
+            ],
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->registry->getManager();
             $data = $form->getData();
 
             $url = $data['url'];
             $type = $data['type'];
 
-            $repository = $this->get('devliver.composer_manager')->createRepositoryByUrl($url, $type);
-            $info = $this->get('devliver.repository_helper')->getComposerInformation($repository);
+            $repository = $this->composerManager->createRepositoryByUrl($url, $type);
+            $info = $this->repositoryHelper->getComposerInformation($repository);
 
             $package = new Package();
             $package->setUrl($url);
@@ -237,15 +271,15 @@ class PackageController extends Controller
             $em->persist($package);
             $em->flush();
 
-            $this->get('devliver.package_synchronization')->sync($package);
+            $this->packageSynchronization->sync($package);
 
-            $this->get('session')->getFlashBag()->add('success', 'Package added');
+            $this->flashBag->add('success', 'Package added');
 
             return $this->redirectToRoute('devliver_package_index');
         }
 
         return [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ];
     }
 
@@ -262,17 +296,17 @@ class PackageController extends Controller
     {
         $form = $this->createForm(PackageType::class, $package->getConfig(), [
             'constraints' => [
-                new Callback([$this->get('devliver.form_validator.package'), 'validateRepository']),
+                new Callback([$this->packageValidator, 'validateRepository']),
                 new Callback([
-                    'callback' => [$this->get('devliver.form_validator.package'), 'validateEditName'],
-                    'payload'  => ['package' => $package]
+                    'callback' => [$this->packageValidator, 'validateEditName'],
+                    'payload'  => ['package' => $package],
                 ]),
-            ]
+            ],
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->registry->getManager();
             $data = $form->getData();
 
             $url = $data['url'];
@@ -286,19 +320,19 @@ class PackageController extends Controller
                 $em->persist($package);
                 $em->flush();
 
-                $this->get('devliver.package_synchronization')->sync($package);
+                $this->packageSynchronization->sync($package);
             }
 
-            $this->get('session')->getFlashBag()->add('success', 'Package updated');
+            $this->flashBag->add('success', 'Package updated');
 
             return $this->redirectToRoute('devliver_package_edit', [
-                'package' => $package->getId()
+                'package' => $package->getId(),
             ]);
         }
 
         return [
             'form'    => $form->createView(),
-            'package' => $package
+            'package' => $package,
         ];
     }
 
@@ -311,12 +345,12 @@ class PackageController extends Controller
      */
     public function deleteAction(Package $package)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->registry->getManager();
 
         $em->remove($package);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('success', 'Package removed');
+        $this->flashBag->add('success', 'Package removed');
 
         return $this->redirectToRoute('devliver_package_index');
     }
@@ -331,9 +365,9 @@ class PackageController extends Controller
      */
     public function updateAction(Request $request, Package $package)
     {
-        $this->get('devliver.package_synchronization')->sync($package);
+        $this->packageSynchronization->sync($package);
 
-        $this->get('session')->getFlashBag()->add('success', 'Package updated');
+        $this->flashBag->add('success', 'Package updated');
 
         if ($request->headers->get('referer')) {
             $referer = $request->headers->get('referer');
@@ -342,7 +376,7 @@ class PackageController extends Controller
         }
 
         return $this->redirectToRoute('devliver_package_view', [
-            'package' => $package->getId()
+            'package' => $package->getId(),
         ]);
     }
 
@@ -353,10 +387,45 @@ class PackageController extends Controller
      */
     public function updateAllAction()
     {
-        $this->get('devliver.repository_synchronization')->sync();
+        $this->packageSynchronization->syncAll();
 
-        $this->get('session')->getFlashBag()->add('success', 'Repositories updated');
+        $this->flashBag->add('success', 'Repositories updated');
 
         return $this->redirectToRoute('devliver_package_index');
+    }
+
+    /**
+     * @Route("/{package}", name="view", requirements={"package"="\d+"})
+     * @Route("/{package}/{slug}", name="view_slug", requirements={"package"="\d+"})
+     * @Route("/{package}/view", name="view_2", requirements={"package"="\d+"})
+     * @Template()
+     *
+     * @param Package $package
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
+     */
+    public function viewAction(Request $request, Package $package)
+    {
+        if (!$package->getVersions()->count()) {
+            return $this->redirectToRoute('devliver_package_update', [
+                'package' => $package->getId(),
+            ]);
+        }
+
+        if ($request->get('_route') === 'devliver_package_view') {
+            return $this->redirectToRoute('devliver_package_view_slug', [
+                'package' => $package->getId(),
+                'slug'    => $this->slugify->slugify($package->getName()),
+            ]);
+        }
+
+        $packages = $package->getPackages();
+        $stable = $package->getLastStablePackage();
+
+        return [
+            'package'  => $package,
+            'info'     => $stable,
+            'versions' => $packages,
+        ];
     }
 }

@@ -40,8 +40,12 @@ class PackagesDumper
      * @param RepositoryHelper         $repositoryHelper
      * @param TagAwareAdapterInterface $cache
      */
-    public function __construct(ManagerRegistry $registry, UrlGeneratorInterface $router, RepositoryHelper $repositoryHelper, TagAwareAdapterInterface $cache)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        UrlGeneratorInterface $router,
+        RepositoryHelper $repositoryHelper,
+        TagAwareAdapterInterface $cache
+    ) {
         $this->registry = $registry;
         $this->router = $router;
         $this->repositoryHelper = $repositoryHelper;
@@ -53,14 +57,14 @@ class PackagesDumper
      */
     public function dumpPackageJson(User $user, Package $package): string
     {
-        $cacheKey = 'user-package-json-' . $package->getId();
+        $cacheKey = 'user-package-json-'.$package->getId();
         $item = $this->cache->getItem($cacheKey);
 
         if ($item->isHit()) {
             return $item->get();
         }
 
-        $item->tag('packages-package-' . $package->getId());
+        $item->tag('packages-package-'.$package->getId());
 
         $data = [];
         $dumper = new ArrayDumper();
@@ -98,7 +102,7 @@ class PackagesDumper
      */
     public function dumpPackagesJson(User $user): string
     {
-        $cacheKey = 'user-packages-json-' . $user->getId();
+        $cacheKey = 'user-packages-json-'.$user->getId();
         $item = $this->cache->getItem($cacheKey);
 
         if ($item->isHit()) {
@@ -106,7 +110,7 @@ class PackagesDumper
         }
 
         $item->tag('packages.json');
-        $item->tag('packages-user-' . $user->getId());
+        $item->tag('packages-user-'.$user->getId());
 
         /** @var PackageRepository $repo */
         $repo = $this->registry->getRepository(Package::class);
@@ -117,10 +121,10 @@ class PackagesDumper
         foreach ($packages as $package) {
             $name = $package->getName();
 
-            $item->tag('packages-package-' . $package->getId());
+            $item->tag('packages-package-'.$package->getId());
 
             $providers[$name] = [
-                'sha256' => $this->hashPackageJson($user, $package)
+                'sha256' => $this->hashPackageJson($user, $package),
             ];
         }
 
@@ -135,7 +139,7 @@ class PackagesDumper
         $repo['packages'] = [];
         $repo['notify-batch'] = $this->router->generate('devliver_download_track', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $repo['mirrors'] = [$mirror];
-        $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%package%.json';
+        $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL).'/%package%.json';
         $repo['providers'] = $providers;
 
         $json = json_encode($repo);

@@ -2,7 +2,7 @@
 
 namespace Shapecode\Devliver\Form\Type\Widgets;
 
-use Shapecode\Devliver\Entity\RepoInterface;
+use Shapecode\Devliver\Entity\Repo;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,7 +46,7 @@ class PackageType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => RepoInterface::class
+            'data_class' => Repo::class
         ]);
     }
 

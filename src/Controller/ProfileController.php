@@ -2,11 +2,14 @@
 
 namespace Shapecode\Devliver\Controller;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Shapecode\Devliver\Form\Type\Forms\UserProfileType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class ProfileController
@@ -16,8 +19,29 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/profile", name="devliver_profile_")
  */
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
+
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /** @var Security */
+    protected $security;
+
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+
+    /**
+     * @param ManagerRegistry      $registry
+     * @param Security             $security
+     * @param FormFactoryInterface $formFactory
+     */
+    public function __construct(ManagerRegistry $registry, Security $security, FormFactoryInterface $formFactory)
+    {
+        $this->registry = $registry;
+        $this->security = $security;
+        $this->formFactory = $formFactory;
+    }
 
     /**
      * @Route("", name="index")
@@ -28,7 +52,7 @@ class ProfileController extends Controller
     public function profileAction()
     {
         return [
-            'user' => $this->getUser()
+            'user' => $this->security->getUser()
         ];
     }
 
@@ -42,13 +66,13 @@ class ProfileController extends Controller
      */
     public function editAction(Request $request)
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
 
-        $form = $this->createForm(UserProfileType::class, $user);
+        $form = $this->formFactory->create(UserProfileType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->registry->getManager();
 
             $em->persist($user);
             $em->flush();

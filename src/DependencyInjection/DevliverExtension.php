@@ -25,7 +25,6 @@ class DevliverExtension extends Extension
         $loader = new YamlFileLoader($container, $locator);
 
         $loader->load('services.yml');
-        $loader->load('admin.yml');
     }
 
 }

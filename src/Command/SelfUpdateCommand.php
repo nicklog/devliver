@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -28,14 +28,14 @@ class SelfUpdateCommand extends Command
     /** @var GitHubRelease */
     protected $github;
 
-    /** @var Kernel */
+    /** @var KernelInterface */
     protected $kernel;
 
     /**
-     * @param GitHubRelease $github
-     * @param Kernel        $kernel
+     * @param GitHubRelease   $github
+     * @param KernelInterface $kernel
      */
-    public function __construct(GitHubRelease $github, Kernel $kernel)
+    public function __construct(GitHubRelease $github, KernelInterface $kernel)
     {
         parent::__construct();
 
@@ -59,11 +59,11 @@ class SelfUpdateCommand extends Command
         $lastTag = $this->github->getLastTag();
 
         $pwd = $this->getWorkingDirectory();
-        $filename = $lastTag['name'] . '.zip';
-        $filePath = $pwd . '/' . $filename;
+        $filename = $lastTag['name'].'.zip';
+        $filePath = $pwd.'/'.$filename;
 
         $io = new SymfonyStyle($input, $output);
-        $io->title('Update Devliver to latest version: ' . $lastTag['name']);
+        $io->title('Update Devliver to latest version: '.$lastTag['name']);
 
         if (!$io->confirm('Do you want update Devliver to the latest version? Do you have a backup?')) {
             $io->error('update canceled');
@@ -86,7 +86,7 @@ class SelfUpdateCommand extends Command
 
         $this->github->setVersionData($lastTag);
 
-        $io->success('Devliver updated to latest version: ' . $lastTag['name']);
+        $io->success('Devliver updated to latest version: '.$lastTag['name']);
 
     }
 
@@ -114,19 +114,19 @@ class SelfUpdateCommand extends Command
         $fs = new Filesystem();
 
         $list = [
-            $pwd . '/bin',
-            $pwd . '/config',
-            $pwd . '/public',
-            $pwd . '/src',
-            $pwd . '/templates',
-            $pwd . '/translations',
-            $pwd . '/var/cache',
+            $pwd.'/bin',
+            $pwd.'/config',
+            $pwd.'/public',
+            $pwd.'/src',
+            $pwd.'/templates',
+            $pwd.'/translations',
+            $pwd.'/var/cache',
         ];
 
         $io->section('remove old source');
 
         foreach ($list as $item) {
-            $io->text('remove: ' . $item);
+            $io->text('remove: '.$item);
         }
 
         $fs->remove($list);
@@ -145,7 +145,7 @@ class SelfUpdateCommand extends Command
         $io->section('unzip update file');
 
         $commit = substr($lastTag['commit']['sha'], 0, 7);
-        $zipDirName = 'shapecode-devliver-' . $commit;
+        $zipDirName = 'shapecode-devliver-'.$commit;
 
         $fs = new Filesystem();
         $zip = new \ZipArchive();
@@ -153,10 +153,10 @@ class SelfUpdateCommand extends Command
             $zip->extractTo($pwd);
             $zip->close();
 
-            $fs->mirror($pwd . '/' . $zipDirName . '/', $pwd, null, [
-                'override' => true
+            $fs->mirror($pwd.'/'.$zipDirName.'/', $pwd, null, [
+                'override' => true,
             ]);
-            $fs->remove($pwd . '/' . $zipDirName);
+            $fs->remove($pwd.'/'.$zipDirName);
         }
     }
 
@@ -220,7 +220,7 @@ class SelfUpdateCommand extends Command
         $helper = $this->getHelper('process');
 
         $projectDir = $this->kernel->getProjectDir();
-        $bin = realpath($projectDir . '/bin/' . $binary);
+        $bin = realpath($projectDir.'/bin/'.$binary);
 
         $executableFinder = new PhpExecutableFinder();
         $php = $executableFinder->find();

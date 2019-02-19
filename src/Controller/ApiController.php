@@ -2,13 +2,13 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\UpdateQueue;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Tenolo\Utilities\Utils\StringUtil;
 
 /**
@@ -19,11 +19,26 @@ use Tenolo\Utilities\Utils\StringUtil;
  *
  * @Route("/api", name="devliver_api_")
  */
-class ApiController extends Controller
+class ApiController
 {
+
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
 
     /**
      * @Route("/update-package", name="package_update", defaults={"_format" = "json"}, methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function updatePackageAction(Request $request): Response
     {
@@ -60,8 +75,8 @@ class ApiController extends Controller
         if (isset($payload['repository']['links']['html']['href'])) {
             $bitbucketHtmlUrl = $payload['repository']['links']['html']['href'];
 
-            $git_http_url = $bitbucketHtmlUrl . '.git';
-            $git_ssh_url = 'git@bitbucket.org:' . StringUtil::removeFromStart('https://bitbucket.org/', $bitbucketHtmlUrl) . '.git';
+            $git_http_url = $bitbucketHtmlUrl.'.git';
+            $git_ssh_url = 'git@bitbucket.org:'.StringUtil::removeFromStart('https://bitbucket.org/', $bitbucketHtmlUrl).'.git';
 
             $urls[] = $git_http_url;
             $urls[] = $git_ssh_url;
@@ -86,18 +101,16 @@ class ApiController extends Controller
             return new JsonResponse(['status' => 'error', 'message' => 'Missing or invalid payload'], 406);
         }
 
-        return $this->receiveWebhook($request, $urls);
+        return $this->receiveWebhook($urls);
     }
 
     /**
-     * Perform the package update
-     *
      * @param Request $request
      * @param array   $urls
      *
      * @return Response
      */
-    protected function receiveWebhook(Request $request, array $urls): Response
+    protected function receiveWebhook(array $urls): Response
     {
         $packages = $this->findPackages($urls);
 
@@ -105,7 +118,7 @@ class ApiController extends Controller
             return new JsonResponse(['status' => 'error', 'message' => 'Could not find a package that matches this request'], 404);
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->registry->getManager();
         $queueRepo = $em->getRepository(UpdateQueue::class);
 
         /** @var Package $package */
@@ -136,10 +149,10 @@ class ApiController extends Controller
      */
     protected function findPackages(array $urls): array
     {
-        $repo = $this->getDoctrine()->getRepository(Package::class);
+        $repo = $this->registry->getRepository(Package::class);
 
         return $repo->findBy([
-            'url' => $urls
+            'url' => $urls,
         ]);
     }
 }

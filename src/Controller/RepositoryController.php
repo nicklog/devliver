@@ -2,12 +2,16 @@
 
 namespace Shapecode\Devliver\Controller;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Package;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Shapecode\Devliver\Service\DistSynchronization;
+use Shapecode\Devliver\Service\PackagesDumper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class RepositoryController
@@ -17,8 +21,34 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("", name="devliver_repository_")
  */
-class RepositoryController extends Controller
+class RepositoryController
 {
+
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /** @var PackagesDumper */
+    protected $packagesDumper;
+
+    /** @var DistSynchronization */
+    protected $distSync;
+
+    /** @var Security */
+    protected $security;
+
+    /**
+     * @param ManagerRegistry     $registry
+     * @param PackagesDumper      $packagesDumper
+     * @param DistSynchronization $distSync
+     * @param Security            $security
+     */
+    public function __construct(ManagerRegistry $registry, PackagesDumper $packagesDumper, DistSynchronization $distSync, Security $security)
+    {
+        $this->registry = $registry;
+        $this->packagesDumper = $packagesDumper;
+        $this->distSync = $distSync;
+        $this->security = $security;
+    }
 
     /**
      * @Route("/repo/packages.json", name="index")
@@ -27,7 +57,7 @@ class RepositoryController extends Controller
      */
     public function indexAction()
     {
-        $json = $this->get('devliver.packages_dumper')->dumpPackagesJson($this->getUser());
+        $json = $this->packagesDumper->dumpPackagesJson($this->security->getUser());
 
         return new Response($json);
     }
@@ -40,21 +70,20 @@ class RepositoryController extends Controller
      */
     public function providerAction($vendor, $project)
     {
-        $doctrine = $this->getDoctrine();
-        $user = $this->getUser();
+        $user = $this->security->getUser();
 
-        $name = $vendor . '/' . $project;
+        $name = $vendor.'/'.$project;
 
-        $repository = $doctrine->getRepository(Package::class);
+        $repository = $this->registry->getRepository(Package::class);
 
         /** @var Package|null $package */
         $package = $repository->findOneByName($name);
 
         if ($package === null) {
-            throw $this->createNotFoundException();
+            throw new NotFoundHttpException();
         }
 
-        $json = $this->get('devliver.packages_dumper')->dumpPackageJson($user, $package);
+        $json = $this->packagesDumper->dumpPackageJson($user, $package);
 
         return new Response($json);
     }
@@ -73,21 +102,19 @@ class RepositoryController extends Controller
      */
     public function distAction($vendor, $project, $ref, $type)
     {
-        $doctrine = $this->getDoctrine();
+        $name = $vendor.'/'.$project;
 
-        $name = $vendor . '/' . $project;
-
-        $repository = $doctrine->getRepository(Package::class);
+        $repository = $this->registry->getRepository(Package::class);
         $package = $repository->findOneByName($name);
 
         if ($package === null) {
-            throw $this->createNotFoundException();
+            throw new NotFoundHttpException();
         }
 
-        $cacheFile = $this->get('devliver.dist_synchronization')->getDistFilename($package, $ref);
+        $cacheFile = $this->distSync->getDistFilename($package, $ref);
 
         if (empty($cacheFile)) {
-            throw $this->createNotFoundException();
+            throw new NotFoundHttpException();
         }
 
         return new BinaryFileResponse($cacheFile, 200, [], false);

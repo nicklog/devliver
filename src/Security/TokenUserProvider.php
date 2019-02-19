@@ -2,7 +2,7 @@
 
 namespace Shapecode\Devliver\Security;
 
-use FOS\UserBundle\Model\UserManager;
+use FOS\UserBundle\Model\UserManagerInterface;
 use Shapecode\Devliver\Entity\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -17,13 +17,13 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 abstract class TokenUserProvider implements UserProviderInterface
 {
 
-    /** @var UserManager */
+    /** @var UserManagerInterface */
     protected $userManager;
 
     /**
-     * @param UserManager $userManager
+     * @param UserManagerInterface $userManager
      */
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManagerInterface $userManager)
     {
         $this->userManager = $userManager;
     }

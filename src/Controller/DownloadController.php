@@ -2,14 +2,15 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Entity\Download;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\Version;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Class DownloadController
@@ -19,8 +20,19 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @Route("/", name="devliver_download_")
  */
-class DownloadController extends Controller
+class DownloadController
 {
+
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
 
     /**
      * @Route("/track-downloads", name="track")
@@ -34,10 +46,10 @@ class DownloadController extends Controller
         $postData = json_decode($request->getContent(), true);
 
         if (empty($postData['downloads']) || !is_array($postData['downloads'])) {
-            throw $this->createAccessDeniedException();
+            throw new AccessDeniedException();
         }
 
-        $doctrine = $this->getDoctrine();
+        $doctrine = $this->registry;
         $em = $doctrine->getManager();
 
         $packageRepo = $doctrine->getRepository(Package::class);
@@ -48,7 +60,7 @@ class DownloadController extends Controller
             $versionName = $p['version'];
 
             $package = $packageRepo->findOneBy([
-                'name' => $name
+                'name' => $name,
             ]);
 
             if ($package) {

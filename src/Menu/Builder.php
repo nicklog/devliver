@@ -4,8 +4,8 @@ namespace Shapecode\Devliver\Menu;
 
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class Builder
@@ -22,20 +22,24 @@ class Builder
     /** @var TranslatorInterface */
     protected $factory;
 
-    /** @var AuthorizationChecker */
+    /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
     /**
-     * @param TranslatorInterface   $translator
-     * @param FactoryInterface      $factory
-     * @param AuthorizationChecker  $authorizationChecker
-     * @param TokenStorageInterface $tokenStorage
+     * @param TranslatorInterface           $translator
+     * @param FactoryInterface              $factory
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenStorageInterface         $tokenStorage
      */
-    public function __construct(TranslatorInterface $translator, FactoryInterface $factory, AuthorizationChecker $authorizationChecker, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        FactoryInterface $factory,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenStorageInterface $tokenStorage
+    ) {
         $this->translator = $translator;
         $this->factory = $factory;
         $this->authorizationChecker = $authorizationChecker;
@@ -49,8 +53,8 @@ class Builder
     {
         $menu = $this->factory->createItem('root', [
             'childrenAttributes' => [
-                'class' => 'navbar-nav mr-auto'
-            ]
+                'class' => 'navbar-nav mr-auto',
+            ],
         ]);
 
         $menu->addChild('devliver_package_index', [
@@ -65,7 +69,7 @@ class Builder
                     'devliver_package_edit',
                     'devliver_package_view',
                 ],
-            ]
+            ],
         ]);
 
         return $menu;
@@ -78,8 +82,8 @@ class Builder
     {
         $menu = $this->factory->createItem('root', [
             'childrenAttributes' => [
-                'class' => 'navbar-nav'
-            ]
+                'class' => 'navbar-nav',
+            ],
         ]);
 
         $token = $this->tokenStorage->getToken();

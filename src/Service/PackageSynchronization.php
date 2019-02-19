@@ -6,12 +6,12 @@ use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Dumper\ArrayDumper;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Author;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Entity\Tag;
 use Shapecode\Devliver\Entity\Version;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Class PackageSynchronization
