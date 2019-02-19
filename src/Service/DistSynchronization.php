@@ -5,6 +5,7 @@ namespace Shapecode\Devliver\Service;
 use Composer\Downloader\FileDownloader;
 use Composer\Factory;
 use Composer\Package\Archiver\ArchiveManager;
+use Composer\Package\CompletePackage;
 use Composer\Package\CompletePackageInterface;
 use Composer\Util\ComposerMirror;
 use Shapecode\Devliver\Composer\ComposerManager;
@@ -57,7 +58,7 @@ class DistSynchronization
         }
 
         foreach ($dbPackage->getPackages() as $package) {
-            if ($package->getSourceReference() == $ref) {
+            if ($package->getSourceReference() === $ref) {
                 $this->downloadPackage($dbPackage, $package);
 
                 return $cacheFile;
@@ -73,8 +74,9 @@ class DistSynchronization
      *
      * @return string
      */
-    protected function downloadPackage(EntityPackage $dbPackage, CompletePackageInterface $package)
+    protected function downloadPackage(EntityPackage $dbPackage, CompletePackage $package)
     {
+        dd($package);
         $cacheFile = $this->getCacheFile($dbPackage, $package->getSourceReference());
         $cacheDir = dirname($cacheFile);
 
@@ -108,7 +110,8 @@ class DistSynchronization
     }
 
     /**
-     * @param CompletePackageInterface $package
+     * @param EntityPackage $dbPackage
+     * @param               $ref
      *
      * @return string
      */

@@ -8,6 +8,7 @@
     },
     "require": {
         "php": "^7.1",
+        "ext-json": "*",
 
         "symfony/flex": "^1.0",
 

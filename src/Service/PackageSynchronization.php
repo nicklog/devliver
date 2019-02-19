@@ -101,7 +101,7 @@ class PackageSynchronization
     }
 
     /**
-     * @param array            $packages
+     * @param array   $packages
      * @param Package $dbPackage
      */
     protected function updateVersions(array $packages, Package $dbPackage)
@@ -111,7 +111,7 @@ class PackageSynchronization
         $dumper = new ArrayDumper();
 
         $knownVersions = $versionRepository->findBy([
-            'package' => $dbPackage
+            'package' => $dbPackage,
         ]);
 
         $toRemove = [];
