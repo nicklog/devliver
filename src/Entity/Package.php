@@ -128,7 +128,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return User|null
      */
     public function getCreator(): ?User
     {
@@ -136,7 +136,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param User|null $creator
      */
     public function setCreator(?User $creator): void
     {
@@ -144,7 +144,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return string
      */
     public function getType()
     {
@@ -152,7 +152,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param $type
      */
     public function setType($type)
     {
@@ -160,7 +160,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return string
      */
     public function getUrl()
     {
@@ -168,7 +168,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param $url
      */
     public function setUrl($url)
     {
@@ -176,7 +176,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return bool
      */
     public function isEnable(): bool
     {
@@ -184,7 +184,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param bool $enable
      */
     public function setEnable(bool $enable): void
     {
@@ -192,7 +192,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return bool
      */
     public function isAbandoned(): bool
     {
@@ -200,7 +200,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param bool $abandoned
      */
     public function setAbandoned(bool $abandoned): void
     {
@@ -224,7 +224,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return array
      */
     public function getConfig()
     {
@@ -235,7 +235,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return Repo|null
      */
     public function getRepo(): ?Repo
     {
@@ -243,7 +243,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param Repo|null $repo
      */
     public function setRepo(?Repo $repo): void
     {
@@ -251,7 +251,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return string
      */
     public function getName(): string
     {
@@ -259,7 +259,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param string $name
      */
     public function setName(string $name): void
     {
@@ -267,7 +267,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return string|null
      */
     public function getReadme(): ?string
     {
@@ -275,7 +275,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param string|null $readme
      */
     public function setReadme(?string $readme): void
     {
@@ -283,7 +283,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return bool
      */
     public function isAutoUpdate(): bool
     {
@@ -291,7 +291,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param bool $autoUpdate
      */
     public function setAutoUpdate(bool $autoUpdate): void
     {
@@ -299,7 +299,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return \DateTime|null
      */
     public function getLastUpdate(): ?\DateTime
     {
@@ -307,7 +307,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param \DateTime $lastUpdate
      */
     public function setLastUpdate(\DateTime $lastUpdate): void
     {
@@ -315,7 +315,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return Collection|Version[]
      */
     public function getVersions(): Collection
     {
@@ -323,7 +323,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return Collection|Version[]
      */
     public function getVersionsSorted(): Collection
     {
@@ -338,7 +338,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return bool
      */
     public function hasVersions(): bool
     {
@@ -346,7 +346,9 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param Version $version
+     *
+     * @return bool
      */
     public function hasVersion(Version $version): bool
     {
@@ -354,7 +356,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param Version $version
      */
     public function addVersion(Version $version): void
     {
@@ -365,7 +367,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @param Version $version
      */
     public function removePackage(Version $version): void
     {
@@ -375,7 +377,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return array
      */
     public function getPackages(): array
     {
@@ -397,7 +399,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return CompletePackage
      */
     public function getLastStablePackage(): CompletePackage
     {
@@ -409,7 +411,7 @@ class Package extends BaseEntity
     }
 
     /**
-     * @inheritdoc
+     * @return string
      */
     public function __toString(): string
     {
