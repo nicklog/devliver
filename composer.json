@@ -102,6 +102,9 @@
         "bin-dir": "bin",
         "preferred-install": {
             "*": "dist"
+        },
+        "platform": {
+            "php": "7.1.29"
         }
     },
     "extra": {
