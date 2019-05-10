@@ -7,6 +7,8 @@ version
 composer/
 
 ###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
 public/bundles/
 public/vendor/
 var/
