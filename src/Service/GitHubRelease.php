@@ -40,9 +40,9 @@ class GitHubRelease
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getVersionData(): string
+    public function getVersionData(): array
     {
         $fs = new Filesystem();
 
@@ -91,7 +91,7 @@ class GitHubRelease
     }
 
     /**
-     * @return array|mixed
+     * @return array
      */
     public function getAllTags(): array
     {

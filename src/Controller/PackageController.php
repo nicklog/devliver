@@ -284,7 +284,7 @@ class PackageController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{package}", name="edit")
+     * @Route("/{package}/edit", name="edit")
      * @Template()
      *
      * @param Request $request
