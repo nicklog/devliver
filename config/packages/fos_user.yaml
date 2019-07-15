@@ -4,8 +4,8 @@ fos_user:
     firewall_name: main
 
     from_email:
-        address:        "%mailer_user%"
-        sender_name:    "%mailer_user%"
+        address:        "%env(MAILER_SENDER)%"
+        sender_name:    "%env(MAILER_SENDER)%"
 
     group:
         group_class: Shapecode\Devliver\Entity\UserGroup

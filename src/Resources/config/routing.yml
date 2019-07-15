@@ -1,3 +1,0 @@
-devliver:
-    resource: "@DevliverBundle/Controller"
-    type: annotation

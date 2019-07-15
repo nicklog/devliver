@@ -7,7 +7,6 @@ use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Service\DistSynchronization;
 use Shapecode\Devliver\Service\PackagesDumper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,7 +54,7 @@ class RepositoryController
      *
      * @return Response
      */
-    public function indexAction()
+    public function indexAction(): Response
     {
         $json = $this->packagesDumper->dumpPackagesJson($this->security->getUser());
 
@@ -66,9 +65,12 @@ class RepositoryController
      * @Route("/repo/provider/{vendor}/{project}.json", name="provider")
      * @Route("/repo/provider", name="provider_base")
      *
+     * @param $vendor
+     * @param $project
+     *
      * @return Response
      */
-    public function providerAction($vendor, $project)
+    public function providerAction($vendor, $project): Response
     {
         $user = $this->security->getUser();
 
@@ -92,15 +94,14 @@ class RepositoryController
      * @Route("/repo/dist/{vendor}/{project}/{ref}.{type}", name="dist")
      * @Route("/dist/{vendor}/{project}/{ref}.{type}", name="dist_web")
      *
-     * @param Request $req
      * @param         $vendor
      * @param         $project
      * @param         $ref
      * @param         $type
      *
-     * @return BinaryFileResponse|Response
+     * @return BinaryFileResponse
      */
-    public function distAction($vendor, $project, $ref, $type)
+    public function distAction($vendor, $project, $ref, $type): BinaryFileResponse
     {
         $name = $vendor.'/'.$project;
 

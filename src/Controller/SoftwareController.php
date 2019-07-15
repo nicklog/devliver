@@ -4,8 +4,7 @@ namespace Shapecode\Devliver\Controller;
 
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Loader\ArrayLoader;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/software", name="devliver_software_")
  */
-class SoftwareController
+class SoftwareController extends AbstractController
 {
 
     /** @var string */
@@ -33,11 +32,10 @@ class SoftwareController
 
     /**
      * @Route("/", name="index")
-     * @Template()
      *
-     * @return RedirectResponse|Response|array
+     * @return Response
      */
-    public function indexAction()
+    public function indexAction(): Response
     {
         $lock = $this->projectDir.'/composer.lock';
 
@@ -55,8 +53,8 @@ class SoftwareController
             $packages[] = $package;
         }
 
-        return [
+        return $this->render('software/index.html.twig', [
             'packages' => $packages,
-        ];
+        ]);
     }
 }

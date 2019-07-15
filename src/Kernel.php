@@ -19,7 +19,7 @@ class Kernel extends BaseKernel
     use MicroKernelTrait;
 
     /** @var string */
-    const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+    public const CONFIG_EXTS = '.{php,xml,yaml,yml}';
 
     /**
      * @inheritdoc
@@ -43,8 +43,6 @@ class Kernel extends BaseKernel
     public function registerBundles()
     {
         $contents = require $this->getProjectDir() . '/config/bundles.php';
-
-        $contents[DevliverBundle::class] = ['all' => true];
 
         foreach ($contents as $class => $envs) {
             if (isset($envs['all']) || isset($envs[$this->environment])) {

@@ -5,7 +5,6 @@ namespace Shapecode\Devliver\Controller;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Shapecode\Devliver\Composer\ComposerManager;
 use Shapecode\Devliver\Entity\Package;
 use Shapecode\Devliver\Form\Type\Forms\PackageAbandonType;
@@ -94,13 +93,12 @@ class PackageController extends AbstractController
 
     /**
      * @Route("s", name="index")
-     * @Template()
      *
      * @param Request $request
      *
-     * @return Response|array
+     * @return Response
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request): Response
     {
         $repository = $this->registry->getRepository(Package::class);
         $qb = $repository->createQueryBuilder('p');
@@ -124,21 +122,20 @@ class PackageController extends AbstractController
 
         $pagination = $this->paginator->paginate($qb, $page, $limit);
 
-        return [
+        return $this->render('package/list.html.twig', [
             'pagination' => $pagination,
-        ];
+        ]);
     }
 
     /**
      * @Route("/{package}/abandon", name="abandon")
-     * @Template()
      *
      * @param Request $request
      * @param Package $package
      *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse|array
+     * @return Response
      */
-    public function abandonAction(Request $request, Package $package)
+    public function abandonAction(Request $request, Package $package): Response
     {
         $form = $this->formFactory->create(PackageAbandonType::class, $package);
         $form->handleRequest($request);
@@ -155,9 +152,9 @@ class PackageController extends AbstractController
             return $this->redirectToRoute('devliver_package_index');
         }
 
-        return [
+        return $this->render('package/abandon.html.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
@@ -165,8 +162,10 @@ class PackageController extends AbstractController
      *
      * @param Request $request
      * @param Package $package
+     *
+     * @return Response
      */
-    public function unabandonAction(Request $request, Package $package)
+    public function unabandonAction(Request $request, Package $package): Response
     {
         $em = $this->registry->getManager();
 
@@ -192,8 +191,10 @@ class PackageController extends AbstractController
      *
      * @param Request $request
      * @param Package $package
+     *
+     * @return Response
      */
-    public function enableAction(Request $request, Package $package)
+    public function enableAction(Request $request, Package $package): Response
     {
         $em = $this->registry->getManager();
 
@@ -216,8 +217,10 @@ class PackageController extends AbstractController
      *
      * @param Request $request
      * @param Package $package
+     *
+     * @return Response
      */
-    public function disableAction(Request $request, Package $package)
+    public function disableAction(Request $request, Package $package): Response
     {
         $em = $this->registry->getManager();
 
@@ -237,13 +240,12 @@ class PackageController extends AbstractController
 
     /**
      * @Route("/add", name="add")
-     * @Template()
      *
      * @param Request $request
      *
-     * @return Response|array
+     * @return Response
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): Response
     {
         $form = $this->formFactory->create(PackageType::class, null, [
             'constraints' => [
@@ -278,21 +280,20 @@ class PackageController extends AbstractController
             return $this->redirectToRoute('devliver_package_index');
         }
 
-        return [
+        return $this->render('package/add.html.twig', [
             'form' => $form->createView(),
-        ];
+        ]);
     }
 
     /**
      * @Route("/{package}/edit", name="edit")
-     * @Template()
      *
      * @param Request $request
      * @param Package $package
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
+     * @return Response
      */
-    public function editAction(Request $request, Package $package)
+    public function editAction(Request $request, Package $package): Response
     {
         $form = $this->createForm(PackageType::class, $package->getConfig(), [
             'constraints' => [
@@ -330,10 +331,10 @@ class PackageController extends AbstractController
             ]);
         }
 
-        return [
+        return $this->render('package/edit.html.twig', [
             'form'    => $form->createView(),
             'package' => $package,
-        ];
+        ]);
     }
 
     /**
@@ -341,9 +342,9 @@ class PackageController extends AbstractController
      *
      * @param Package $package
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response
      */
-    public function deleteAction(Package $package)
+    public function deleteAction(Package $package): Response
     {
         $em = $this->registry->getManager();
 
@@ -361,9 +362,9 @@ class PackageController extends AbstractController
      * @param Request $request
      * @param Package $package
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response
      */
-    public function updateAction(Request $request, Package $package)
+    public function updateAction(Request $request, Package $package): Response
     {
         $this->packageSynchronization->sync($package);
 
@@ -383,9 +384,9 @@ class PackageController extends AbstractController
     /**
      * @Route("/update-all", name="update_all")
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response
      */
-    public function updateAllAction()
+    public function updateAllAction(): Response
     {
         $this->packageSynchronization->syncAll();
 
@@ -398,13 +399,13 @@ class PackageController extends AbstractController
      * @Route("/{package}", name="view", requirements={"package"="\d+"})
      * @Route("/{package}/{slug}", name="view_slug", requirements={"package"="\d+"})
      * @Route("/{package}/view", name="view_2", requirements={"package"="\d+"})
-     * @Template()
      *
+     * @param Request $request
      * @param Package $package
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response|array
+     * @return Response
      */
-    public function viewAction(Request $request, Package $package)
+    public function viewAction(Request $request, Package $package): Response
     {
         if (!$package->getVersions()->count()) {
             return $this->redirectToRoute('devliver_package_update', [
@@ -422,10 +423,10 @@ class PackageController extends AbstractController
         $packages = $package->getPackages();
         $stable = $package->getLastStablePackage();
 
-        return [
+        return $this->render('package/view.html.twig', [
             'package'  => $package,
             'info'     => $stable,
             'versions' => $packages,
-        ];
+        ]);
     }
 }

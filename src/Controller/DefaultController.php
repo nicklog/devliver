@@ -2,7 +2,6 @@
 
 namespace Shapecode\Devliver\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,12 +41,11 @@ class DefaultController extends AbstractController
 
     /**
      * @Route("/how-to", name="howto")
-     * @Template
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function howtoAction()
     {
-        return [];
+        return $this->render('default/howto.html.twig');
     }
 }

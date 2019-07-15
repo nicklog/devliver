@@ -3,11 +3,11 @@
 namespace Shapecode\Devliver\Controller;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Shapecode\Devliver\Form\Type\Forms\UserProfileType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -45,26 +45,24 @@ class ProfileController extends AbstractController
 
     /**
      * @Route("", name="index")
-     * @Template()
      *
-     * @return array
+     * @return Response
      */
-    public function profileAction()
+    public function profileAction(): Response
     {
-        return [
-            'user' => $this->security->getUser()
-        ];
+        return $this->render('profile/profile.html.twig', [
+            'user' => $this->security->getUser(),
+        ]);
     }
 
     /**
      * @Route("/edit", name="edit")
-     * @Template()
      *
      * @param Request $request
      *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return Response
      */
-    public function editAction(Request $request)
+    public function editAction(Request $request): Response
     {
         $user = $this->security->getUser();
 
@@ -80,9 +78,9 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute($request->get('_route'));
         }
 
-        return [
+        return $this->render('profile/edit.html.twig', [
             'user' => $this->getUser(),
             'form' => $form->createView(),
-        ];
+        ]);
     }
 }

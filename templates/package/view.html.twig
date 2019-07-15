@@ -1,4 +1,4 @@
-{% extends '@Devliver/layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block pageTitle %}
     <i class="fas fa-cube fa-fw"></i> {{ package.name }}
@@ -59,7 +59,7 @@
 
             {% for version in versions %}
                 <div class="package-details" id="details_{{ (version.prettyVersion ~ version.sourceReference)|sha1 }}" {% if version != info %}style="display: none"{% endif %}>
-                    {% include '@Devliver/package/_details.html.twig' with { info: version } %}
+                    {% include 'package/_details.html.twig' with { info: version } %}
                 </div>
             {% endfor %}
 

@@ -20,7 +20,6 @@ return [
     Sonata\EasyExtendsBundle\SonataEasyExtendsBundle::class => ['all' => true],
     FOS\UserBundle\FOSUserBundle::class => ['all' => true],
     Sonata\UserBundle\SonataUserBundle::class => ['all' => true],
-    Shapecode\Devliver\DevliverBundle::class => ['all' => true],
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
     Ornicar\GravatarBundle\OrnicarGravatarBundle::class => ['all' => true],
     Shapecode\Bundle\CronBundle\ShapecodeCronBundle::class => ['all' => true],

@@ -15,6 +15,9 @@ profile:
     change_password:
         page_header: Change Password
 
+repository:
+    singular: Repository
+
 package:
     list:
         page_header: Packages
