@@ -77,7 +77,7 @@ class PackageAdmin extends AbstractAdmin
         $listMapper->addIdentifier('url');
         $listMapper->add('type');
         $listMapper->add('creator');
-        $listMapper->add('lastUpdate');
+        $listMapper->add('lastUpdate', 'datetime');
         $listMapper->add('enable', null, [
             'editable' => true
         ]);
@@ -85,7 +85,7 @@ class PackageAdmin extends AbstractAdmin
             'editable' => true
         ]);
         $listMapper->add('autoUpdate', null, [
-            'editable' => true
+            'editable' => false
         ]);
     }
 }
