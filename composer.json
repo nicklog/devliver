@@ -30,6 +30,7 @@
         "symfony/finder": "^4.2",
         "symfony/form": "^4.2",
         "symfony/lock": "^4.2",
+        "symfony/yaml": "^4.2",
         "symfony/stopwatch": "^4.2",
         "symfony/translation": "^4.2",
         "symfony/validator": "^4.2",
@@ -50,10 +51,10 @@
         "tenolo/doctrine-table-prefix-bundle": "^2.1",
         "tenolo/ignore-doctrine-annotations-bundle": "^1.0",
 
+        "avris/dotenv": "^1.0",
         "php-http/client-implementation": "^1.0",
         "php-http/discovery": "^1.4",
         "php-http/client-common": "^1.7",
-        "incenteev/composer-parameter-handler": "^2.0",
         "twig/twig": "^1.0|^2.0",
         "composer/composer": "^1.0",
         "erusev/parsedown": "^1.7",
@@ -74,24 +75,19 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "@parameter-scripts",
             "@auto-scripts"
         ],
         "post-update-cmd": [
-            "@parameter-scripts",
             "@auto-scripts"
         ],
         "auto-scripts": {
             "cache:clear --no-warmup": "symfony-cmd",
             "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd",
+            "devliver:setup": "symfony-cmd",
             "doctrine:schema:update --force": "symfony-cmd",
             "shapecode:cron:scan": "symfony-cmd",
-            "devliver:migrate": "symfony-cmd",
             "cache:warmup": "symfony-cmd"
-        },
-        "parameter-scripts": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
-        ]
+        }
     },
     "config": {
         "bin-dir": "bin",
@@ -105,9 +101,6 @@
     "extra": {
         "symfony": {
             "allow-contrib": "true"
-        },
-        "incenteev-parameters": {
-            "file": "parameters.yml"
         }
     },
     "minimum-stability": "dev",

@@ -6,15 +6,13 @@ use Http\Client\Common\Plugin\RedirectPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
+use Shapecode\Devliver\Service\ConsoleHelper;
 use Shapecode\Devliver\Service\GitHubRelease;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 /**
  * Class SelfUpdateCommand
@@ -28,19 +26,19 @@ class SelfUpdateCommand extends Command
     /** @var GitHubRelease */
     protected $github;
 
-    /** @var KernelInterface */
-    protected $kernel;
+    /** @var ConsoleHelper */
+    protected $consoleHelper;
 
     /**
-     * @param GitHubRelease   $github
-     * @param KernelInterface $kernel
+     * @param GitHubRelease $github
+     * @param ConsoleHelper $consoleHelper
      */
-    public function __construct(GitHubRelease $github, KernelInterface $kernel)
+    public function __construct(GitHubRelease $github, ConsoleHelper $consoleHelper)
     {
         parent::__construct();
 
         $this->github = $github;
-        $this->kernel = $kernel;
+        $this->consoleHelper = $consoleHelper;
     }
 
     /**
@@ -58,7 +56,7 @@ class SelfUpdateCommand extends Command
     {
         $lastTag = $this->github->getLastTag();
 
-        $pwd = $this->getWorkingDirectory();
+        $pwd = $this->consoleHelper->getWorkingDirectory();
         $filename = $lastTag['name'].'.zip';
         $filePath = $pwd.'/'.$filename;
 
@@ -110,7 +108,7 @@ class SelfUpdateCommand extends Command
      */
     protected function removeSources(SymfonyStyle $io)
     {
-        $pwd = $this->getWorkingDirectory();
+        $pwd = $this->consoleHelper->getWorkingDirectory();
         $fs = new Filesystem();
 
         $list = [
@@ -140,7 +138,7 @@ class SelfUpdateCommand extends Command
      */
     protected function unzip(SymfonyStyle $io, $zipball, $lastTag)
     {
-        $pwd = $this->getWorkingDirectory();
+        $pwd = $this->consoleHelper->getWorkingDirectory();
 
         $io->section('unzip update file');
 
@@ -167,8 +165,7 @@ class SelfUpdateCommand extends Command
     {
         $io->section('composer install');
 
-        $this->executeCommand($io, 'install --no-scripts --no-dev --optimize-autoloader', 'composer.phar');
-        $this->executeCommand($io, 'auto-scripts', 'composer.phar');
+        $this->consoleHelper->composerInstall($io);
     }
 
     /**
@@ -182,14 +179,6 @@ class SelfUpdateCommand extends Command
         $io->section('remove update file');
         $fs->remove($filePath);
         $io->text('update file removed');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getWorkingDirectory()
-    {
-        return $this->kernel->getProjectDir();
     }
 
     /**
@@ -212,25 +201,6 @@ class SelfUpdateCommand extends Command
         );
 
         file_put_contents($dest, $download->getBody());
-    }
-
-    protected function executeCommand(SymfonyStyle $io, $commandStr, $binary = 'console')
-    {
-        $pwd = $this->getWorkingDirectory();
-        $helper = $this->getHelper('process');
-
-        $projectDir = $this->kernel->getProjectDir();
-        $bin = realpath($projectDir.'/bin/'.$binary);
-
-        $executableFinder = new PhpExecutableFinder();
-        $php = $executableFinder->find();
-
-        $command = sprintf('%s %s %s', $php, $bin, $commandStr);
-
-        $process = new Process($command, $pwd);
-        $helper->run($io, $process, null, function ($type, $data) use ($io) {
-            $io->write($data);
-        });
     }
 
 }
