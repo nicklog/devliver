@@ -2,6 +2,9 @@
     "license": "LGPL-3.0",
     "type": "project",
     "autoload": {
+        "files": [
+            "src/Kernel.php"
+        ],
         "psr-4": {
             "Shapecode\\Devliver\\": "src/"
         }
@@ -35,8 +38,6 @@
         "symfony/apache-pack": "^1.0",
         "symfony/polyfill-apcu": "^1.0",
 
-        "sensio/framework-extra-bundle": "^5.1",
-
         "sonata-project/admin-bundle": "^3.9",
         "sonata-project/doctrine-orm-admin-bundle": "^3.4",
         "sonata-project/user-bundle": "^4.1",
@@ -68,12 +69,6 @@
     "require-dev": {
         "roave/security-advisories": "dev-master"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
     "conflict": {
         "symfony/symfony": "*"
     },
