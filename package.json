@@ -6,7 +6,7 @@
         "bootstrap-confirmation2": "^4.0",
         "chart.js": "^2.7",
         "clean-css": "^4.1.11",
-        "jquery": "^3.3.1",
+        "jquery": "^3.5.0",
         "jquery-countdown": "^2.2",
         "moment": "^2.23",
         "node-sass": "^4.9.0",
