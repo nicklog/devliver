@@ -9,7 +9,7 @@
         "jquery": "^3.3.1",
         "jquery-countdown": "^2.2",
         "moment": "^2.23",
-        "node-sass": "^4.9.0",
+        "node-sass": "^4.13.1",
         "popper.js": "^1.14",
         "sass-loader": "^7.0.3",
         "select2": "^4.0",
