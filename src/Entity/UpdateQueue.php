@@ -1,83 +1,56 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class UpdateQueue
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
- *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\UpdateQueueRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\UpdateQueueRepository")
  */
-class UpdateQueue extends BaseEntity
+class UpdateQueue extends AbstractEntity
 {
-
     /**
-     * @var Package
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Package")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    protected $package;
+    protected Package $package;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(type="datetimeutc", nullable=true)
-     */
-    protected $lockedAt;
+    /** @ORM\Column(type="datetimeutc", nullable=true) */
+    protected ?DateTime $lockedAt = null;
 
-    /**
-     * @var \DateTime
-     * @ORM\Column(type="datetimeutc", nullable=false)
-     */
-    protected $lastCalledAt;
+    /** @ORM\Column(type="datetimeutc", nullable=false) */
+    protected DateTime $lastCalledAt;
 
-    /**
-     * @inheritdoc
-     */
     public function getPackage(): Package
     {
         return $this->package;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setPackage(Package $package): void
     {
         $this->package = $package;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getLockedAt(): ?\DateTime
+    public function getLockedAt(): ?DateTime
     {
         return $this->lockedAt;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setLockedAt(?\DateTime $lockedAt): void
+    public function setLockedAt(?DateTime $lockedAt): void
     {
         $this->lockedAt = $lockedAt;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getLastCalledAt(): \DateTime
+    public function getLastCalledAt(): DateTime
     {
         return $this->lastCalledAt;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setLastCalledAt(\DateTime $lastCalledAt): void
+    public function setLastCalledAt(DateTime $lastCalledAt): void
     {
         $this->lastCalledAt = $lastCalledAt;
     }

@@ -1,30 +1,34 @@
 <?php
 
-namespace Shapecode\Devliver\Repository;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\User;
-use Shapecode\Devliver\Entity\Version;
+namespace App\Repository;
+
+use App\Entity\Package;
+use App\Entity\User;
+use App\Entity\Version;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class VersionRepository
- *
- * @package Shapecode\Devliver\Repository
- * @author  Nikita Loges
+ * @method Version|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method Version[] findAll()
+ * @method Version|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Version[] findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null)
  */
-class VersionRepository extends EntityRepository
+class VersionRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Version::class);
+    }
 
     /**
-     * @param User                  $user
-     * @param Package|null $package
-     *
      * @return array|Version[]
      */
-    public function findAccessibleForUser(User $user, Package $package = null): array
+    public function findAccessibleForUser(User $user, ?Package $package = null): array
     {
-        $qb = $this->createQueryBuilder('v');
+        $qb   = $this->createQueryBuilder('v');
         $expr = $qb->expr();
 
         $qb->join('v.package', 'p');
@@ -35,9 +39,9 @@ class VersionRepository extends EntityRepository
             $qb->setParameter('package', $package->getId());
         }
 
-        if (!$user->isPackageRootAccess()) {
-            $versions = $user->getAccessVersions();
-            $versionIds = $versions->map(function (Version $version) {
+        if (! $user->isPackageRootAccess()) {
+            $versions   = $user->getAccessVersions();
+            $versionIds = $versions->map(static function (Version $version) {
                 return $version->getId();
             })->toArray();
 
@@ -49,5 +53,4 @@ class VersionRepository extends EntityRepository
 
         return $query->getResult();
     }
-
 }

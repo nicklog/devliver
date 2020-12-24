@@ -1,6 +1,8 @@
 <?php
 
-namespace Shapecode\Devliver\Service;
+declare(strict_types=1);
+
+namespace App\Service;
 
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -8,55 +10,41 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-/**
- * Class ConsoleHelper
- *
- * @package Shapecode\Devliver\Service
- * @author  Nikita Loges
- * @company tenolo GmbH & Co. KG
- */
+use function realpath;
+use function sprintf;
+
 class ConsoleHelper
 {
+    protected KernelInterface $kernel;
 
-    /** @var KernelInterface */
-    protected $kernel;
-
-    /**
-     * @return string
-     */
     public function getWorkingDirectory(): string
     {
         return $this->kernel->getProjectDir();
     }
 
-    /**
-     * @param OutputInterface $io
-     * @param                 $commandStr
-     * @param string          $binary
-     */
-    public function run(OutputInterface $io, $commandStr, $binary = 'console'): void
-    {
+    public function run(
+        OutputInterface $io,
+        string $commandStr,
+        string $binary = 'console'
+    ): void {
         $pwd = $this->getWorkingDirectory();
 
         $projectDir = $this->kernel->getProjectDir();
-        $bin = realpath($projectDir.'/bin/'.$binary);
+        $bin        = realpath($projectDir . '/bin/' . $binary);
 
         $executableFinder = new PhpExecutableFinder();
-        $php = $executableFinder->find();
+        $php              = $executableFinder->find();
 
         $command = sprintf('%s %s %s', $php, $bin, $commandStr);
 
-        $helper = new ProcessHelper();
+        $helper  = new ProcessHelper();
         $process = new Process($command, $pwd);
-        $helper->run($io, $process, null, function ($type, $data) use ($io) {
+        $helper->run($io, $process, null, static function ($type, $data) use ($io): void {
             $io->write($data);
         });
     }
 
-    /**
-     * @param OutputInterface $io
-     */
-    public function composerInstall(OutputInterface $io)
+    public function composerInstall(OutputInterface $io): void
     {
         $this->run($io, 'install --no-scripts --no-dev --optimize-autoloader', 'composer.phar');
         $this->run($io, 'auto-scripts', 'composer.phar');

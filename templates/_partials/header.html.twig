@@ -8,12 +8,6 @@
                         <span class="fas fa-cubes fa-fw"></span>
                         {{ 'repository.singular'|trans }}
                     </a>
-                    {% if latest_release.name != current_release.name and is_granted('ROLE_USER') %}
-                        <a class="btn btn-warning bs-tooltip" data-title="{{ latest_release.name }}" href="https://github.com/shapecode/devliver/releases" target="_blank">
-                            <span class="fas fa-chevron-circle-up fa-fw"></span>
-                            Update Available
-                        </a>
-                    {% endif %}
                 </div>
             </div>
         </form>

@@ -1,52 +1,37 @@
 <?php
 
-namespace Shapecode\Devliver\Service;
+declare(strict_types=1);
+
+namespace App\Service;
 
 use Composer\Repository\RepositoryInterface;
 use Composer\Repository\VcsRepository;
-use Demontpx\ParsedownBundle\Parsedown;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Throwable;
 
-/**
- * Class RepositoryHelper
- *
- * @package Shapecode\Devliver\Service
- * @author  Nikita Loges
- */
+use function htmlspecialchars;
+use function str_replace;
+
 class RepositoryHelper
 {
+    protected UrlGeneratorInterface $router;
 
-    /** @var Parsedown */
-    protected $parsdown;
-
-    /** @var UrlGeneratorInterface */
-    protected $router;
-
-    /**
-     * @param Parsedown             $parsdown
-     * @param UrlGeneratorInterface $router
-     */
-    public function __construct(Parsedown $parsdown, UrlGeneratorInterface $router)
-    {
-        $this->parsdown = $parsdown;
+    public function __construct(
+        UrlGeneratorInterface $router
+    ) {
         $this->router = $router;
     }
 
-    /**
-     * @param RepositoryInterface $repository
-     *
-     * @return null|string
-     */
     public function getReadme(RepositoryInterface $repository): ?string
     {
-        if (!($repository instanceof VcsRepository)) {
+        if (! ($repository instanceof VcsRepository)) {
             return null;
         }
 
         try {
             $driver = $repository->getDriver();
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return null;
         }
 
@@ -55,7 +40,7 @@ class RepositoryHelper
         $readme = $composerInfo['readme'] ?? 'README.md';
 
         $file = new File($readme, false);
-        $ext = $file->getExtension();
+        $ext  = $file->getExtension();
 
         $source = null;
 
@@ -63,35 +48,33 @@ class RepositoryHelper
             switch ($ext) {
                 case 'md':
                     $source = $driver->getFileContent($readme, $driver->getRootIdentifier());
-                    $source = $this->parsdown->parse($source);
                     break;
                 default:
                     $source = $driver->getFileContent($readme, $driver->getRootIdentifier());
-                    if (!empty($source)) {
+                    if (! empty($source)) {
                         $source = '<pre>' . htmlspecialchars($source) . '</pre>';
                     }
+
                     break;
             }
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
         }
 
         return $source;
     }
 
     /**
-     * @param RepositoryInterface $repository
-     *
-     * @return array|null
+     * @return mixed[]|null
      */
     public function getComposerInformation(RepositoryInterface $repository): ?array
     {
-        if (!($repository instanceof VcsRepository)) {
+        if (! ($repository instanceof VcsRepository)) {
             return null;
         }
 
         try {
             $driver = $repository->getDriver();
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return null;
         }
 
@@ -102,15 +85,11 @@ class RepositoryHelper
         return $driver->getComposerInformation($driver->getRootIdentifier());
     }
 
-    /**
-     * @param                       $package
-     * @param                       $ref
-     * @param                       $type
-     *
-     * @return string
-     */
-    public function getComposerDistUrl($package, $ref, $type = 'zip'): string
-    {
+    public function getComposerDistUrl(
+        string $package,
+        string $ref,
+        string $type = 'zip'
+    ): string {
         $distUrl = $this->router->generate('devliver_repository_dist', [
             'vendor'  => 'PACK',
             'project' => 'AGE',

@@ -1,81 +1,65 @@
 <?php
 
-namespace Shapecode\Devliver\Service;
+declare(strict_types=1);
 
+namespace App\Service;
+
+use App\Composer\ComposerManager;
+use App\Entity\Author;
+use App\Entity\Package;
+use App\Entity\Tag;
+use App\Entity\Version;
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
 use Composer\Package\Dumper\ArrayDumper;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Composer\ComposerManager;
-use Shapecode\Devliver\Entity\Author;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\Tag;
-use Shapecode\Devliver\Entity\Version;
+use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * Class PackageSynchronization
- *
- * @package Shapecode\Devliver\Service
- * @author  Nikita Loges
- */
+use function count;
+
 class PackageSynchronization
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected ComposerManager $composerManager;
 
-    /** @var ComposerManager */
-    protected $composerManager;
+    protected RepositoryHelper $repositoryHelper;
 
-    /** @var RepositoryHelper */
-    protected $repositoryHelper;
-
-    /**
-     * @param ManagerRegistry  $registry
-     * @param ComposerManager  $composerManager
-     * @param RepositoryHelper $repositoryHelper
-     */
     public function __construct(
         ManagerRegistry $registry,
         ComposerManager $composerManager,
-        RepositoryHelper $repositoryHelper)
-    {
-        $this->registry = $registry;
-        $this->composerManager = $composerManager;
+        RepositoryHelper $repositoryHelper
+    ) {
+        $this->registry         = $registry;
+        $this->composerManager  = $composerManager;
         $this->repositoryHelper = $repositoryHelper;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function syncAll(IOInterface $io = null): void
+    public function syncAll(?IOInterface $io = null): void
     {
         if ($io === null) {
             $io = $this->composerManager->createIO();
         }
 
         $repository = $this->registry->getRepository(Package::class);
-        $packages = $repository->findAll();
+        $packages   = $repository->findAll();
 
         foreach ($packages as $package) {
             $this->sync($package, $io);
         }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function sync(Package $package, IOInterface $io = null): void
+    public function sync(Package $package, ?IOInterface $io = null): void
     {
         if ($io === null) {
             $io = $this->composerManager->createIO();
         }
 
         $repository = $this->composerManager->createRepository($package, $io);
-        $packages = $repository->getPackages();
+        $packages   = $repository->getPackages();
 
-        if (!$packages) {
+        if (! $packages) {
             return;
         }
 
@@ -89,26 +73,27 @@ class PackageSynchronization
      */
     public function save(Package $package, array $packages): void
     {
-        if (count($packages)) {
-            $em = $this->registry->getManager();
-            $package->setLastUpdate(new \DateTime());
-
-            $em->persist($package);
-            $em->flush();
-
-            $this->updateVersions($packages, $package);
+        if (! count($packages)) {
+            return;
         }
+
+        $em = $this->registry->getManager();
+        $package->setLastUpdate(new DateTime());
+
+        $em->persist($package);
+        $em->flush();
+
+        $this->updateVersions($packages, $package);
     }
 
     /**
-     * @param array   $packages
-     * @param Package $dbPackage
+     * @param mixed[] $packages
      */
     protected function updateVersions(array $packages, Package $dbPackage): void
     {
         $versionRepository = $this->registry->getRepository(Version::class);
-        $em = $this->registry->getManager();
-        $dumper = new ArrayDumper();
+        $em                = $this->registry->getManager();
+        $dumper            = new ArrayDumper();
 
         $knownVersions = $versionRepository->findBy([
             'package' => $dbPackage,
@@ -116,7 +101,7 @@ class PackageSynchronization
 
         $toRemove = [];
         foreach ($knownVersions as $knownVersion) {
-            $name = $knownVersion->getName();
+            $name            = $knownVersion->getName();
             $toRemove[$name] = $knownVersion;
         }
 
@@ -131,7 +116,7 @@ class PackageSynchronization
             ]);
 
             $new = false;
-            if (!$dbVersion) {
+            if (! $dbVersion) {
                 $dbVersion = new Version();
                 $dbVersion->setName($package->getPrettyVersion());
                 $dbVersion->setPackage($dbPackage);
@@ -158,9 +143,11 @@ class PackageSynchronization
 
             $em->persist($dbVersion);
 
-            if ($new) {
-                $em->flush();
+            if (! $new) {
+                continue;
             }
+
+            $em->flush();
         }
 
         foreach ($toRemove as $item) {
@@ -170,45 +157,43 @@ class PackageSynchronization
         $em->flush();
     }
 
-    /**
-     * @param Version         $version
-     * @param CompletePackage $completePackage
-     */
     protected function updateTags(Version $version, CompletePackage $completePackage): void
     {
         $keywords = $completePackage->getKeywords();
-        $tagRepo = $this->registry->getRepository(Tag::class);
+        $tagRepo  = $this->registry->getRepository(Tag::class);
 
         foreach ($keywords as $keyword) {
             $tag = $tagRepo->findByName($keyword, true);
 
-            if ($tag) {
-                $version->addTag($tag);
+            if (! $tag) {
+                continue;
             }
+
+            $version->addTag($tag);
         }
     }
 
-    /**
-     * @param Version         $version
-     * @param CompletePackage $completePackage
-     */
     protected function updateAuthors(Version $version, CompletePackage $completePackage): void
     {
-        $authors = $completePackage->getAuthors();
+        $authors    = $completePackage->getAuthors();
         $authorRepo = $this->registry->getRepository(Author::class);
 
         foreach ($authors as $a) {
             $author = $authorRepo->findByNameOrEmail($a['name'], $a['email'], true);
 
-            if ($author) {
-                if (isset($a['homepage'])) {
-                    $author->setHomepage($a['homepage']);
-                }
-                if (isset($a['role'])) {
-                    $author->setRole($a['role']);
-                }
-                $version->addAuthor($author);
+            if ($author === null) {
+                continue;
             }
+
+            if (isset($a['homepage'])) {
+                $author->setHomepage($a['homepage']);
+            }
+
+            if (isset($a['role'])) {
+                $author->setRole($a['role']);
+            }
+
+            $version->addAuthor($author);
         }
     }
 }

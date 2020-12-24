@@ -1,41 +1,32 @@
 <?php
 
-namespace Shapecode\Devliver\Form\Type\Forms;
+declare(strict_types=1);
+
+namespace App\Form\Type\Forms;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Class PackageType
- *
- * @package Shapecode\Devliver\Form\Type\Forms
- * @author  Nikita Loges
- */
 class PackageType extends AbstractType
 {
-
     /**
      * @inheritdoc
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('package', \Shapecode\Devliver\Form\Type\Widgets\PackageType::class, [
+        $builder->add('package', \App\Form\Type\Widgets\PackageType::class, [
             'inherit_data' => true,
             'label'        => false,
         ]);
 
         $builder->add('submit', SubmitType::class, [
-            'label' => 'Save'
+            'label' => 'Save',
         ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
     }
-
 }

@@ -1,117 +1,102 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
 use Composer\Package\AliasPackage;
 use Composer\Package\Loader\ArrayLoader;
+use Composer\Package\PackageInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 
 /**
- * Class Version
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
- *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\VersionRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\VersionRepository")
  * @ORM\Table(indexes={
  *     @ORM\Index(columns={"package_id", "name"})
  * })
  */
-class Version extends BaseEntity
+class Version extends AbstractEntity
 {
-
     /**
-     * @var Package
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="versions", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Package", inversedBy="versions", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    protected $package;
+    protected Package $package;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Download", mappedBy="version", cascade={"persist", "remove"}, orphanRemoval=true)
+     *
      * @var ArrayCollection|PersistentCollection|Collection|Download[]
-     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Download", mappedBy="version", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $downloads;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="accessVersions", cascade={"persist"})
+     *
      * @var ArrayCollection|PersistentCollection|User[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\User", mappedBy="accessVersions", cascade={"persist"})
      */
     protected $accessUsers;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Author", inversedBy="versions", cascade={"persist"})
+     *
      * @var ArrayCollection|PersistentCollection|Author[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Author", inversedBy="versions", cascade={"persist"})
      */
     protected $authors;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", inversedBy="versions", cascade={"persist"})
+     *
      * @var ArrayCollection|PersistentCollection|Tag[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Tag", inversedBy="versions", cascade={"persist"})
      */
     protected $tags;
 
-    /**
-     * @var string|null
-     * @ORM\Column(type="string")
-     */
-    protected $name;
+    /** @ORM\Column(type="string") */
+    protected ?string $name = null;
 
     /**
-     * @var array
-     * @ORM\Column(type="json_array")
+     * @ORM\Column(type="json")
+     *
+     * @var mixed[]
      */
-    protected $data;
+    protected array $data;
 
-    /**
-     */
     public function __construct()
     {
         parent::__construct();
 
         $this->accessUsers = new ArrayCollection();
-        $this->authors = new ArrayCollection();
-        $this->downloads = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+        $this->authors     = new ArrayCollection();
+        $this->downloads   = new ArrayCollection();
+        $this->tags        = new ArrayCollection();
     }
 
-    /**
-     * @return Package
-     */
     public function getPackage(): Package
     {
         return $this->package;
     }
 
-    /**
-     * @param Package $package
-     */
-    public function setPackage(Package $package)
+    public function setPackage(Package $package): void
     {
         $this->package = $package;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getData(): array
     {
@@ -119,9 +104,9 @@ class Version extends BaseEntity
     }
 
     /**
-     * @param array $data
+     * @param mixed[] $data
      */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -134,34 +119,27 @@ class Version extends BaseEntity
         return $this->authors;
     }
 
-    /**
-     * @param Author $author
-     *
-     * @return bool
-     */
     public function hasAuthor(Author $author): bool
     {
         return $this->getAuthors()->contains($author);
     }
 
-    /**
-     * @param Author $author
-     */
     public function addAuthor(Author $author): void
     {
-        if (!$this->hasAuthor($author)) {
-            $this->getAuthors()->add($author);
+        if ($this->hasAuthor($author)) {
+            return;
         }
+
+        $this->getAuthors()->add($author);
     }
 
-    /**
-     * @param Author $author
-     */
     public function removeAuthor(Author $author): void
     {
-        if ($this->hasAuthor($author)) {
-            $this->getAuthors()->removeElement($author);
+        if (! $this->hasAuthor($author)) {
+            return;
         }
+
+        $this->getAuthors()->removeElement($author);
     }
 
     /**
@@ -172,40 +150,30 @@ class Version extends BaseEntity
         return $this->tags;
     }
 
-    /**
-     * @param Tag $tag
-     *
-     * @return bool
-     */
     public function hasTag(Tag $tag): bool
     {
         return $this->getTags()->contains($tag);
     }
 
-    /**
-     * @param Tag $tag
-     */
     public function addTag(Tag $tag): void
     {
-        if (!$this->hasTag($tag)) {
-            $this->getTags()->add($tag);
+        if ($this->hasTag($tag)) {
+            return;
         }
+
+        $this->getTags()->add($tag);
     }
 
-    /**
-     * @param Tag $tag
-     */
     public function removeTag(Tag $tag): void
     {
-        if ($this->hasTag($tag)) {
-            $this->getTags()->removeElement($tag);
+        if (! $this->hasTag($tag)) {
+            return;
         }
+
+        $this->getTags()->removeElement($tag);
     }
 
-    /**
-     * @return \Composer\Package\PackageInterface
-     */
-    public function getPackageInformation(): \Composer\Package\PackageInterface
+    public function getPackageInformation(): PackageInterface
     {
         $loader = new ArrayLoader();
 

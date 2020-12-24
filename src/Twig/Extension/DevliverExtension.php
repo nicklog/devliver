@@ -1,65 +1,44 @@
 <?php
 
-namespace Shapecode\Devliver\Twig\Extension;
+declare(strict_types=1);
 
+namespace App\Twig\Extension;
+
+use App\Composer\ComposerManager;
+use App\Entity\Download;
+use App\Entity\Package;
+use App\Entity\Version;
+use App\Model\PackageAdapter;
+use App\Repository\DownloadRepository;
+use App\Service\RepositoryHelper;
 use Composer\Package\CompletePackageInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Composer\ComposerManager;
-use Shapecode\Devliver\Entity\Download;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\Version;
-use Shapecode\Devliver\Model\PackageAdapter;
-use Shapecode\Devliver\Repository\DownloadRepository;
-use Shapecode\Devliver\Service\GitHubRelease;
-use Shapecode\Devliver\Service\RepositoryHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
-use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-/**
- * Class DevliverExtension
- *
- * @package Shapecode\Devliver\Twig\Extension
- * @author  Nikita Loges
- */
-class DevliverExtension extends AbstractExtension implements GlobalsInterface
+use function assert;
+
+class DevliverExtension extends AbstractExtension
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected UrlGeneratorInterface $router;
 
-    /** @var UrlGeneratorInterface */
-    protected $router;
+    protected ComposerManager $composerManager;
 
-    /** @var GitHubRelease */
-    protected $github;
+    protected RepositoryHelper $repositoryHelper;
 
-    /** @var ComposerManager */
-    protected $composerManager;
-
-    /** @var RepositoryHelper */
-    protected $repositoryHelper;
-
-    /**
-     * @param ManagerRegistry       $registry
-     * @param UrlGeneratorInterface $router
-     * @param GitHubRelease         $github
-     * @param ComposerManager       $composerManager
-     * @param RepositoryHelper      $repositoryHelper
-     */
     public function __construct(
         ManagerRegistry $registry,
         UrlGeneratorInterface $router,
-        GitHubRelease $github,
         ComposerManager $composerManager,
         RepositoryHelper $repositoryHelper
     ) {
-        $this->registry = $registry;
-        $this->router = $router;
-        $this->github = $github;
-        $this->composerManager = $composerManager;
+        $this->registry         = $registry;
+        $this->router           = $router;
+        $this->composerManager  = $composerManager;
         $this->repositoryHelper = $repositoryHelper;
     }
 
@@ -89,48 +68,28 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
         ];
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return int
-     */
-    public function getPackageDownloadsCounter(Package $package)
+    public function getPackageDownloadsCounter(Package $package): int
     {
-        /** @var DownloadRepository $repo */
         $repo = $this->registry->getRepository(Download::class);
+        assert($repo instanceof DownloadRepository);
 
         return $repo->countPackageDownloads($package);
     }
 
-    /**
-     * @param Version $version
-     *
-     * @return int
-     */
-    public function getVersionDownloadsCounter(Version $version)
+    public function getVersionDownloadsCounter(Version $version): int
     {
-        /** @var DownloadRepository $repo */
         $repo = $this->registry->getRepository(Download::class);
+        assert($repo instanceof DownloadRepository);
 
         return $repo->countVersionDownloads($version);
     }
 
-    /**
-     * @param CompletePackageInterface $package
-     *
-     * @return PackageAdapter
-     */
-    public function getPackageAdapter(CompletePackageInterface $package)
+    public function getPackageAdapter(CompletePackageInterface $package): PackageAdapter
     {
         return new PackageAdapter($package);
     }
 
-    /**
-     * @param $name
-     *
-     * @return string
-     */
-    public function getPackageUrl($name)
+    public function getPackageUrl(string $name): string
     {
         $repo = $this->registry->getRepository(Package::class);
 
@@ -144,15 +103,10 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             ]);
         }
 
-        return 'https://packagist.org/packages/'.$name;
+        return 'https://packagist.org/packages/' . $name;
     }
 
-    /**
-     * @param CompletePackageInterface $package
-     *
-     * @return string
-     */
-    public function getPackageDownloadUrl(CompletePackageInterface $package)
+    public function getPackageDownloadUrl(CompletePackageInterface $package): string
     {
         $adapter = $this->getPackageAdapter($package);
 
@@ -164,27 +118,10 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
         ]);
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return null|string
-     */
-    public function getPackageReadme(Package $package)
+    public function getPackageReadme(Package $package): ?string
     {
         $repository = $this->composerManager->createRepoByPackage(null, $package);
 
         return $this->repositoryHelper->getReadme($repository);
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getGlobals()
-    {
-        return [
-            'current_release' => $this->github->getCurrentTag(),
-            'latest_release'  => $this->github->getLastTag(),
-        ];
-    }
-
 }

@@ -1,46 +1,35 @@
 <?php
 
-namespace Shapecode\Devliver\Security;
+declare(strict_types=1);
 
-use FOS\UserBundle\Model\UserManagerInterface;
-use Shapecode\Devliver\Entity\User;
+namespace App\Security;
+
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-/**
- * Class TokenUserProvider
- *
- * @package Shapecode\Devliver\Security
- * @author  Nikita Loges
- */
 abstract class TokenUserProvider implements UserProviderInterface
 {
+    protected UserRepository $userManager;
 
-    /** @var UserManagerInterface */
-    protected $userManager;
-
-    /**
-     * @param UserManagerInterface $userManager
-     */
-    public function __construct(UserManagerInterface $userManager)
+    public function __construct(UserRepository $userManager)
     {
         $this->userManager = $userManager;
     }
 
     /**
-     * @param $token
-     *
      * @return null
      */
-    abstract public function getUsernameForToken($token);
+    abstract public function getUsernameForToken(string $token): ?string;
 
     /**
      * @inheritdoc
      */
     public function loadUserByUsername($username)
     {
-        return $this->userManager->findUserByUsername($username);
+        return $this->userManager->findOneByUsernameAndToken($username);
     }
 
     /**
@@ -60,6 +49,6 @@ abstract class TokenUserProvider implements UserProviderInterface
      */
     public function supportsClass($class)
     {
-        return User::class === $class;
+        return $class === User::class;
     }
 }

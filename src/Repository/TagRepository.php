@@ -1,25 +1,26 @@
 <?php
 
-namespace Shapecode\Devliver\Repository;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\Tag;
+namespace App\Repository;
+
+use App\Entity\Tag;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class TagRepository
- *
- * @package Shapecode\Devliver\Repository
- * @author  Nikita Loges
+ * @method Tag|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method Tag[] findAll()
+ * @method Tag|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Tag[] findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null)
  */
-class TagRepository extends EntityRepository
+class TagRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Tag::class);
+    }
 
-    /**
-     * @param string $name
-     * @param bool   $create
-     *
-     * @return Tag|null
-     */
     public function findByName(string $name, bool $create = false): ?Tag
     {
         $qb = $this->createQueryBuilder('p');

@@ -1,9 +1,11 @@
 <?php
 
-namespace Shapecode\Devliver\Controller;
+declare(strict_types=1);
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Form\Type\Forms\UserProfileType;
+namespace App\Controller;
+
+use App\Form\Type\Forms\UserProfileType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,41 +14,28 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Class ProfileController
- *
- * @package Shapecode\Devliver\Controller
- * @author  Nikita Loges
- *
  * @Route("/profile", name="devliver_profile_")
  */
 class ProfileController extends AbstractController
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected Security $security;
 
-    /** @var Security */
-    protected $security;
+    protected FormFactoryInterface $formFactory;
 
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /**
-     * @param ManagerRegistry      $registry
-     * @param Security             $security
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(ManagerRegistry $registry, Security $security, FormFactoryInterface $formFactory)
-    {
-        $this->registry = $registry;
-        $this->security = $security;
+    public function __construct(
+        ManagerRegistry $registry,
+        Security $security,
+        FormFactoryInterface $formFactory
+    ) {
+        $this->registry    = $registry;
+        $this->security    = $security;
         $this->formFactory = $formFactory;
     }
 
     /**
      * @Route("", name="index")
-     *
-     * @return Response
      */
     public function profileAction(): Response
     {
@@ -57,10 +46,6 @@ class ProfileController extends AbstractController
 
     /**
      * @Route("/edit", name="edit")
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function editAction(Request $request): Response
     {

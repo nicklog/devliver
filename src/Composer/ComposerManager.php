@@ -1,48 +1,35 @@
 <?php
 
-namespace Shapecode\Devliver\Composer;
+declare(strict_types=1);
 
+namespace App\Composer;
+
+use App\Entity\Package;
 use Composer\Config;
 use Composer\IO\BufferIO;
 use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryFactory;
 use Composer\Repository\RepositoryInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Entity\Package;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Class ComposerManager
- *
- * @package Shapecode\Devliver\Composer
- * @author  Nikita Loges
- */
+use function array_map;
+
 class ComposerManager
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected Config $config;
 
-    /** @var Config */
-    protected $config;
+    protected ConfigFactory $configFactory;
 
-    /** @var ConfigFactory */
-    protected $configFactory;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigFactory   $configFactory
-     */
     public function __construct(ManagerRegistry $registry, ConfigFactory $configFactory)
     {
-        $this->registry = $registry;
+        $this->registry      = $registry;
         $this->configFactory = $configFactory;
     }
 
-    /**
-     * @return BufferIO
-     */
-    public function createIO()
+    public function createIO(): BufferIO
     {
         $io = new BufferIO('', OutputInterface::VERBOSITY_VERBOSE);
         $io->loadConfiguration($this->getConfig());
@@ -50,13 +37,10 @@ class ComposerManager
         return $io;
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         if ($this->config === null) {
-            $packages = $this->registry->getRepository(Package::class)->findAll();
+            $packages     = $this->registry->getRepository(Package::class)->findAll();
             $this->config = $this->createRepositoriesConfig($packages);
         }
 
@@ -64,21 +48,14 @@ class ComposerManager
     }
 
     /**
-     * @return Config
      * @deprecated
      */
-    public function create()
+    public function create(): Config
     {
         return $this->getConfig();
     }
 
-    /**
-     * @param Package $package
-     * @param IOInterface|null $io
-     *
-     * @return RepositoryInterface
-     */
-    public function createRepository(Package $package, IOInterface $io = null)
+    public function createRepository(Package $package, ?IOInterface $io = null): RepositoryInterface
     {
         if ($io === null) {
             $io = $this->createIO();
@@ -90,13 +67,9 @@ class ComposerManager
     }
 
     /**
-     * @param string           $url
-     * @param string           $type
-     * @param IOInterface|null $io
-     *
      * @return RepositoryInterface|mixed
      */
-    public function createRepositoryByUrl(string $url, string $type = 'vcs', IOInterface $io = null)
+    public function createRepositoryByUrl(string $url, string $type = 'vcs', ?IOInterface $io = null)
     {
         if ($io === null) {
             $io = $this->createIO();
@@ -106,34 +79,29 @@ class ComposerManager
 
         return RepositoryFactory::createRepo($io, $config, [
             'type' => $type,
-            'url'  => $url
+            'url'  => $url,
         ]);
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return Config
-     */
-    public function createRepositoryConfig(Package $package)
+    public function createRepositoryConfig(Package $package): Config
     {
         return $this->createRepositoriesConfig([$package]);
     }
 
     /**
      * @param Package[] $packages
-     *
-     * @return Config
      */
-    public function createRepositoriesConfig(array $packages)
+    public function createRepositoriesConfig(array $packages): Config
     {
         $config = $this->configFactory->create();
-        $config->merge(['repositories' => array_map(
-            function (Package $r) {
-                return $r->getConfig();
-            },
-            $packages
-        )]);
+        $config->merge([
+            'repositories' => array_map(
+                static function (Package $r) {
+                    return $r->getConfig();
+                },
+                $packages
+            ),
+        ]);
 
         return $config;
     }

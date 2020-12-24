@@ -1,21 +1,17 @@
 <?php
 
-namespace Shapecode\Devliver\EventListener;
+declare(strict_types=1);
 
+namespace App\EventListener;
+
+use App\Entity\Common\AbstractEntity;
+use DateTime;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\BaseEntity;
 
-/**
- * Class EntityListener
- *
- * @package Shapecode\Devliver\EventListener
- * @author  Nikita Loges
- */
 class EntityListener implements EventSubscriber
 {
-
     /**
      * @inheritDoc
      */
@@ -28,78 +24,38 @@ class EntityListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \Exception
-     */
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
 
-        $this->updateCreatedAt($entity);
         $this->updateUpdatedAt($entity);
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \Exception
-     */
-    public function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
 
-        $this->updateCreatedAt($entity);
         $this->updateUpdatedAt($entity);
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \Doctrine\ORM\ORMException
-     */
-    public function postLoad(LifecycleEventArgs $args)
+    public function postLoad(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
 
-        $this->updateCreatedAt($entity);
         $this->updateUpdatedAt($entity);
 
         $args->getEntityManager()->persist($entity);
     }
 
     /**
-     * @param $entity
-     *
-     * @throws \Exception
+     * @param mixed $entity
      */
-    protected function updateCreatedAt($entity)
+    protected function updateUpdatedAt($entity): void
     {
-        if (!($entity instanceof BaseEntity)) {
+        if (! ($entity instanceof AbstractEntity)) {
             return;
         }
 
-        $year = (int)$entity->getCreatedAt()->format('Y');
-        if ($entity->getCreatedAt() !== null && $year > 0) {
-            return;
-        }
-
-        $entity->setCreatedAt(new \DateTime());
+        $entity->setUpdated(new DateTime());
     }
-
-    /**
-     * @param $entity
-     *
-     * @throws \Exception
-     */
-    protected function updateUpdatedAt($entity)
-    {
-        if (!($entity instanceof BaseEntity)) {
-            return;
-        }
-
-        $entity->setUpdatedAt(new \DateTime());
-    }
-
 }

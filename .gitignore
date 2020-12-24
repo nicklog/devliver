@@ -1,5 +1,6 @@
 .web-server-pid
 .idea/
+.phpcs.cache
 build/
 phpunit.xml
 parameters.yml
@@ -21,3 +22,13 @@ var/
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+###> squizlabs/php_codesniffer ###
+/.phpcs-cache
+/phpcs.xml
+###< squizlabs/php_codesniffer ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

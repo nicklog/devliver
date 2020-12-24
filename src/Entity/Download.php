@@ -1,43 +1,32 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Download
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
- *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\DownloadRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\DownloadRepository")
  */
-class Download extends BaseEntity
+class Download extends AbstractEntity
 {
-
     /**
-     * @var Package
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="downloads", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Package", inversedBy="downloads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    protected $package;
+    protected Package $package;
 
     /**
-     * @var Version
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="downloads", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Version", inversedBy="downloads", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
-    protected $version;
+    protected Version $version;
 
-    /**
-     * @var string|null
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $versionName;
+    /** @ORM\Column(type="string", nullable=true) */
+    protected ?string $versionName = null;
 
-    /**
-     * @inheritdoc
-     */
     public function getPackage(): Package
     {
         return $this->package;
@@ -67,18 +56,12 @@ class Download extends BaseEntity
         $this->version = $version;
     }
 
-    /**
-     * @return string
-     */
-    public function getVersionName()
+    public function getVersionName(): string
     {
         return $this->versionName;
     }
 
-    /**
-     * @param string $versionName
-     */
-    public function setVersionName(string $versionName)
+    public function setVersionName(string $versionName): void
     {
         $this->versionName = $versionName;
     }

@@ -1,73 +1,49 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Repo
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
  * @deprecated
  *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\RepoRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\RepoRepository")
  */
-class Repo extends BaseEntity
+class Repo extends AbstractEntity
 {
+    /** @ORM\OneToOne(targetEntity="App\Entity\Package", mappedBy="repo", cascade={"persist", "remove"}, orphanRemoval=true) */
+    protected Package $package;
 
     /**
-     * @var Package
-     * @ORM\OneToOne(targetEntity="Shapecode\Devliver\Entity\Package", mappedBy="repo", cascade={"persist", "remove"}, orphanRemoval=true)
-     */
-    protected $package;
-
-    /**
-     * @var User|null
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\User", inversedBy="repos", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="repos", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
-    protected $creator;
+    protected ?User $creator = null;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", options={"default": "vcs"})
-     */
-    protected $type = 'vcs';
+    /** @ORM\Column(type="string", options={"default": "vcs"}) */
+    protected string $type = 'vcs';
 
-    /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
-    protected $url;
+    /** @ORM\Column(type="string") */
+    protected string $url;
 
-    /**
-     * @inheritdoc
-     */
     public function getPackage(): ?Package
     {
         return $this->package;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setPackage(Package $package): void
     {
         $this->package = $package;
     }
 
-    /**
-     * @return null|User
-     */
     public function getCreator(): ?User
     {
         return $this->creator;
     }
 
-    /**
-     * @param null|User $creator
-     */
     public function setCreator(?User $creator): void
     {
         $this->creator = $creator;
@@ -115,5 +91,4 @@ class Repo extends BaseEntity
             'url'  => $this->getUrl(),
         ];
     }
-
 }

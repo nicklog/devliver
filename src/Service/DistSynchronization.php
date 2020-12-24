@@ -1,45 +1,38 @@
 <?php
 
-namespace Shapecode\Devliver\Service;
+declare(strict_types=1);
 
+namespace App\Service;
+
+use App\Composer\ComposerManager;
+use App\Entity\Package as EntityPackage;
 use Composer\Downloader\FileDownloader;
 use Composer\Factory;
 use Composer\Package\Archiver\ArchiveManager;
 use Composer\Package\CompletePackage;
 use Composer\Util\ComposerMirror;
-use Shapecode\Devliver\Composer\ComposerManager;
-use Shapecode\Devliver\Entity\Package as EntityPackage;
 use Symfony\Component\Filesystem\Filesystem;
+use Throwable;
 
-/**
- * Class DistSynchronization
- *
- * @package Shapecode\Devliver\Service
- * @author  Nikita Loges
- */
+use function assert;
+use function dirname;
+use function file_exists;
+use function sys_get_temp_dir;
+
 class DistSynchronization
 {
-
     public const DIST_FORMAT = '/%package%/%reference%.%type%';
 
-    /** @var ComposerManager */
-    protected $composerManager;
+    protected ComposerManager $composerManager;
 
-    /** @var string */
-    protected $format = 'zip';
+    protected string $format = 'zip';
 
-    /** @var string */
-    protected $distDir;
+    protected string $distDir;
 
-    /**
-     *
-     * @param ComposerManager $composerManager
-     * @param                 $distDir
-     */
     public function __construct(ComposerManager $composerManager, string $distDir)
     {
         $this->composerManager = $composerManager;
-        $this->distDir = $distDir;
+        $this->distDir         = $distDir;
     }
 
     /**
@@ -53,7 +46,7 @@ class DistSynchronization
             return $cacheFile;
         }
 
-        if (!$dbPackage->getVersions()->count()) {
+        if (! $dbPackage->getVersions()->count()) {
             return '';
         }
 
@@ -68,39 +61,34 @@ class DistSynchronization
         return '';
     }
 
-    /**
-     * @param EntityPackage   $dbPackage
-     * @param CompletePackage $package
-     *
-     * @return string
-     */
     protected function downloadPackage(EntityPackage $dbPackage, CompletePackage $package): string
     {
         $cacheFile = $this->getCacheFile($dbPackage, $package->getSourceReference());
-        $cacheDir = dirname($cacheFile);
+        $cacheDir  = dirname($cacheFile);
 
         $fs = new Filesystem();
 
-        if (!$fs->exists($cacheDir)) {
+        if (! $fs->exists($cacheDir)) {
             $fs->mkdir($cacheDir);
         }
 
-        if (!$fs->exists($cacheFile)) {
+        if (! $fs->exists($cacheFile)) {
+            $url = $package->getDistUrl();
 
-            if ($url = $package->getDistUrl()) {
+            if ($url !== null) {
                 try {
                     $downloader = $this->createFileDownloader();
-                    $path = $downloader->download($package, sys_get_temp_dir());
+                    $path       = $downloader->download($package, sys_get_temp_dir());
 
                     $fs->rename($path, $cacheFile);
 
                     return $cacheFile;
-                } catch (\Exception $e) {
+                } catch (Throwable $e) {
                 }
             }
 
             $archiveManager = $this->createArchiveManager();
-            $path = $archiveManager->archive($package, $package->getDistType() ?: $this->format, sys_get_temp_dir());
+            $path           = $archiveManager->archive($package, $package->getDistType() ?: $this->format, sys_get_temp_dir());
 
             $fs->rename($path, $cacheFile);
         }
@@ -108,30 +96,21 @@ class DistSynchronization
         return $cacheFile;
     }
 
-    /**
-     * @param EntityPackage $dbPackage
-     * @param               $ref
-     *
-     * @return string
-     */
-    protected function getCacheFile(EntityPackage $dbPackage, $ref): string
+    protected function getCacheFile(EntityPackage $dbPackage, string $ref): string
     {
-        $targetDir = $this->distDir.DistSynchronization::DIST_FORMAT;
+        $targetDir = $this->distDir . self::DIST_FORMAT;
 
-        $name = $dbPackage->getName();
-        $type = $this->format;
+        $name    = $dbPackage->getName();
+        $type    = $this->format;
         $version = 'placeholder';
 
         return ComposerMirror::processUrl($targetDir, $name, $version, $ref, $type);
     }
 
-    /**
-     * @return FileDownloader
-     */
     protected function createFileDownloader(): FileDownloader
     {
         $config = $this->composerManager->getConfig();
-        $io = $this->composerManager->createIO();
+        $io     = $this->composerManager->createIO();
 
         $downloader = new FileDownloader($io, $config);
         $downloader->setOutputProgress(false);
@@ -139,17 +118,14 @@ class DistSynchronization
         return $downloader;
     }
 
-    /**
-     * @return ArchiveManager
-     */
     protected function createArchiveManager(): ArchiveManager
     {
         $config = $this->composerManager->getConfig();
 
         $factory = new Factory();
 
-        /* @var ArchiveManager $archiveManager */
         $archiveManager = $factory->createArchiveManager($config);
+        assert($archiveManager instanceof ArchiveManager);
         $archiveManager->setOverwriteFiles(false);
 
         return $archiveManager;

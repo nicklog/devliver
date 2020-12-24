@@ -1,33 +1,30 @@
 <?php
 
-namespace Shapecode\Devliver\Controller;
+declare(strict_types=1);
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\UpdateQueue;
+namespace App\Controller;
+
+use App\Entity\Package;
+use App\Entity\UpdateQueue;
+use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Tenolo\Utilities\Utils\StringUtil;
+
+use function assert;
+use function count;
+use function json_decode;
+use function Symfony\Component\String\u;
 
 /**
- * Class ApiController
- *
- * @package Shapecode\Devliver\Controller
- * @author  Nikita Loges
- *
  * @Route("/api", name="devliver_api_")
  */
 class ApiController
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
@@ -35,21 +32,17 @@ class ApiController
 
     /**
      * @Route("/update-package", name="package_update", defaults={"_format" = "json"}, methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
     public function updatePackageAction(Request $request): Response
     {
         // parse the payload
         $payload = json_decode($request->request->get('payload'), true);
 
-        if (!$payload && $request->headers->get('Content-Type') === 'application/json') {
+        if (! $payload && $request->headers->get('Content-Type') === 'application/json') {
             $payload = json_decode($request->getContent(), true);
         }
 
-        if (!$payload) {
+        if (! $payload) {
             return new JsonResponse(['status' => 'error', 'message' => 'Missing payload parameter'], 406);
         }
 
@@ -59,6 +52,7 @@ class ApiController
         if (isset($payload['project']['git_ssh_url'])) {
             $urls[] = $payload['project']['git_ssh_url'];
         }
+
         if (isset($payload['project']['git_http_url'])) {
             $urls[] = $payload['project']['git_http_url'];
         }
@@ -67,6 +61,7 @@ class ApiController
         if (isset($payload['repository']['git_url'])) {
             $urls[] = $payload['repository']['git_url'];
         }
+
         if (isset($payload['repository']['clone_url'])) {
             $urls[] = $payload['repository']['clone_url'];
         }
@@ -75,11 +70,11 @@ class ApiController
         if (isset($payload['repository']['links']['html']['href'])) {
             $bitbucketHtmlUrl = $payload['repository']['links']['html']['href'];
 
-            $git_http_url = $bitbucketHtmlUrl.'.git';
-            $git_ssh_url = 'git@bitbucket.org:'.StringUtil::removeFromStart('https://bitbucket.org/', $bitbucketHtmlUrl).'.git';
+            $gitHttpUrl = $bitbucketHtmlUrl . '.git';
+            $gitSshUrl  = 'git@bitbucket.org:' . u($bitbucketHtmlUrl)->replace('https://bitbucket.org/', '')->toString() . '.git';
 
-            $urls[] = $git_http_url;
-            $urls[] = $git_ssh_url;
+            $urls[] = $gitHttpUrl;
+            $urls[] = $gitSshUrl;
         }
 
         // gogs
@@ -105,10 +100,7 @@ class ApiController
     }
 
     /**
-     * @param Request $request
-     * @param array   $urls
-     *
-     * @return Response
+     * @param string[] $urls
      */
     protected function receiveWebhook(array $urls): Response
     {
@@ -118,11 +110,11 @@ class ApiController
             return new JsonResponse(['status' => 'error', 'message' => 'Could not find a package that matches this request'], 404);
         }
 
-        $em = $this->registry->getManager();
+        $em        = $this->registry->getManager();
         $queueRepo = $em->getRepository(UpdateQueue::class);
 
-        /** @var Package $package */
         foreach ($packages as $package) {
+            assert($package instanceof Package);
             $updateQueue = $queueRepo->findOneByPackage($package);
 
             if ($updateQueue === null) {
@@ -130,7 +122,7 @@ class ApiController
                 $updateQueue->setPackage($package);
             }
 
-            $updateQueue->setLastCalledAt(new \DateTime());
+            $updateQueue->setLastCalledAt(new DateTime());
 
             $package->setAutoUpdate(true);
             $em->persist($package);
@@ -143,7 +135,7 @@ class ApiController
     }
 
     /**
-     * @param array $urls
+     * @param string[] $urls
      *
      * @return Package[]
      */

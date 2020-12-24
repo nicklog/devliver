@@ -28,6 +28,10 @@ services:
         Doctrine\Common\EventSubscriber:
             tags: ['doctrine.event_subscriber']
 
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Model,Migrations,Tests,Kernel.php,bootstrap.php}'
+        
     Cocur\Slugify\Slugify: ~
 
     cache.tag.app:
@@ -36,59 +40,22 @@ services:
         arguments: ['@cache.tag.app.inner']
 
     # controller
-    Shapecode\Devliver\Controller\:
+    App\Controller\:
         resource: '../src/Controller/*'
         tags: ['controller.service_arguments']
 
-    # composer
-    Shapecode\Devliver\Composer\:
-        resource: '../src/Composer/*'
-
-    # event listener
-    Shapecode\Devliver\EventListener\:
-        resource: '../src/EventListener/*'
-
-    # twig
-    Shapecode\Devliver\Twig\:
-        resource: '../src/Twig/*'
-
-    # service
-    Shapecode\Devliver\Service\:
-        resource: '../src/Service/*'
-
-    # command
-    Shapecode\Devliver\Command\:
-        resource: '../src/Command/*'
-
-    # form
-    Shapecode\Devliver\Form\:
-        resource: '../src/Form/*'
-
-    # menu
-    Shapecode\Devliver\Menu\Builder: ~
-
     devliver.main_menu_left:
         class: Knp\Menu\MenuItem
-        factory: ['@Shapecode\Devliver\Menu\Builder', mainMenu]
+        factory: ['@App\Menu\Builder', mainMenu]
         tags:
             - { name: knp_menu.menu, alias: main_left }
 
     devliver.main_menu_right:
         class: Knp\Menu\MenuItem
-        factory: ['@Shapecode\Devliver\Menu\Builder', rightNavbar]
+        factory: ['@App\Menu\Builder', rightNavbar]
         tags:
             - { name: knp_menu.menu, alias: main_right }
 
-    # security
-    Shapecode\Devliver\Security\:
-        resource: '../src/Security/*'
-
-    devliver.security.token_authenticator: '@Shapecode\Devliver\Security\TokenAuthenticator'
-    devliver.security.api_token_user_provider: '@Shapecode\Devliver\Security\ApiTokenUserProvider'
-    devliver.security.repository_token_user_provider: '@Shapecode\Devliver\Security\RepositoryTokenUserProvider'
-
-    # admin
-    Shapecode\Devliver\Admin\PackageAdmin:
-        arguments: [~, Shapecode\Devliver\Entity\Package, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Packages, group: Packages }
+    devliver.security.token_authenticator: '@App\Security\TokenAuthenticator'
+    devliver.security.api_token_user_provider: '@App\Security\ApiTokenUserProvider'
+    devliver.security.repository_token_user_provider: '@App\Security\RepositoryTokenUserProvider'

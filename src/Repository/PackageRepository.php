@@ -1,34 +1,39 @@
 <?php
 
-namespace Shapecode\Devliver\Repository;
+declare(strict_types=1);
 
+namespace App\Repository;
+
+use App\Entity\Package;
+use App\Entity\User;
 use Composer\Package\PackageInterface as ComposerPackageInterface;
-use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\User;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class PackageRepository
- *
- * @package Shapecode\Devliver\Repository
- * @author  Nikita Loges
+ * @method Package|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method Package[] findAll()
+ * @method Package|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Package[] findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null)
  */
-class PackageRepository extends EntityRepository
+class PackageRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Package::class);
+    }
 
     /**
-     * @param User $user
-     *
      * @return array|Package[]
      */
     public function findAccessibleForUser(User $user): array
     {
-        $qb = $this->createQueryBuilder('p');
+        $qb   = $this->createQueryBuilder('p');
         $expr = $qb->expr();
 
-        if (!$user->isPackageRootAccess()) {
-            $packages = $user->getAccessPackages();
-            $packageIds = $packages->map(function (Package $package) {
+        if (! $user->isPackageRootAccess()) {
+            $packages   = $user->getAccessPackages();
+            $packageIds = $packages->map(static function (Package $package) {
                 return $package->getId();
             })->toArray();
 
@@ -44,21 +49,19 @@ class PackageRepository extends EntityRepository
     }
 
     /**
-     * @param ComposerPackageInterface $package
-     *
-     * @return null|object|Package
+     * @return object|Package|null
      */
     public function findOneByComposerPackage(ComposerPackageInterface $package)
     {
         return $this->findOneBy([
-            'name' => $this->findOneByName($package->getName())
+            'name' => $this->findOneByName($package->getName()),
         ]);
     }
 
     /**
      * @return Package[]
      */
-    public function findWithRepos()
+    public function findWithRepos(): array
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -67,15 +70,10 @@ class PackageRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @param $name
-     *
-     * @return null|object|Package
-     */
-    public function findOneByName($name)
+    public function findOneByName(string $name): ?Package
     {
         return $this->findOneBy([
-            'name' => $name
+            'name' => $name,
         ]);
     }
 }

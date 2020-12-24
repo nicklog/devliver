@@ -1,37 +1,30 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 
 /**
- * Class Tag
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
- *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\TagRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
  */
-class Tag extends BaseEntity
+class Tag extends AbstractEntity
 {
+    /** @ORM\Column(type="string", unique=true) */
+    protected string $name;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", unique=true)
-     */
-    protected $name;
-
-    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Version", mappedBy="tags")
+     *
      * @var ArrayCollection|PersistentCollection|Collection|Version[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Version", mappedBy="tags")
      */
     protected $versions;
 
-    /**
-     */
     public function __construct()
     {
         parent::__construct();
@@ -39,17 +32,11 @@ class Tag extends BaseEntity
         $this->versions = new ArrayCollection();
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setName(string $name): void
     {
         $this->name = $name;

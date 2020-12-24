@@ -1,29 +1,21 @@
 <?php
 
-namespace Shapecode\Devliver\Security;
+declare(strict_types=1);
 
-use Shapecode\Devliver\Entity\User;
+namespace App\Security;
 
-/**
- * Class RepositoryTokenUserProvider
- *
- * @package Shapecode\Devliver\Security
- * @author  Nikita Loges
- */
+use App\Entity\User;
+
+use function assert;
+
 class RepositoryTokenUserProvider extends TokenUserProvider
 {
-
-    /**
-     * @param $token
-     *
-     * @return null
-     */
-    public function getUsernameForToken($token)
+    public function getUsernameForToken(string $token): ?string
     {
-        /** @var User $user */
         $user = $this->userManager->findUserBy([
-            'repositoryToken' => $token
+            'repositoryToken' => $token,
         ]);
+        assert($user instanceof User);
 
         if ($user) {
             return $user->getUsername();
@@ -31,5 +23,4 @@ class RepositoryTokenUserProvider extends TokenUserProvider
 
         return null;
     }
-
 }

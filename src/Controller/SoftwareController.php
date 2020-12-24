@@ -1,6 +1,8 @@
 <?php
 
-namespace Shapecode\Devliver\Controller;
+declare(strict_types=1);
+
+namespace App\Controller;
 
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Loader\ArrayLoader;
@@ -8,23 +10,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use function file_get_contents;
+use function json_decode;
+
 /**
- * Class SoftwareController
- *
- * @package Shapecode\Devliver\Controller
- * @author  Nikita Loges
- *
  * @Route("/software", name="devliver_software_")
  */
 class SoftwareController extends AbstractController
 {
+    protected string $projectDir;
 
-    /** @var string */
-    protected $projectDir;
-
-    /**
-     * @param string $projectDir
-     */
     public function __construct(string $projectDir)
     {
         $this->projectDir = $projectDir;
@@ -32,12 +27,10 @@ class SoftwareController extends AbstractController
 
     /**
      * @Route("/", name="index")
-     *
-     * @return Response
      */
     public function indexAction(): Response
     {
-        $lock = $this->projectDir.'/composer.lock';
+        $lock = $this->projectDir . '/composer.lock';
 
         $json = file_get_contents($lock);
         $data = json_decode($json, true);

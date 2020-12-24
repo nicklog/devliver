@@ -1,22 +1,17 @@
 <?php
 
-namespace Shapecode\Devliver\EventListener;
+declare(strict_types=1);
 
+namespace App\EventListener;
+
+use App\Entity\User;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\User;
-use Tenolo\Utilities\Utils\CryptUtil;
+use Ramsey\Uuid\Uuid;
 
-/**
- * Class UserListener
- *
- * @package Shapecode\Devliver\EventListener
- * @author  Nikita Loges
- */
 class UserListener implements EventSubscriber
 {
-
     /**
      * @inheritDoc
      */
@@ -29,55 +24,43 @@ class UserListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args): void
     {
         $this->setApiToken($args);
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function preUpdate(LifecycleEventArgs $args)
+    public function preUpdate(LifecycleEventArgs $args): void
     {
         $this->setApiToken($args);
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postLoad(LifecycleEventArgs $args)
+    public function postLoad(LifecycleEventArgs $args): void
     {
         $done = $this->setApiToken($args);
 
-        if ($done) {
-            $args->getObjectManager()->persist($args->getEntity());
-            $args->getObjectManager()->flush();
+        if (! $done) {
+            return;
         }
+
+        $args->getObjectManager()->persist($args->getEntity());
+        $args->getObjectManager()->flush();
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @return bool
-     */
-    public function setApiToken(LifecycleEventArgs $args)
+    public function setApiToken(LifecycleEventArgs $args): bool
     {
         $user = $args->getEntity();
-        if (!($user instanceof User)) {
+        if (! ($user instanceof User)) {
             return false;
         }
 
         if ($user->getApiToken() === null) {
-            $token = CryptUtil::getRandomHash();
+            $token = Uuid::uuid4()->toString();
 
             $user->setApiToken($token);
         }
 
         if ($user->getRepositoryToken() === null) {
-            $token = CryptUtil::getRandomHash();
+            $token = Uuid::uuid4()->toString();
 
             $user->setRepositoryToken($token);
         }

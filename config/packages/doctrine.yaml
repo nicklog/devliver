@@ -3,15 +3,18 @@ parameters:
 
 doctrine:
     dbal:
-        driver:         'pdo_mysql'
-        charset:        'utf8'
-
-        types:
-            json: Sonata\Doctrine\Types\JsonType
-            datetime: ASM\Doctrine\DBAL\Types\DateTimeUTCType
-            datetimeutc: ASM\Doctrine\DBAL\Types\DateTimeUTCType
+        driver: 'pdo_mysql'
+        charset: utf8mb4
+        logging: false
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
 
         url: '%env(resolve:DATABASE_URL)%'
+
+        types:
+            datetime: ASM\Doctrine\DBAL\Types\DateTimeUTCType
+            datetimeutc: ASM\Doctrine\DBAL\Types\DateTimeUTCType
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -21,10 +24,8 @@ doctrine:
                 is_bundle: false
                 type: annotation
                 dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'Shapecode\Devliver\Entity'
+                prefix: 'App\Entity'
                 alias: App
         resolve_target_entities:
-            Tenolo\Bundle\UserBundle\Entity\Plan\UserInterface: Shapecode\Devliver\Entity\User
-            Symfony\Component\Security\Core\User\UserInterface: Shapecode\Devliver\Entity\User
-            FOS\UserBundle\Model\UserInterface: Shapecode\Devliver\Entity\User
-            Sonata\UserBundle\Model\UserInterface: Shapecode\Devliver\Entity\User
+            Symfony\Component\Security\Core\User\UserInterface: App\Entity\User
+            FOS\UserBundle\Model\UserInterface: App\Entity\User

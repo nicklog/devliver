@@ -1,45 +1,36 @@
 <?php
 
-namespace Shapecode\Devliver\Composer;
+declare(strict_types=1);
+
+namespace App\Composer;
 
 use Composer\Config;
 use Composer\Json\JsonFile;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * Class ConfigFactory
- *
- * @package Shapecode\Devliver\Composer
- * @author  Nikita Loges
- */
+use function file_put_contents;
+use function getcwd;
+
 class ConfigFactory
 {
+    protected string $composerDirectory;
 
-    /** @var string */
-    protected $composerDirectory;
+    protected string $projectDir;
 
-    /** @var string */
-    protected $projectDir;
-
-    /**
-     * @param string $composerDirectory
-     * @param string $projectDir
-     */
-    public function __construct(string $composerDirectory, string $projectDir)
-    {
+    public function __construct(
+        string $composerDirectory,
+        string $projectDir
+    ) {
         $this->composerDirectory = $composerDirectory;
-        $this->projectDir = $projectDir;
+        $this->projectDir        = $projectDir;
     }
 
-    /**
-     * @return Config
-     */
     public function create(): Config
     {
         unset(Config::$defaultRepositories['packagist.org']);
 
         $fs = new Filesystem();
-        if (!$fs->exists($this->getComposerConfigDir())) {
+        if (! $fs->exists($this->getComposerConfigDir())) {
             $fs->mkdir($this->getComposerConfigDir());
         }
 
@@ -49,8 +40,8 @@ class ConfigFactory
                 'home' => $this->composerDirectory,
             ],
             'repositories' => [
-                'packagist.org' => false
-            ]
+                'packagist.org' => false,
+            ],
         ]);
 
         $this->setConfigSource($config);
@@ -59,15 +50,12 @@ class ConfigFactory
         return $config;
     }
 
-    /**
-     * @param Config $config
-     */
-    protected function setConfigSource(Config $config)
+    protected function setConfigSource(Config $config): void
     {
         $filename = $this->getComposerConfigDir() . '/config.json';
-        $file = new JsonFile($filename);
+        $file     = new JsonFile($filename);
 
-        if (!$file->exists()) {
+        if (! $file->exists()) {
             file_put_contents($filename, '{}');
         }
 
@@ -77,13 +65,10 @@ class ConfigFactory
         $config->setConfigSource($source);
     }
 
-    /**
-     * @param Config $config
-     */
-    protected function setAuthConfigSource(Config $config)
+    protected function setAuthConfigSource(Config $config): void
     {
         $filename = $this->getComposerConfigDir() . '/auth.json';
-        $file = new JsonFile($filename);
+        $file     = new JsonFile($filename);
 
         if ($file->exists()) {
             $config->merge(['config' => $file->read()]);
@@ -96,10 +81,7 @@ class ConfigFactory
         $config->setAuthConfigSource($source);
     }
 
-    /**
-     * @return string
-     */
-    protected function getComposerConfigDir()
+    protected function getComposerConfigDir(): string
     {
         return $this->projectDir . '/composer';
     }

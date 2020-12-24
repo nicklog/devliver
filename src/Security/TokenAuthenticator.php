@@ -1,7 +1,10 @@
 <?php
 
-namespace Shapecode\Devliver\Security;
+declare(strict_types=1);
 
+namespace App\Security;
+
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -10,31 +13,27 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
-use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 
-/**
- * Class TokenAuthenticator
- *
- * @package Shapecode\Devliver\Security
- * @author  Nikita Loges
- */
-class TokenAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
+use function get_class;
+use function sprintf;
+use function strtr;
+
+class TokenAuthenticator implements AuthenticationFailureHandlerInterface
 {
-
     /**
      * @inheritdoc
      */
     public function createToken(Request $request, $providerKey)
     {
         // look for an apikey query parameter
-        $token = $request->get('token');
+        $token  = $request->get('token');
         $token2 = $request->headers->get('token');
 
-        if ($token2 && !$token) {
+        if ($token2 && ! $token) {
             $token = $token2;
         }
 
-        if (!$token) {
+        if (! $token) {
             return null;
         }
 
@@ -58,8 +57,8 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-        if (!$userProvider instanceof TokenUserProvider) {
-            throw new \InvalidArgumentException(
+        if (! $userProvider instanceof TokenUserProvider) {
+            throw new InvalidArgumentException(
                 sprintf(
                     'The user provider must be an instance of TokenUserProvider (%s was given).',
                     get_class($userProvider)
@@ -67,10 +66,10 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             );
         }
 
-        $token = $token->getCredentials();
+        $token    = $token->getCredentials();
         $username = $userProvider->getUsernameForToken($token);
 
-        if (!$username) {
+        if (! $username) {
             throw new BadCredentialsException();
         }
 
@@ -94,5 +93,4 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             401
         );
     }
-
 }

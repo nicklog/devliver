@@ -1,55 +1,38 @@
 <?php
 
-namespace Shapecode\Devliver\Menu;
+declare(strict_types=1);
+
+namespace App\Menu;
 
 use Knp\Menu\FactoryInterface;
+use Knp\Menu\ItemInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * Class Builder
- *
- * @package Shapecode\Devliver\Menu
- * @author  Nikita Loges
- */
 class Builder
 {
+    protected TranslatorInterface $translator;
 
-    /** @var TranslatorInterface */
-    protected $translator;
+    protected FactoryInterface $factory;
 
-    /** @var TranslatorInterface */
-    protected $factory;
+    protected AuthorizationCheckerInterface $authorizationChecker;
 
-    /** @var AuthorizationCheckerInterface */
-    protected $authorizationChecker;
+    protected TokenStorageInterface $tokenStorage;
 
-    /** @var TokenStorageInterface */
-    protected $tokenStorage;
-
-    /**
-     * @param TranslatorInterface           $translator
-     * @param FactoryInterface              $factory
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenStorageInterface         $tokenStorage
-     */
     public function __construct(
         TranslatorInterface $translator,
         FactoryInterface $factory,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage
     ) {
-        $this->translator = $translator;
-        $this->factory = $factory;
+        $this->translator           = $translator;
+        $this->factory              = $factory;
         $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
+        $this->tokenStorage         = $tokenStorage;
     }
 
-    /**
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function mainMenu()
+    public function mainMenu(): ItemInterface
     {
         $menu = $this->factory->createItem('root', [
             'childrenAttributes' => [
@@ -75,10 +58,7 @@ class Builder
         return $menu;
     }
 
-    /**
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function rightNavbar()
+    public function rightNavbar(): ItemInterface
     {
         $menu = $this->factory->createItem('root', [
             'childrenAttributes' => [
@@ -86,8 +66,8 @@ class Builder
             ],
         ]);
 
-        $token = $this->tokenStorage->getToken();
-        $username = ($token !== null) ? $token->getUsername() : 'Profil';
+        $token    = $this->tokenStorage->getToken();
+        $username = $token !== null ? $token->getUsername() : 'Profil';
 
         $dropdown = $menu->addChild(
             $username,

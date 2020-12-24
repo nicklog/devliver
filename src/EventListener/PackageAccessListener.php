@@ -1,24 +1,21 @@
 <?php
 
-namespace Shapecode\Devliver\EventListener;
+declare(strict_types=1);
 
+namespace App\EventListener;
+
+use App\Entity\Package;
+use App\Entity\User;
+use App\Entity\Version;
+use App\Repository\UserRepository;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\User;
-use Shapecode\Devliver\Entity\Version;
-use Shapecode\Devliver\Repository\UserRepository;
 
-/**
- * Class PackageAccessListener
- *
- * @package Shapecode\Devliver\EventListener
- * @author  Nikita Loges
- */
+use function assert;
+
 class PackageAccessListener implements EventSubscriber
 {
-
     /**
      * @inheritDoc
      */
@@ -29,12 +26,7 @@ class PackageAccessListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \Doctrine\ORM\ORMException
-     */
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
 
@@ -42,29 +34,26 @@ class PackageAccessListener implements EventSubscriber
             $this->addUsersToPackage($args);
         }
 
-        if ($entity instanceof Version) {
-            $this->addUsersToVersion($args);
+        if (! ($entity instanceof Version)) {
+            return;
         }
+
+        $this->addUsersToVersion($args);
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \Doctrine\ORM\ORMException
-     */
-    protected function addUsersToPackage(LifecycleEventArgs $args)
+    protected function addUsersToPackage(LifecycleEventArgs $args): void
     {
         $em = $args->getEntityManager();
 
-        /** @var Package $package */
         $package = $args->getEntity();
+        assert($package instanceof Package);
 
-        /** @var UserRepository $userRepo */
         $userRepo = $em->getRepository(User::class);
+        assert($userRepo instanceof UserRepository);
 
         /** @var User[] $users */
         $users = $userRepo->findBy([
-            'autoAddToNewPackages' => true
+            'autoAddToNewPackages' => true,
         ]);
 
         foreach ($users as $user) {
@@ -73,32 +62,29 @@ class PackageAccessListener implements EventSubscriber
         }
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     *
-     * @throws \Doctrine\ORM\ORMException
-     */
-    protected function addUsersToVersion(LifecycleEventArgs $args)
+    protected function addUsersToVersion(LifecycleEventArgs $args): void
     {
         $em = $args->getEntityManager();
 
-        /** @var Version $version */
         $version = $args->getEntity();
+        assert($version instanceof Version);
         $package = $version->getPackage();
 
-        /** @var UserRepository $userRepo */
         $userRepo = $em->getRepository(User::class);
+        assert($userRepo instanceof UserRepository);
 
         /** @var User[] $users */
         $users = $userRepo->findBy([
-            'autoAddToNewVersions' => true
+            'autoAddToNewVersions' => true,
         ]);
 
         foreach ($users as $user) {
-            if ($user->hasAccessPackage($package)) {
-                $user->addAccessVersion($version);
-                $em->persist($user);
+            if (! $user->hasAccessPackage($package)) {
+                continue;
             }
+
+            $user->addAccessVersion($version);
+            $em->persist($user);
         }
     }
 }

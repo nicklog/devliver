@@ -1,25 +1,20 @@
 <?php
 
-namespace Shapecode\Devliver\Model;
+declare(strict_types=1);
+
+namespace App\Model;
 
 use Composer\Package\CompletePackageInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-/**
- * Class PackageAdapter
- *
- * @package Shapecode\Devliver\Model
- * @author  Nikita Loges
- */
+use function call_user_func_array;
+use function explode;
+use function method_exists;
+
 class PackageAdapter
 {
+    protected CompletePackageInterface $package;
 
-    /** @var CompletePackageInterface */
-    protected $package;
-
-    /**
-     * @param CompletePackageInterface $package
-     */
     public function __construct(CompletePackageInterface $package)
     {
         $this->package = $package;
@@ -50,7 +45,7 @@ class PackageAdapter
      */
     public function getAlias()
     {
-        $extra = $this->getPackage()->getExtra();
+        $extra   = $this->getPackage()->getExtra();
         $version = $this->getPackage()->getPrettyVersion();
 
         if (isset($extra['branch-alias'][$version])) {
@@ -67,17 +62,14 @@ class PackageAdapter
     {
         $alias = $this->getAlias();
 
-        if (!empty($alias)) {
+        if (! empty($alias)) {
             return $alias;
         }
 
         return $this->getPackage()->getPrettyVersion();
     }
 
-    /**
-     * @return CompletePackageInterface
-     */
-    public function getPackage()
+    public function getPackage(): CompletePackageInterface
     {
         return $this->package;
     }
@@ -99,8 +91,8 @@ class PackageAdapter
     {
         if (method_exists($this->getPackage(), $name)) {
             return call_user_func_array([$this->getPackage(), $name], $arguments);
-        } else {
-            return $this->__get($name);
         }
+
+        return $this->__get($name);
     }
 }

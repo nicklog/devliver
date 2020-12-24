@@ -1,0 +1,28 @@
+version: '3.6'
+
+services:
+  app:
+    build: 
+      context: .
+    volumes:
+      - .:/var/www/html
+      - ${HOME}/.composer/:/home/docker/.composer/
+      - ./var/bash_history:/home/docker/bash_history
+    depends_on:
+      - database
+    networks:
+      - default
+    ports:
+      - "80:80"
+
+  database:
+    image: mariadb:latest
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
+    networks:
+      - default

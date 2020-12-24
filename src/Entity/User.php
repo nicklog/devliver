@@ -1,96 +1,112 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
-use Sonata\UserBundle\Entity\BaseUser;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class User
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
- *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User extends BaseUser
+class User extends AbstractEntity implements UserInterface
 {
+    /** @ORM\Column(type="string") */
+    private string $email;
+
+    /** @ORM\Column(type="string", nullable=true) */
+    private ?string $password = null;
+
+    /** @ORM\Column(type="string", nullable=true) */
+    private ?string $passwordResetToken = null;
+
+    /** @ORM\Column(type="datetimeutc", nullable=true) */
+    private ?DateTimeInterface $passwordResetTokenExpireAt = null;
+
+    /** @ORM\Column(type="string", nullable=true, unique=true) */
+    protected ?string $apiToken = null;
+
+    /** @ORM\Column(type="string", nullable=true, unique=true) */
+    protected ?string $repositoryToken = null;
 
     /**
-     * @var int
-     * @ORM\Column(type="integer", nullable=false, options={"unsigned": true})
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\OneToMany(targetEntity="App\Entity\Package", mappedBy="creator", cascade={"persist"})
+     *
+     * @var Collection<int, Package>
      */
-    protected $id;
+    protected Collection $createdPackages;
 
     /**
-     * @var string|null
-     * @ORM\Column(type="string", nullable=true, unique=true)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Package", inversedBy="accessUsers")
+     *
+     * @var Collection<int, Package>
      */
-    protected $apiToken;
+    protected Collection $accessPackages;
 
     /**
-     * @var string|null
-     * @ORM\Column(type="string", nullable=true, unique=true)
+     * @ORM\ManyToMany(targetEntity="App\Entity\Version", inversedBy="accessUsers")
+     *
+     * @var Collection<int, Version>
      */
-    protected $repositoryToken;
+    protected Collection $accessVersions;
 
     /**
-     * @var ArrayCollection|PersistentCollection|Package[]
-     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Package", mappedBy="creator", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Repo", mappedBy="creator", cascade={"persist"})
+     *
+     * @var Collection<int, Repo>
      */
-    protected $createdPackages;
+    protected Collection $repos;
 
-    /**
-     * @var ArrayCollection|PersistentCollection|Package[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Package", inversedBy="accessUsers")
-     */
-    protected $accessPackages;
+    /** @ORM\Column(type="boolean", options={"default": true}) */
+    protected bool $packageRootAccess = true;
 
-    /**
-     * @var ArrayCollection|PersistentCollection|Version[]
-     * @ORM\ManyToMany(targetEntity="Shapecode\Devliver\Entity\Version", inversedBy="accessUsers")
-     */
-    protected $accessVersions;
+    /** @ORM\Column(type="boolean", options={"default": true}) */
+    protected bool $autoAddToNewPackages = true;
 
-    /**
-     * @var ArrayCollection|PersistentCollection|Repo[]
-     * @ORM\OneToMany(targetEntity="Shapecode\Devliver\Entity\Repo", mappedBy="creator", cascade={"persist"})
-     */
-    protected $repos;
+    /** @ORM\Column(type="boolean", options={"default": true}) */
+    protected bool $autoAddToNewVersions = true;
 
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean", options={"default": true})
-     */
-    protected $packageRootAccess = true;
-
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean", options={"default": true})
-     */
-    protected $autoAddToNewPackages = true;
-
-    /**
-     * @var boolean
-     * @ORM\Column(type="boolean", options={"default": true})
-     */
-    protected $autoAddToNewVersions = true;
-
-    /**
-     */
-    public function __construct()
-    {
+    public function __construct(
+        string $email
+    ) {
         parent::__construct();
 
+        $this->email           = $email;
         $this->createdPackages = new ArrayCollection();
-        $this->accessPackages = new ArrayCollection();
-        $this->accessVersions = new ArrayCollection();
-        $this->repos = new ArrayCollection();
+        $this->accessPackages  = new ArrayCollection();
+        $this->accessVersions  = new ArrayCollection();
+        $this->repos           = new ArrayCollection();
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getEmail();
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function getPasswordResetToken(): ?string
+    {
+        return $this->passwordResetToken;
+    }
+
+    public function getPasswordResetTokenExpireAt(): ?DateTimeInterface
+    {
+        return $this->passwordResetTokenExpireAt;
     }
 
     /**
@@ -101,36 +117,29 @@ class User extends BaseUser
         return $this->createdPackages;
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return bool
-     */
     public function hasCreatedPackage(Package $package): bool
     {
         return $this->getCreatedPackages()->contains($package);
     }
 
-    /**
-     * @param Package $package
-     */
     public function addCreatedPackage(Package $package): void
     {
-        if (!$this->hasCreatedPackage($package)) {
-            $package->setCreator($this);
-            $this->getCreatedPackages()->add($package);
+        if ($this->hasCreatedPackage($package)) {
+            return;
         }
+
+        $package->setCreator($this);
+        $this->getCreatedPackages()->add($package);
     }
 
-    /**
-     * @param Package $package
-     */
     public function removeCreatedPackage(Package $package): void
     {
-        if ($this->hasCreatedPackage($package)) {
-            $package->setCreator(null);
-            $this->getCreatedPackages()->removeElement($package);
+        if (! $this->hasCreatedPackage($package)) {
+            return;
         }
+
+        $package->setCreator(null);
+        $this->getCreatedPackages()->removeElement($package);
     }
 
     /**
@@ -142,42 +151,37 @@ class User extends BaseUser
 
         foreach ($this->getAccessVersions() as $version) {
             $package = $version->getPackage();
-            if (!$packages->contains($package)) {
-                $packages->add($package);
+            if ($packages->contains($package)) {
+                continue;
             }
+
+            $packages->add($package);
         }
 
         return $packages;
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return bool
-     */
     public function hasAccessPackage(Package $package): bool
     {
         return $this->getAccessPackages()->contains($package);
     }
 
-    /**
-     * @param Package $package
-     */
     public function addAccessPackage(Package $package): void
     {
-        if (!$this->hasAccessPackage($package)) {
-            $this->getAccessPackages()->add($package);
+        if ($this->hasAccessPackage($package)) {
+            return;
         }
+
+        $this->getAccessPackages()->add($package);
     }
 
-    /**
-     * @param Package $package
-     */
     public function removeAccessPackage(Package $package): void
     {
-        if ($this->hasAccessPackage($package)) {
-            $this->getCreatedPackages()->removeElement($package);
+        if (! $this->hasAccessPackage($package)) {
+            return;
         }
+
+        $this->getCreatedPackages()->removeElement($package);
     }
 
     /**
@@ -188,114 +192,95 @@ class User extends BaseUser
         return $this->accessVersions;
     }
 
-    /**
-     * @param Version $version
-     *
-     * @return bool
-     */
     public function hasAccessVersion(Version $version): bool
     {
         return $this->getAccessVersions()->contains($version);
     }
 
-    /**
-     * @param Version $version
-     */
     public function addAccessVersion(Version $version): void
     {
-        if (!$this->hasAccessVersion($version)) {
-            $this->getAccessVersions()->add($version);
+        if ($this->hasAccessVersion($version)) {
+            return;
         }
+
+        $this->getAccessVersions()->add($version);
     }
 
-    /**
-     * @param Version $version
-     */
     public function removeAccessVersion(Version $version): void
     {
-        if ($this->hasAccessVersion($version)) {
-            $this->getCreatedPackages()->removeElement($version);
+        if (! $this->hasAccessVersion($version)) {
+            return;
         }
+
+        $this->getCreatedPackages()->removeElement($version);
     }
 
-    /**
-     * @return string|null
-     */
     public function getApiToken(): ?string
     {
         return $this->apiToken;
     }
 
-    /**
-     * @param string $apiToken
-     */
-    public function setApiToken(string $apiToken)
+    public function setApiToken(string $apiToken): void
     {
         $this->apiToken = $apiToken;
     }
 
-    /**
-     * @return null|string
-     */
     public function getRepositoryToken(): ?string
     {
         return $this->repositoryToken;
     }
 
-    /**
-     * @param null|string $repositoryToken
-     */
     public function setRepositoryToken(?string $repositoryToken): void
     {
         $this->repositoryToken = $repositoryToken;
     }
 
-    /**
-     * @return bool
-     */
     public function isPackageRootAccess(): bool
     {
         return $this->packageRootAccess;
     }
 
-    /**
-     * @param bool $packageRootAccess
-     */
     public function setPackageRootAccess(bool $packageRootAccess): void
     {
         $this->packageRootAccess = $packageRootAccess;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoAddToNewPackages(): bool
     {
         return $this->autoAddToNewPackages;
     }
 
-    /**
-     * @param bool $autoAddToNewPackages
-     */
     public function setAutoAddToNewPackages(bool $autoAddToNewPackages): void
     {
         $this->autoAddToNewPackages = $autoAddToNewPackages;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoAddToNewVersions(): bool
     {
         return $this->autoAddToNewVersions;
     }
 
-    /**
-     * @param bool $autoAddToNewVersions
-     */
     public function setAutoAddToNewVersions(bool $autoAddToNewVersions): void
     {
         $this->autoAddToNewVersions = $autoAddToNewVersions;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getRoles(): array
+    {
+        return [
+            'ROLE_USER',
+        ];
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
 }

@@ -1,29 +1,32 @@
 <?php
 
-namespace Shapecode\Devliver\Repository;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\Author;
+namespace App\Repository;
+
+use App\Entity\Author;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class AuthorRepository
- *
- * @package Shapecode\Devliver\Repository
- * @author  Nikita Loges
+ * @method Author|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method Author[] findAll()
+ * @method Author|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Author[] findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null)
  */
-class AuthorRepository extends EntityRepository
+class AuthorRepository extends ServiceEntityRepository
 {
-
-    /**
-     * @param string|null $name
-     * @param string|null $email
-     * @param bool        $create
-     *
-     * @return null|Author
-     */
-    public function findByNameOrEmail(?string $name, ?string $email, bool $create = false): ?Author
+    public function __construct(ManagerRegistry $registry)
     {
-        $qb = $this->createQueryBuilder('p');
+        parent::__construct($registry, Author::class);
+    }
+
+    public function findByNameOrEmail(
+        ?string $name,
+        ?string $email,
+        bool $create = false
+    ): ?Author {
+        $qb   = $this->createQueryBuilder('p');
         $expr = $qb->expr();
 
         if ($email !== null) {
@@ -57,5 +60,4 @@ class AuthorRepository extends EntityRepository
 
         return $author;
     }
-
 }

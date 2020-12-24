@@ -1,19 +1,16 @@
 <?php
 
-namespace Shapecode\Devliver\Util;
+declare(strict_types=1);
 
+namespace App\Util;
+
+use App\Entity\Version;
 use Composer\Package\CompletePackage;
-use Shapecode\Devliver\Entity\Version;
 
-/**
- * Class ComposerUtil
- *
- * @package Shapecode\Devliver\Util
- * @author  Nikita Loges
- */
+use function uasort;
+
 class ComposerUtil
 {
-
     /**
      * @param Version[] $versions
      *
@@ -21,15 +18,15 @@ class ComposerUtil
      */
     public static function sortPackagesByVersion(array $versions): array
     {
-        uasort($versions, function (Version $a, Version $b) {
+        uasort($versions, static function (Version $a, Version $b) {
             $a = $a->getPackageInformation();
             $b = $b->getPackageInformation();
 
-            if ($a->isDev() && !$b->isDev()) {
+            if ($a->isDev() && ! $b->isDev()) {
                 return 1;
             }
 
-            if (!$a->isDev() && $b->isDev()) {
+            if (! $a->isDev() && $b->isDev()) {
                 return -1;
             }
 
@@ -48,14 +45,12 @@ class ComposerUtil
     }
 
     /**
-     * @param array $packages
-     *
-     * @return CompletePackage
+     * @param mixed[] $packages
      */
     public static function getLastStableVersion(array $packages): CompletePackage
     {
         foreach ($packages as $p) {
-            if (!$p->isDev()) {
+            if (! $p->isDev()) {
                 return $p;
             }
         }

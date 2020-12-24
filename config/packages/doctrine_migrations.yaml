@@ -1,0 +1,6 @@
+doctrine_migrations:
+  migrations_paths:
+    'App\Infrastructure\Migrations': 'src/Infrastructure/Migrations'
+
+  all_or_nothing: true
+  check_database_platform: false

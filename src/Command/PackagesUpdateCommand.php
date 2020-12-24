@@ -1,86 +1,74 @@
 <?php
 
-namespace Shapecode\Devliver\Command;
+declare(strict_types=1);
 
+namespace App\Command;
+
+use App\Entity\Package;
+use App\Service\PackageSynchronization;
 use Composer\IO\ConsoleIO;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Service\PackageSynchronization;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\SemaphoreStore;
 
-/**
- * Class PackagesUpdateCommand
- *
- * @package Shapecode\Devliver\Command
- * @author  Nikita Loges
- */
+use function ini_set;
+use function set_time_limit;
+
 class PackagesUpdateCommand extends Command
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected PackageSynchronization $packageSynchronization;
 
-    /** @var PackageSynchronization */
-    protected $packageSynchronization;
-
-    /**
-     * @param ManagerRegistry                 $registry
-     * @param PackageSynchronization $packageSynchronization
-     */
-    public function __construct(ManagerRegistry $registry, PackageSynchronization $packageSynchronization)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        PackageSynchronization $packageSynchronization
+    ) {
         parent::__construct();
 
-        $this->registry = $registry;
+        $this->registry               = $registry;
         $this->packageSynchronization = $packageSynchronization;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('devliver:packages:update');
-        $this->setHelp('Syncs all Packages');
-
-        $this->addArgument('package', InputArgument::OPTIONAL);
+        $this
+            ->setName('devliver:packages:update')
+            ->setHelp('Syncs all Packages')
+            ->addArgument('package', InputArgument::OPTIONAL);
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $store = new SemaphoreStore();
-        $factory = new Factory($store);
+        $store   = new SemaphoreStore();
+        $factory = new LockFactory($store);
 
         $lock = $factory->createLock('devliver_packages_update');
 
         // another job is still active
-        if (!$lock->acquire()) {
+        if (! $lock->acquire()) {
             $output->writeln('Aborting, lock file is present.');
 
-            return;
+            return 1;
         }
 
         $package = $input->getArgument('package');
 
         if ($package !== null) {
-            $repo = $this->registry->getRepository(Package::class);
+            $repo    = $this->registry->getRepository(Package::class);
             $package = $repo->findOneBy([
-                'name' => $package
+                'name' => $package,
             ]);
 
             // another job is still active
             if ($package === null) {
                 $output->writeln('Aborting, package not found.');
 
-                return;
+                return 1;
             }
         }
 
@@ -94,15 +82,11 @@ class PackagesUpdateCommand extends Command
         } else {
             $this->packageSynchronization->syncAll($io);
         }
+
+        return 0;
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return ConsoleIO
-     */
-    protected function createIO(InputInterface $input, OutputInterface $output)
+    protected function createIO(InputInterface $input, OutputInterface $output): ConsoleIO
     {
         return new ConsoleIO($input, $output, $this->getHelperSet());
     }

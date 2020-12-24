@@ -1,4 +1,6 @@
 {
+    "name": "shapecode/devliver",
+    "description": "Devliver",
     "license": "LGPL-3.0",
     "type": "project",
     "autoload": {
@@ -6,69 +8,88 @@
             "src/Kernel.php"
         ],
         "psr-4": {
-            "Shapecode\\Devliver\\": "src/"
+            "App\\": "src/"
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.4",
         "ext-json": "*",
+        "ext-zlib": "*",
+        "ext-mbstring": "*",
 
-        "symfony/flex": "^1.0",
+        "symfony/flex": "^1.11",
 
-        "symfony/framework-bundle": "^4.2",
-        "symfony/twig-bundle": "^4.2",
+        "symfony/framework-bundle": "^5.0",
+        "symfony/twig-bundle": "^5.0",
         "symfony/monolog-bundle": "^3.2",
-        "symfony/swiftmailer-bundle": "^3.2",
-        "symfony/debug-bundle": "^4.2",
-        "symfony/web-profiler-bundle": "^4.2",
-        "symfony/security-bundle": "^4.2",
+        "symfony/debug-bundle": "^5.0",
+        "symfony/web-profiler-bundle": "^5.0",
+        "symfony/security-bundle": "^5.0",
 
-        "symfony/asset": "^4.2",
-        "symfony/console": "^4.2",
-        "symfony/dotenv": "^4.2",
-        "symfony/filesystem": "^4.2",
-        "symfony/finder": "^4.2",
-        "symfony/form": "^4.2",
-        "symfony/lock": "^4.2",
-        "symfony/yaml": "^4.2",
-        "symfony/stopwatch": "^4.2",
-        "symfony/translation": "^4.2",
-        "symfony/validator": "^4.2",
-        "symfony/webpack-encore-bundle": "^1.1",
+        "symfony/dependency-injection": "^5.0",
+        "symfony/asset": "^5.0",
+        "symfony/console": "^5.0",
+        "symfony/dotenv": "^5.0",
+        "symfony/filesystem": "^5.0",
+        "symfony/finder": "^5.0",
+        "symfony/form": "^5.0",
+        "symfony/lock": "^5.0",
+        "symfony/yaml": "^5.0",
+        "symfony/stopwatch": "^5.0",
+        "symfony/translation": "^5.0",
+        "symfony/translation-contracts": "^2.3",
+        "symfony/security-core": "^5.0",
+        "symfony/security-http": "^5.0",
+        "symfony/routing": "^5.0",
+        "symfony/process": "^5.0",
+        "symfony/options-resolver": "^5.0",
+        "symfony/validator": "^5.0",
+        "symfony/http-kernel": "^5.0",
+        "symfony/http-foundation": "^5.0",
+        "symfony/webpack-encore-bundle": "^1.8",
+        "symfony/string": "^5.0",
+        "symfony/cache": "^5.0",
+        "symfony/property-access": "^5.0",
+        "symfony/messenger": "^5.0",
+        "symfony/mailer": "^5.0",
 
-        "symfony/apache-pack": "^1.0",
-        "symfony/polyfill-apcu": "^1.0",
+        "doctrine/doctrine-migrations-bundle": "^3.0",
+        "doctrine/doctrine-bundle": "^2.2",
+        "doctrine/orm": "^2.8",
+        "doctrine/dbal": "^2.12",
+        "doctrine/event-manager": "^1.1",
+        "doctrine/migrations": "^3.0",
+        "doctrine/persistence": "^2.1",
+        "doctrine/collections": "^1.6",
 
-        "sonata-project/admin-bundle": "^3.9",
-        "sonata-project/doctrine-orm-admin-bundle": "^3.4",
-        "sonata-project/user-bundle": "^4.1",
-
-        "doctrine/doctrine-bundle": "^1.6",
-        "doctrine/orm": "^2.5",
-
-        "shapecode/cron-bundle": "^3.1",
-
-        "tenolo/doctrine-table-prefix-bundle": "^2.1",
-        "tenolo/ignore-doctrine-annotations-bundle": "^1.0",
-
-        "avris/dotenv": "^1.0",
-        "php-http/client-implementation": "^1.0",
-        "php-http/discovery": "^1.4",
-        "php-http/client-common": "^1.7",
-        "twig/twig": "^1.0|^2.0",
-        "composer/composer": "^1.0",
+        "twig/twig": "^3.0",
+        "composer/composer": "^2.0",
         "erusev/parsedown": "^1.7",
-        "demontpx/parsedown-bundle": "^1.3",
-        "knplabs/github-api": "^2.8",
-        "php-http/guzzle6-adapter": "^1.1",
-        "knplabs/knp-paginator-bundle": "^2.7",
-        "ornicar/gravatar-bundle": "^1.2",
-        "knplabs/knp-menu-bundle": "^2.0",
+        "knplabs/knp-paginator-bundle": "^5.4",
+        "knplabs/knp-menu-bundle": "^3.1",
+        "knplabs/knp-menu": "^3.1",
+        "knplabs/knp-components": "^3.0",
         "austinsmorris/doctrine-dbal-datetimeutc": "^2.0",
-        "cocur/slugify": "^3.1"
+        "cocur/slugify": "^4.0",
+        "sensiolabs-de/rich-model-forms-bundle": "^0.7.0",
+        "twig/markdown-extra": "^3.1",
+        "sensio/framework-extra-bundle": "^5.6",
+        "ramsey/uuid": "^4.1"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-master"
+        "doctrine/coding-standard": "^8.2",
+        "roave/security-advisories": "dev-master",
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "~0.12",
+        "phpstan/phpstan-deprecation-rules": "~0.12",
+        "phpstan/phpstan-phpunit": "~0.12",
+        "phpstan/phpstan-strict-rules": "~0.12",
+        "phpstan/phpstan-doctrine": "~0.12",
+        "phpstan/phpstan-symfony": "~0.12",
+        "maglnet/composer-require-checker": "^2.1",
+        "icanhazstring/composer-unused": "~0.7",
+        "symfony/maker-bundle": "^1.26"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -82,26 +103,55 @@
         ],
         "auto-scripts": {
             "cache:clear --no-warmup": "symfony-cmd",
-            "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd",
-            "devliver:setup": "symfony-cmd",
-            "doctrine:schema:update --force": "symfony-cmd",
-            "shapecode:cron:scan": "symfony-cmd",
+            "assets:install": "symfony-cmd",
             "cache:warmup": "symfony-cmd"
-        }
+        },
+        "prepare-test": [
+            "php bin/console cache:clear --env=test --no-warmup --ansi",
+            "php bin/console cache:warmup --env=test --ansi"
+        ],
+        "check": [
+            "composer check-platform-reqs -n",
+            "composer validate --strict -n",
+            "@crc",
+            "@unuse",
+            "@cs-check",
+            "@phpstan"
+        ],
+        "fos-js-dump": "php bin/console fos:js-routing:dump --format=json --target=public/js/fos_js_routes.json",
+        "crc": "vendor/bin/composer-require-checker --config-file=./composer-require-checker.json",
+        "phpstan": "phpstan analyse --ansi",
+        "phpstan-update-baseline": "phpstan analyse --ansi --generate-baseline phpstan-baseline.neon",
+        "phpunit": "phpunit --colors=always",
+        "cs-check": "phpcs -s --filter=GitModified",
+        "cs-check-diff": "phpcs -s --filter=src/Infrastructure/PHPCodeSniffer/Filters/GitDiff.php",
+        "cs-check-all": "phpcs -s",
+        "cs-fix": "phpcbf --filter=GitModified",
+        "cs-fix-diff": "phpcbf --filter=./src/Infrastructure/PHPCodeSniffer/Filters/GitDiff.php",
+        "cs-fix-all": "phpcbf",
+        "lint-twig": "php bin/console lint:twig src templates --show-deprecations --ansi",
+        "lint-yaml": "php bin/console lint:yaml config src translations --parse-tags --ansi",
+        "lint-container": "php bin/console lint:container --ansi",
+        "unuse": "composer unused --excludeDir=vendor --excludeDir=var --excludeDir=node_modules",
+        "install-codestandards": "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
     },
     "config": {
-        "bin-dir": "bin",
         "preferred-install": {
             "*": "dist"
-        },
-        "platform": {
-            "php": "7.1.29"
         }
     },
     "extra": {
         "symfony": {
             "allow-contrib": "true"
-        }
+        },
+        "unused": [
+            "sensio/framework-extra-bundle",
+            "twig/markdown-extra",
+            "symfony/messenger",
+            "symfony/mailer",
+            "austinsmorris/doctrine-dbal-datetimeutc",
+            "erusev/parsedown"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true
