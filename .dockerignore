@@ -16,6 +16,7 @@
 **/Thumbs.db
 .editorconfig
 .env.*.local
+.env.test
 .env.local
 .env.local.php
 .phpcs.cache
@@ -27,6 +28,7 @@ phpcs.xml
 phpunit.xml
 bin/*
 !bin/console
+.github/
 docs/
 var/
 node_modules/
