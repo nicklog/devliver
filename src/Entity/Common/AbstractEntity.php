@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Common;
 
-use App\Infrastructure\Error\InvalidArgumentTypeException;
+use App\Infrastructure\Error\InvalidArgumentTypeError;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -39,7 +39,7 @@ abstract class AbstractEntity implements Entity
     public function equals(self $self): bool
     {
         if (! $self instanceof static) {
-            throw new InvalidArgumentTypeException(static::class, get_debug_type($self));
+            throw new InvalidArgumentTypeError(static::class, get_debug_type($self));
         }
 
         return $this->getId() === $self->getId();

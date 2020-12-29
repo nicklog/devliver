@@ -7,7 +7,7 @@ namespace App\Domain;
 use MyCLabs\Enum\Enum;
 
 /**
- * @method static self ADMIN
+ * @method static self ADMIN()
  */
 final class Role extends Enum
 {

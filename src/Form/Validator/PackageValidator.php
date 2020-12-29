@@ -29,7 +29,6 @@ final class PackageValidator
     }
 
     /**
-     * @param mixed[]      $object
      * @param mixed[]|null $payload
      */
     public function validateRepository(?Package $object, ExecutionContextInterface $context, ?array $payload): void
@@ -52,7 +51,6 @@ final class PackageValidator
     }
 
     /**
-     * @param mixed[]      $object
      * @param mixed[]|null $payload
      */
     public function validateAddName(?Package $object, ExecutionContextInterface $context, ?array $payload): void
@@ -84,10 +82,6 @@ final class PackageValidator
         ]);
     }
 
-    /**
-     * @param mixed[] $object
-     * @param mixed[] $payload
-     */
     public function validateEditName(Package $object, ExecutionContextInterface $context, Package $payload): void
     {
         $url  = $object->getUrl();

@@ -26,7 +26,7 @@ class Package extends AbstractEntity
     private string $url;
 
     /** @ORM\Column(type="string") */
-    private ?string $name = null;
+    private string $name = '';
 
     /** @ORM\Column(type="boolean", options={"default": true}) */
     private bool $enable = true;

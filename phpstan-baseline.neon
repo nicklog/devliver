@@ -1,0 +1,17 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Instanceof between App\\\\Entity\\\\Common\\\\AbstractEntity and App\\\\Entity\\\\Common\\\\AbstractEntity will always evaluate to true\\.$#"
+			count: 1
+			path: src/Entity/Common/AbstractEntity.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(Composer\\\\Package\\\\CompletePackageInterface, string\\) given\\.$#"
+			count: 1
+			path: src/Model/PackageAdapter.php
+
+		-
+			message: "#^Parameter \\#1 \\$origin of method Symfony\\\\Component\\\\Filesystem\\\\Filesystem\\:\\:rename\\(\\) expects string, React\\\\Promise\\\\PromiseInterface\\|null given\\.$#"
+			count: 1
+			path: src/Service/DistSynchronization.php
+

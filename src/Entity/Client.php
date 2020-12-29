@@ -17,7 +17,7 @@ class Client extends AbstractEntity implements UserInterface
     /** @ORM\Column(type="string") */
     private string $name;
 
-    /** @ORM\Column(type="string", nullable=true, unique=true) */
+    /** @ORM\Column(type="string", unique=true) */
     private string $token;
 
     /** @ORM\Column(type="boolean", options={"default": true}) */
@@ -68,6 +68,9 @@ class Client extends AbstractEntity implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getRoles(): array
     {
         return [

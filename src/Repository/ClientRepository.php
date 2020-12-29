@@ -8,6 +8,7 @@ use App\Entity\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -26,7 +27,7 @@ final class ClientRepository extends ServiceEntityRepository implements UserProv
 
     public function loadUserByUsername(string $token): UserInterface
     {
-        return $this->_em->createQuery(
+        $result = $this->_em->createQuery(
             <<<'DQL'
                 SELECT u 
                 FROM App\Entity\Client u 
@@ -34,15 +35,21 @@ final class ClientRepository extends ServiceEntityRepository implements UserProv
             DQL
         )
             ->setParameter('token', $token, Types::STRING)
-            ->getSingleResult();
+            ->getOneOrNullResult();
+
+        if ($result === null) {
+            throw new UsernameNotFoundException();
+        }
+
+        return $result;
     }
 
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         return $user;
     }
 
-    public function supportsClass(string $class)
+    public function supportsClass(string $class): bool
     {
         return $class === Client::class;
     }

@@ -9,6 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -46,7 +47,7 @@ final class UserRepository extends ServiceEntityRepository implements UserProvid
 
     public function loadUserByUsername(string $username): UserInterface
     {
-        return $this->_em->createQuery(
+        $result = $this->_em->createQuery(
             <<<'DQL'
                 SELECT u 
                 FROM App\Entity\User u 
@@ -54,7 +55,13 @@ final class UserRepository extends ServiceEntityRepository implements UserProvid
             DQL
         )
             ->setParameter('username', $username, Types::STRING)
-            ->getSingleResult();
+            ->getOneOrNullResult();
+
+        if ($result === null) {
+            throw new UsernameNotFoundException();
+        }
+
+        return $result;
     }
 
     public function refreshUser(UserInterface $user): UserInterface

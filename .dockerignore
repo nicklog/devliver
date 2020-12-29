@@ -24,6 +24,7 @@ composer-require-checker.json
 Makefile
 LICENSE
 phpstan.neon
+phpstan-baseline.neon
 phpcs.xml
 phpunit.xml
 bin/*

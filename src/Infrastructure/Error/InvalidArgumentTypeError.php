@@ -9,7 +9,7 @@ use Throwable;
 
 use function sprintf;
 
-final class InvalidArgumentTypeException extends InvalidArgumentException
+final class InvalidArgumentTypeError extends InvalidArgumentException
 {
     public function __construct(
         string $expectedType,

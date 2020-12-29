@@ -8,7 +8,7 @@ includes:
     - vendor/phpstan/phpstan-symfony/rules.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
     - vendor/phpstan/phpstan-doctrine/rules.neon
-    #- phpstan-baseline.neon
+    - phpstan-baseline.neon
 
 parameters:
     level: max

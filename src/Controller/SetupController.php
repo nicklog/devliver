@@ -53,7 +53,7 @@ final class SetupController extends AbstractController
             $user->addRole(Role::ADMIN());
 
             $this->entityManager->persist($user);
-            $this->entityManager->flush($user);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('app_login');
         }

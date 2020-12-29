@@ -10,6 +10,8 @@ use Composer\Repository\VcsRepository;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Throwable;
+
+use function array_unshift;
 use function htmlspecialchars;
 use function str_replace;
 
@@ -25,7 +27,7 @@ final class RepositoryHelper
 
     public function getReadme(RepositoryInterface $repository): ?string
     {
-        if (!($repository instanceof VcsRepository)) {
+        if (! ($repository instanceof VcsRepository)) {
             return null;
         }
 
@@ -51,8 +53,8 @@ final class RepositoryHelper
         foreach ($readmes as $readme) {
             try {
                 $source = $this->getReadmeSource($driver, $readme);
-                
-                if($source !== null) {
+
+                if ($source !== null) {
                     return $source;
                 }
             } catch (Throwable $e) {
@@ -62,10 +64,10 @@ final class RepositoryHelper
         return null;
     }
 
-    private function getReadmeSource(VcsDriverInterface $driver, $path): ?string
+    private function getReadmeSource(VcsDriverInterface $driver, string $path): ?string
     {
         $file = new File($path, false);
-        $ext = $file->getExtension();
+        $ext  = $file->getExtension();
 
         if ($ext === 'md') {
             $source = $driver->getFileContent($path, $driver->getRootIdentifier());
@@ -84,7 +86,7 @@ final class RepositoryHelper
      */
     public function getComposerInformation(RepositoryInterface $repository): ?array
     {
-        if (!($repository instanceof VcsRepository)) {
+        if (! ($repository instanceof VcsRepository)) {
             return null;
         }
 
@@ -107,10 +109,10 @@ final class RepositoryHelper
         string $type = 'zip'
     ): string {
         $distUrl = $this->router->generate('app_repository_dist', [
-            'vendor' => 'PACK',
+            'vendor'  => 'PACK',
             'project' => 'AGE',
-            'ref' => 'REF',
-            'type' => 'TYPE',
+            'ref'     => 'REF',
+            'type'    => 'TYPE',
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $distUrl = str_replace(

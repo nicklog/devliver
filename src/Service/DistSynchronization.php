@@ -9,6 +9,7 @@ use App\Entity\Package as EntityPackage;
 use Composer\Downloader\FileDownloader;
 use Composer\IO\NullIO;
 use Composer\Package\CompletePackage;
+use Composer\Package\PackageInterface;
 use Composer\Util\ComposerMirror;
 use Composer\Util\HttpDownloader;
 use Symfony\Component\Filesystem\Filesystem;
@@ -24,8 +25,6 @@ final class DistSynchronization
 
     private ComposerManager $composerManager;
 
-    private string $format = 'zip';
-
     private string $distDir;
 
     public function __construct(ComposerManager $composerManager, string $distDir)
@@ -36,19 +35,19 @@ final class DistSynchronization
 
     public function getDistFilename(EntityPackage $dbPackage, string $ref): ?string
     {
-        $cacheFile = $this->getCacheFile($dbPackage, $ref);
-
-        if (file_exists($cacheFile)) {
-            return $cacheFile;
-        }
-
         if ($dbPackage->getVersions()->count() === 0) {
             return null;
         }
 
         foreach ($dbPackage->getPackages() as $package) {
             if ($package instanceof CompletePackage && $package->getSourceReference() === $ref) {
-                $this->downloadPackage($dbPackage, $package);
+                $cacheFile = $this->getCacheFile($package, $ref);
+
+                if (file_exists($cacheFile)) {
+                    return $cacheFile;
+                }
+
+                $this->downloadPackage($package);
 
                 return $cacheFile;
             }
@@ -57,9 +56,9 @@ final class DistSynchronization
         return null;
     }
 
-    private function downloadPackage(EntityPackage $dbPackage, CompletePackage $package): string
+    private function downloadPackage(PackageInterface $package): string
     {
-        $cacheFile = $this->getCacheFile($dbPackage, $package->getSourceReference());
+        $cacheFile = $this->getCacheFile($package, $package->getSourceReference());
         $cacheDir  = dirname($cacheFile);
 
         $fs = new Filesystem();
@@ -81,7 +80,7 @@ final class DistSynchronization
 
             $composer       = $this->composerManager->createComposer();
             $archiveManager = $composer->getArchiveManager();
-            $path           = $archiveManager->archive($package, $package->getDistType() ?: $this->format, sys_get_temp_dir());
+            $path           = $archiveManager->archive($package, $package->getDistType(), sys_get_temp_dir());
 
             $fs->rename($path, $cacheFile);
         }
@@ -89,12 +88,12 @@ final class DistSynchronization
         return $cacheFile;
     }
 
-    private function getCacheFile(EntityPackage $dbPackage, string $ref): string
+    private function getCacheFile(PackageInterface $package, string $ref): string
     {
         $targetDir = $this->distDir . self::DIST_FORMAT;
 
-        $name    = $dbPackage->getName();
-        $type    = $this->format;
+        $name    = $package->getName();
+        $type    = $package->getDistType();
         $version = 'placeholder';
 
         return ComposerMirror::processUrl($targetDir, $name, $version, $ref, $type);

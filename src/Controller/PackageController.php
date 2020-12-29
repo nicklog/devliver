@@ -22,6 +22,8 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Callback;
 
+use function assert;
+
 /**
  * @Route("/packages", name="app_package_")
  */
@@ -200,10 +202,10 @@ final class PackageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em   = $this->registry->getManager();
-            
-            /** @var Package $package */
+            $em = $this->registry->getManager();
+
             $package = $form->getData();
+            assert($package instanceof Package);
 
             $repository = $this->composerManager->createRepository($package);
             $info       = $this->repositoryHelper->getComposerInformation($repository);
