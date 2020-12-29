@@ -1,75 +1,73 @@
 <?php
 
-namespace Shapecode\Devliver\Form\Validator;
+declare(strict_types=1);
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Composer\ComposerManager;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Service\RepositoryHelper;
+namespace App\Form\Validator;
+
+use App\Composer\ComposerManager;
+use App\Entity\Package;
+use App\Service\RepositoryHelper;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * Class PackageValidator
- *
- * @package Shapecode\Devliver\Form\Validator
- * @author  Nikita Loges
- */
-class PackageValidator
+final class PackageValidator
 {
+    private ComposerManager $composerManager;
 
-    /** @var ComposerManager */
-    protected $composerManager;
+    private RepositoryHelper $repositoryHelper;
 
-    /** @var RepositoryHelper */
-    protected $repositoryHelper;
+    private ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /**
-     * @param ComposerManager  $composerManager
-     * @param RepositoryHelper $repositoryHelper
-     * @param ManagerRegistry  $registry
-     */
-    public function __construct(ComposerManager $composerManager, RepositoryHelper $repositoryHelper, ManagerRegistry $registry)
-    {
-        $this->composerManager = $composerManager;
+    public function __construct(
+        ComposerManager $composerManager,
+        RepositoryHelper $repositoryHelper,
+        ManagerRegistry $registry
+    ) {
+        $this->composerManager  = $composerManager;
         $this->repositoryHelper = $repositoryHelper;
-        $this->registry = $registry;
+        $this->registry         = $registry;
     }
 
     /**
-     * @param                           $object
-     * @param ExecutionContextInterface $context
-     * @param                           $payload
+     * @param mixed[]      $object
+     * @param mixed[]|null $payload
      */
-    public function validateRepository($object, ExecutionContextInterface $context, $payload)
+    public function validateRepository(?Package $object, ExecutionContextInterface $context, ?array $payload): void
     {
-        $url = $object['url'];
-        $type = $object['type'];
-
-        $repository = $this->composerManager->createRepositoryByUrl($url, $type);
-        $info = $this->repositoryHelper->getComposerInformation($repository);
-
-        if ($info === null) {
-            $context->addViolation('Url is invalid');
+        if ($object === null) {
+            return;
         }
+
+        $url  = $object->getUrl();
+        $type = $object->getType();
+
+        $repository = $this->composerManager->createRepositoryByUrl($url, $type);
+        $info       = $this->repositoryHelper->getComposerInformation($repository);
+
+        if ($info !== null) {
+            return;
+        }
+
+        $context->addViolation('Url is invalid');
     }
 
     /**
-     * @param                           $object
-     * @param ExecutionContextInterface $context
-     * @param                           $payload
+     * @param mixed[]      $object
+     * @param mixed[]|null $payload
      */
-    public function validateAddName($object, ExecutionContextInterface $context, $payload)
+    public function validateAddName(?Package $object, ExecutionContextInterface $context, ?array $payload): void
     {
-        $url = $object['url'];
-        $type = $object['type'];
+        if ($object === null) {
+            return;
+        }
+
+        $url  = $object->getUrl();
+        $type = $object->getType();
 
         $repository = $this->composerManager->createRepositoryByUrl($url, $type);
-        $info = $this->repositoryHelper->getComposerInformation($repository);
+        $info       = $this->repositoryHelper->getComposerInformation($repository);
 
-        if (!isset($info['name'])) {
+        if (! isset($info['name'])) {
             $context->addViolation('composer.json does not include a valid name.');
 
             return;
@@ -77,38 +75,36 @@ class PackageValidator
 
         $package = $this->registry->getRepository(Package::class)->findOneByName($info['name']);
 
-        if ($package !== null) {
-            $context->addViolation('Package name already exists.', [
-                'name' => $package->getName()
-            ]);
+        if ($package === null) {
+            return;
         }
+
+        $context->addViolation('Package name already exists.', [
+            'name' => $package->getName(),
+        ]);
     }
 
     /**
-     * @param                           $object
-     * @param ExecutionContextInterface $context
-     * @param                           $payload
+     * @param mixed[] $object
+     * @param mixed[] $payload
      */
-    public function validateEditName($object, ExecutionContextInterface $context, $payload)
+    public function validateEditName(Package $object, ExecutionContextInterface $context, Package $payload): void
     {
-        $url = $object['url'];
-        $type = $object['type'];
-
-        /** @var Package $package */
-        $package = $payload['package'];
+        $url  = $object->getUrl();
+        $type = $object->getType();
 
         $repository = $this->composerManager->createRepositoryByUrl($url, $type);
-        $info = $this->repositoryHelper->getComposerInformation($repository);
+        $info       = $this->repositoryHelper->getComposerInformation($repository);
 
-        if (!isset($info['name'])) {
+        if (! isset($info['name'])) {
             $context->addViolation('composer.json does not include a valid name.');
 
             return;
         }
 
-        if ($package->getName() !== $info['name']) {
+        if ($payload->getName() !== $info['name']) {
             $context->addViolation('Package name is not accessible with this url.', [
-                'name' => $package->getName()
+                'name' => $payload->getName(),
             ]);
 
             return;

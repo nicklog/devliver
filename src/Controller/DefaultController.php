@@ -1,50 +1,41 @@
 <?php
 
-namespace Shapecode\Devliver\Controller;
+declare(strict_types=1);
+
+namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class DefaultController
- *
- * @package Shapecode\Devliver\Controller
- * @author  Nikita Loges
- *
- * @Route("", name="devliver_")
+ * @Route("", name="app_")
  */
-class DefaultController extends AbstractController
+final class DefaultController extends AbstractController
 {
-
     /**
      * @Route("", name="index")
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function index(): Response
     {
-        return $this->redirectToRoute('devliver_package_index');
+        return $this->redirectToRoute('app_package_index');
     }
 
     /**
      * @Route("/packages.json", name="packages")
      * @Route("/repo/private/packages.json", name="toran_fallback")
      * @Route("/repo/private", name="toran_fallback_2")
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function packagesAction(Request $request)
+    public function packages(Request $request): Response
     {
-        return $this->redirectToRoute('devliver_repository_index', $request->query->all());
+        return $this->redirectToRoute('app_repository_index', $request->query->all());
     }
 
     /**
      * @Route("/how-to", name="howto")
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function howtoAction()
+    public function howto(): Response
     {
         return $this->render('default/howto.html.twig');
     }

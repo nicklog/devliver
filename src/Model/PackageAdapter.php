@@ -1,91 +1,60 @@
 <?php
 
-namespace Shapecode\Devliver\Model;
+declare(strict_types=1);
+
+namespace App\Model;
 
 use Composer\Package\CompletePackageInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-/**
- * Class PackageAdapter
- *
- * @package Shapecode\Devliver\Model
- * @author  Nikita Loges
- */
-class PackageAdapter
+use function call_user_func_array;
+use function explode;
+use function method_exists;
+
+final class PackageAdapter
 {
+    protected CompletePackageInterface $package;
 
-    /** @var CompletePackageInterface */
-    protected $package;
-
-    /**
-     * @param CompletePackageInterface $package
-     */
     public function __construct(CompletePackageInterface $package)
     {
         $this->package = $package;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getVendorName()
+    public function getVendorName(): mixed
     {
         $split = explode('/', $this->getPackage()->getName());
 
         return $split[0];
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProjectName()
+    public function getProjectName(): mixed
     {
         $split = explode('/', $this->getPackage()->getName());
 
         return $split[1];
     }
 
-    /**
-     * @return null
-     */
-    public function getAlias()
+    public function getAlias(): ?string
     {
-        $extra = $this->getPackage()->getExtra();
+        $extra   = $this->getPackage()->getExtra();
         $version = $this->getPackage()->getPrettyVersion();
 
-        if (isset($extra['branch-alias'][$version])) {
-            return $extra['branch-alias'][$version];
-        }
-
-        return null;
+        return $extra['branch-alias'][$version] ?? null;
     }
 
-    /**
-     * @return null
-     */
-    public function getVersionName()
+    public function getVersionName(): string
     {
         $alias = $this->getAlias();
 
-        if (!empty($alias)) {
-            return $alias;
-        }
-
-        return $this->getPackage()->getPrettyVersion();
+        return $alias ?? $this->getPackage()->getPrettyVersion();
     }
 
-    /**
-     * @return CompletePackageInterface
-     */
-    public function getPackage()
+    public function getPackage(): CompletePackageInterface
     {
         return $this->package;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __get($id)
+    public function __get(mixed $id): mixed
     {
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
@@ -93,14 +62,14 @@ class PackageAdapter
     }
 
     /**
-     * @inheritDoc
+     * @param mixed[] $arguments
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         if (method_exists($this->getPackage(), $name)) {
             return call_user_func_array([$this->getPackage(), $name], $arguments);
-        } else {
-            return $this->__get($name);
         }
+
+        return $this->__get($name);
     }
 }

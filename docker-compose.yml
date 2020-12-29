@@ -1,0 +1,39 @@
+version: '3.6'
+
+services:
+  app:
+    build: 
+      context: .
+    volumes:
+      - .:/var/www/html
+      - ./var/bash_history:/home/docker/bash_history
+      - ${HOME}/.ssh:/home/docker/.ssh
+      - ${HOME}/.composer/:/home/docker/.composer/
+    environment:
+      - TZ=Europe/Berlin
+      - APP_ENV=dev
+      - DATABASE_NAME=devliver
+      - DATABASE_USER=devliver
+      - DATABASE_PASSWORD=devliver
+      - DATABASE_HOST=database
+      - DATABASE_PORT=3306
+    depends_on:
+      - database
+    networks:
+      - default
+    ports:
+      - "9000:80"
+
+  database:
+    image: mariadb:latest
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD}
+    networks:
+      - default
+    ports:
+      - "3307:3306"

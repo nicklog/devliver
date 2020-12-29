@@ -26,7 +26,7 @@
                     {%- if author.homepage is defined and author.homepage is not empty -%}
                         <a href="{{ author.homepage }}" target="_blank" style="text-decoration: none;">
                     {%- endif -%}
-                    <img src="{{ gravatar(author.email, 50) }}" class="bs-tooltip" data-title="{{ author.name }}"/>
+                    <img src="{{ author.email|gravatar(50) }}" data-tooltip="{{ author.name }}"/>
                 {% endif -%}
                 {%- if author.homepage is defined and author.homepage is not empty -%}
                     </a>

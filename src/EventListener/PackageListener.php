@@ -1,28 +1,21 @@
 <?php
 
-namespace Shapecode\Devliver\EventListener;
+declare(strict_types=1);
 
+namespace App\EventListener;
+
+use App\Entity\Package;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Shapecode\Devliver\Entity\Package;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-/**
- * Class PackageListener
- *
- * @package Shapecode\Devliver\EventListener
- * @author  Nikita Loges
- */
-class PackageListener implements EventSubscriber
+use function sprintf;
+
+final class PackageListener implements EventSubscriber
 {
+    private TagAwareAdapterInterface $cache;
 
-    /** @var TagAwareAdapterInterface */
-    protected $cache;
-
-    /**
-     * @param TagAwareAdapterInterface $cache
-     */
     public function __construct(TagAwareAdapterInterface $cache)
     {
         $this->cache = $cache;
@@ -31,7 +24,7 @@ class PackageListener implements EventSubscriber
     /**
      * @inheritDoc
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::postPersist,
@@ -40,53 +33,43 @@ class PackageListener implements EventSubscriber
         ];
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
-     */
-    public function postPersist(LifecycleEventArgs $event)
+    public function postPersist(LifecycleEventArgs $event): void
     {
         $entity = $event->getObject();
 
-        if ($entity instanceof Package) {
-            $this->cache->invalidateTags(['packages.json']);
+        if (! ($entity instanceof Package)) {
+            return;
         }
+
+        $this->cache->invalidateTags(['packages.json']);
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
-    public function postUpdate(LifecycleEventArgs $event)
+    public function postUpdate(LifecycleEventArgs $event): void
     {
         $entity = $event->getObject();
 
-        if ($entity instanceof Package) {
-            $this->deleteTags($entity);
+        if (! ($entity instanceof Package)) {
+            return;
         }
+
+        $this->deleteTags($entity);
     }
 
-    /**
-     * @param LifecycleEventArgs $event
-     */
-    public function preRemove(LifecycleEventArgs $event)
+    public function preRemove(LifecycleEventArgs $event): void
     {
         $entity = $event->getObject();
 
-        if ($entity instanceof Package) {
-            $this->deleteTags($entity);
+        if (! ($entity instanceof Package)) {
+            return;
         }
+
+        $this->deleteTags($entity);
     }
 
-    /**
-     * @param Package $package
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
-     */
-    protected function deleteTags(Package $package)
+    private function deleteTags(Package $package): void
     {
-        $this->cache->clear();
-//        $this->cache->invalidateTags(['packages-package-' . $package->getId()]);
+        $this->cache->invalidateTags([
+            sprintf('packages-%d', $package->getId()),
+        ]);
     }
-
 }

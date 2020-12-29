@@ -1,0 +1,4 @@
+sensio_framework_extra:
+    request:
+        converters: true
+        auto_convert: true

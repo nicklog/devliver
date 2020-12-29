@@ -5,13 +5,21 @@
 {% endblock %}
 
 {% block pageActions %}
-    <a href="{{ path('devliver_package_index') }}" data-title="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger bs-tooltip"><span class="fas fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
+    <a href="{{ path('app_package_index') }}" data-tooltip="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger"><span class="fas fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
 {% endblock %}
 
 {% block content %}
     {{ form_start(form) }}
-
-    {{ form_widget(form) }}
-
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            Add repository
+        </div>
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+    <div class="text-right">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
     {{ form_end(form) }}
 {% endblock %}

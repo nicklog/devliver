@@ -2,17 +2,6 @@
 
 
 {% block profile %}
-    <h3>Your API token</h3>
-
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="basic-addon1"><i class="fas fa-user-secret"></i> </span>
-        </div>
-        <input type="text" readonly class="form-control text-center" value="{{ user.apiToken }}"/>
-    </div>
-
-    <p>You can use your API token to interact with the Devliver API, see details in the <a href="{{ path('devliver_howto') }}">how-to</a>.</p>
-
     <h3>Your repository token</h3>
 
     <div class="input-group mb-3">

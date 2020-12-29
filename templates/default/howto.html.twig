@@ -12,10 +12,7 @@
         <div class="col-md-12">
             <p>
                 The repositories will usually be protected.
-                There are 2 ways to allow devliver access to these repositories.
-                You store an SSH key in the ssh directory in the home directory for the corresponding web server user.
-                Or you can create an auth.json file in the <code>%document_root%/composer</code> directory.
-                See the documentation on <a href="https://getcomposer.org/doc/articles/http-basic-authentication.md">getcomposer.org</a>.
+                You have to store an SSH key in the ssh directory in the home directory for the corresponding web server user which have access to the git repositories.
             </p>
         </div>
     </div>
@@ -25,23 +22,7 @@
     </h2>
     <div class="row">
         <div class="col-md-12">
-
-            <h3>Use username and password</h3>
-            <p>To use your Devliver installation in Composer, there is one package repository you have to add to the composer.json in your projects.
-                This is your repository of private packages.</p>
-            <pre>
-    {
-        "repositories": [
-            {
-                "type": "composer",
-                "url": "{{ app.request.uriForPath('') }}"
-            }
-        ]
-    }
-            </pre>
-            <p>Composer will you ask for credentials to access the packages.json when you update your project.</p>
-            <h3>Use token</h3>
-            <p>Or you use your Repository-Token</p>
+            <p>Use the token from clients</p>
             <pre>
     {
         "repositories": [
@@ -59,114 +40,42 @@
         ]
     }
             </pre>
-            <p>You can find your Repository-Token on <a href="{{ path('devliver_profile_index') }}">your profile page</a>.</p>
+            <p>You can find the Repository-Tokens on <a href="{{ path('app_client_index') }}">client overview</a>.</p>
         </div>
     </div>
 
-    <h2>
-        Update Instruction
-    </h2>
-    <div class="row">
-        <div class="col-md-12">
-            <p>
-                Login into your terminal and run following command.<br>
-                <code>php bin/console devliver:self-update</code><br>
-                Follow the instructions.
-            </p>
-        </div>
-    </div>
+    <h3>System/Web Hooks <small>to update repository infos.</small></h3>
+    <h4>GitHub Web-Hook</h4>
+    <p>Enabling the Packagist service hook ensures that your package will always be updated instantly when you push to GitHub.</p>
+    <p>To do so you can:</p>
+    <ul>
+        <li>Go to your GitHub repository</li>
+        <li>Click the "Settings" button</li>
+        <li>Click "Integrations &amp; services"</li>
+        <li>Add a "Packagist" service, and configure it with your username and token</li>
+        <li>Enter "{{ app.request.schemeAndHttpHost }}" in the domain field</li>
+        <li>Check the "Active" box and submit the form</li>
+    </ul>
 
-    <h2 id="update-packages">
-        How to update packages?
-    </h2>
-    <div class="alert alert-info">
-        <i class="fas fa-exclamation-circle fa-fw"></i> You have to run a background update task as a cronjob and setup a system/web hook.
-    </div>
+    <h4>GitLab System Hooks</h4>
+    <p>Creating a System Hook ensures that your package will always be updated instantly when you push to your GitLab.</p>
+    <p>To do so you can:</p>
+    <ul>
+        <li>Go to your Admin Area</li>
+        <li>Click the "System Hooks" button in den left panel</li>
+        <li>Enter <code>{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> in url field</li>
+        <li>Let "Secret Token" empty</li>
+        <li>Enable "Push events" and "Tag push events"</li>
+        <li>Submit the form</li>
+    </ul>
 
-    <h3>Cronjob</h3>
-    <div class="row">
-        <div class="col-md-12">
-            <p>The background task is executed with the <code>bin/console shapecode:cron:run</code> shell command.</p>
+    <h4>Bitbucket Webhooks</h4>
+    <p>To enable the Bitbucket web hook, go to your BitBucket repository, open the settings and select "Webhooks" in the menu. Add a new hook. You have to enter the Devliver endpoint, containing both your username and API token. Enter <code>{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> as URL. Save your changes and you're done.</p>
 
-            <p> Just add a cronjob to your cron table that runs the command every minute like this to your cron table.<br>
-                <code>* * * * * /path/to/your/project/bin/console shapecode:cron:run -q</code>
-            </p>
-        </div>
-    </div>
+    <h4>Manual hook setup</h4>
+    <p>If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar. You have to do a <code>POST</code> request to <code>{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> with a request body looking like this: <code>{"repository":{"git_url":"REPOSITORY_GIT_URL"}}</code></p>
+    <p>You can do this using curl for example:</p>
+    <pre>curl -XPOST -H'content-type:application/json' '{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'</pre>
 
-    <h3>System/Web Hooks</h3>
-    <div class="row">
-        <div class="col-md-6">
-            <h4>GitHub Service Hook</h4>
-            <p>Enabling the Packagist service hook ensures that your package will always be updated instantly when you push to GitHub.</p>
-            <p>To do so you can:</p>
-            <ul>
-                <li>Go to your GitHub repository</li>
-                <li>Click the "Settings" button</li>
-                <li>Click "Integrations &amp; services"</li>
-                <li>Add a "Packagist" service, and configure it with your username and token</li>
-                <li>Enter "{{ app.request.schemeAndHttpHost }}" in the domain field</li>
-                <li>Check the "Active" box and submit the form</li>
-            </ul>
-        </div>
-
-        <div class="col-md-6">
-            <h4>GitLab System Hooks</h4>
-            <p>Creating a System Hook ensures that your package will always be updated instantly when you push to your GitLab.</p>
-            <p>To do so you can:</p>
-            <ul>
-                <li>Go to your Admin Area</li>
-                <li>Click the "System Hooks" button in den left panel</li>
-                <li>Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> in url field</li>
-                <li>Let "Secret Token" empty</li>
-                <li>Enable "Push events" and "Tag push events"</li>
-                <li>Submit the form</li>
-            </ul>
-        </div>
-
-        <div class="col-md-6">
-            <h4>Bitbucket Webhooks</h4>
-            <p>To enable the Bitbucket web hook, go to your BitBucket repository, open the settings and select "Webhooks" in the menu. Add a new hook. You have to enter the Devliver endpoint, containing both your username and API token. Enter <code>{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> as URL. Save your changes and you're done.</p>
-        </div>
-
-        <div class="col-md-6">
-            <h4>Manual hook setup</h4>
-            <p>If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar. You have to do a <code>POST</code> request to <code>{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> with a request body looking like this: <code>{"repository":{"git_url":"REPOSITORY_GIT_URL"}}</code></p>
-            <p>You can do this using curl for example:</p>
-            <pre>curl -XPOST -H'content-type:application/json' '{{ url('devliver_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'</pre>
-        </div>
-
-        <div class="col-md-12">
-            <div class="alert alert-info">
-                Here you see tutorials only for the 3 frequently used web services, but even more providers are supported.
-                <ul style="margin-bottom: 0px;">
-                    <li><a href="https://github.com/" target="_blank" class="alert-link">GitHub</a></li>
-                    <li><a href="https://gitlab.com/" target="_blank" class="alert-link">GitLab</a></li>
-                    <li><a href="https://bitbucket.org/" target="_blank" class="alert-link">Bitbucket</a></li>
-                    <li><a href="https://de.atlassian.com/software/bitbucket/server" target="_blank" class="alert-link">Bitbucket Server</a></li>
-                    <li><a href="https://gogs.io/" target="_blank" class="alert-link">Gogs</a></li>
-                    <li><a href="https://gitea.io" target="_blank" class="alert-link">Gitea</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="col-md-12">
-            <h4>API Token</h4>
-            <p>You can find your API token on <a href="{{ path('devliver_profile_index') }}">your profile page</a>.</p>
-        </div>
-    </div>
-
-    <h3>Terminal</h3>
-    <div class="row">
-        <div class="col-md-12">
-            <p>Or you can use a terminal command to update all packages at once: <code>bin/console devliver:packages:update</code></p>
-
-            <div class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                But be careful. This command updates each repository and can take a long time. Especially if many repositories are managed.
-                If many repositories are managed, it is recommended to use hooks.
-            </div>
-        </div>
-    </div>
 {% endblock %}
 

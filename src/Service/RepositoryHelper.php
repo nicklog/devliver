@@ -1,43 +1,28 @@
 <?php
 
-namespace Shapecode\Devliver\Service;
+declare(strict_types=1);
+
+namespace App\Service;
 
 use Composer\Repository\RepositoryInterface;
+use Composer\Repository\Vcs\VcsDriverInterface;
 use Composer\Repository\VcsRepository;
-use Demontpx\ParsedownBundle\Parsedown;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Throwable;
+use function htmlspecialchars;
+use function str_replace;
 
-/**
- * Class RepositoryHelper
- *
- * @package Shapecode\Devliver\Service
- * @author  Nikita Loges
- */
-class RepositoryHelper
+final class RepositoryHelper
 {
+    private UrlGeneratorInterface $router;
 
-    /** @var Parsedown */
-    protected $parsdown;
-
-    /** @var UrlGeneratorInterface */
-    protected $router;
-
-    /**
-     * @param Parsedown             $parsdown
-     * @param UrlGeneratorInterface $router
-     */
-    public function __construct(Parsedown $parsdown, UrlGeneratorInterface $router)
-    {
-        $this->parsdown = $parsdown;
+    public function __construct(
+        UrlGeneratorInterface $router
+    ) {
         $this->router = $router;
     }
 
-    /**
-     * @param RepositoryInterface $repository
-     *
-     * @return null|string
-     */
     public function getReadme(RepositoryInterface $repository): ?string
     {
         if (!($repository instanceof VcsRepository)) {
@@ -46,42 +31,56 @@ class RepositoryHelper
 
         try {
             $driver = $repository->getDriver();
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return null;
         }
 
         $composerInfo = $this->getComposerInformation($repository);
 
-        $readme = $composerInfo['readme'] ?? 'README.md';
+        $readmes = [
+            'README.md',
+            'README',
+            'docs/README.md',
+            'docs/README',
+        ];
 
-        $file = new File($readme, false);
+        if (isset($composerInfo['readme'])) {
+            array_unshift($readmes, $composerInfo['readme']);
+        }
+
+        foreach ($readmes as $readme) {
+            try {
+                $source = $this->getReadmeSource($driver, $readme);
+                
+                if($source !== null) {
+                    return $source;
+                }
+            } catch (Throwable $e) {
+            }
+        }
+
+        return null;
+    }
+
+    private function getReadmeSource(VcsDriverInterface $driver, $path): ?string
+    {
+        $file = new File($path, false);
         $ext = $file->getExtension();
 
-        $source = null;
-
-        try {
-            switch ($ext) {
-                case 'md':
-                    $source = $driver->getFileContent($readme, $driver->getRootIdentifier());
-                    $source = $this->parsdown->parse($source);
-                    break;
-                default:
-                    $source = $driver->getFileContent($readme, $driver->getRootIdentifier());
-                    if (!empty($source)) {
-                        $source = '<pre>' . htmlspecialchars($source) . '</pre>';
-                    }
-                    break;
+        if ($ext === 'md') {
+            $source = $driver->getFileContent($path, $driver->getRootIdentifier());
+        } else {
+            $source = $driver->getFileContent($path, $driver->getRootIdentifier());
+            if ($source !== null) {
+                $source = '<pre>' . htmlspecialchars($source) . '</pre>';
             }
-        } catch (\Exception $e) {
         }
 
         return $source;
     }
 
     /**
-     * @param RepositoryInterface $repository
-     *
-     * @return array|null
+     * @return mixed[]|null
      */
     public function getComposerInformation(RepositoryInterface $repository): ?array
     {
@@ -91,7 +90,7 @@ class RepositoryHelper
 
         try {
             $driver = $repository->getDriver();
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return null;
         }
 
@@ -102,25 +101,29 @@ class RepositoryHelper
         return $driver->getComposerInformation($driver->getRootIdentifier());
     }
 
-    /**
-     * @param                       $package
-     * @param                       $ref
-     * @param                       $type
-     *
-     * @return string
-     */
-    public function getComposerDistUrl($package, $ref, $type = 'zip'): string
-    {
-        $distUrl = $this->router->generate('devliver_repository_dist', [
-            'vendor'  => 'PACK',
+    public function getComposerDistUrl(
+        string $package,
+        string $ref,
+        string $type = 'zip'
+    ): string {
+        $distUrl = $this->router->generate('app_repository_dist', [
+            'vendor' => 'PACK',
             'project' => 'AGE',
-            'ref'     => 'REF',
-            'type'    => 'TYPE',
+            'ref' => 'REF',
+            'type' => 'TYPE',
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $distUrl = str_replace(
-            ['PACK/AGE', 'REF', 'TYPE'],
-            [$package, $ref, $type],
+            [
+                'PACK/AGE',
+                'REF',
+                'TYPE',
+            ],
+            [
+                $package,
+                $ref,
+                $type,
+            ],
             $distUrl
         );
 

@@ -1,89 +1,69 @@
 security:
 
     role_hierarchy:
-        ROLE_MANAGER:     [ROLE_USER]
-        ROLE_REPO:        [ROLE_USER]
-        ROLE_ADMIN:       [ROLE_MANAGER, ROLE_REPO, ROLE_USER, ROLE_SONATA_ADMIN]
+        ROLE_ADMIN:       [ROLE_USER, ROLE_MANAGER, ROLE_REPO]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
-        SONATA:
-            - ROLE_SONATA_PAGE_ADMIN_PAGE_EDIT  # if you are using acl then this line must be commented
 
     encoders:
-        FOS\UserBundle\Model\UserInterface: bcrypt
+        App\Entity\User: 'auto'
 
     providers:
-        fos_userbundle:
-            id: fos_user.user_provider.username
-        api_token_provider:
-            id: devliver.security.api_token_user_provider
-        repository_token_provider:
-            id: devliver.security.repository_token_user_provider
-
+        users:
+            entity:
+                class: App\Entity\User
+        clients:
+            entity:
+                class: App\Entity\Client
+                property: token
+                
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
-        admin:
-            pattern:            /admin/(.*)
-            context:            admin
-            form_login:
-                provider:       fos_userbundle
-                login_path:     /admin/login
-                use_forward:    false
-                check_path:     /admin/login_check
-                failure_path:   null
-            logout:
-                path:           /admin/logout
-                target:         /admin/login
-            anonymous:          true
-
-        api:
-            pattern: ^/api
-            stateless: true
-            simple_preauth:
-                authenticator: devliver.security.token_authenticator
-            provider: api_token_provider
-
+#
+#        api:
+#            pattern: ^/api
+#            stateless: true
+#            simple_preauth:
+#                authenticator: devliver.security.token_authenticator
+#            provider: api_token_provider
+#
         repo:
-            pattern:            /repo/(.*)
-            context:            repo
-            anonymous:          true
-            stateless: false
-            http_basic:
-                provider:       fos_userbundle
-            simple_preauth:
-                authenticator: devliver.security.token_authenticator
-                provider: repository_token_provider
+            pattern: ^/repo/(.*)
+            context: repo
+            anonymous: true
+            stateless: true
+            lazy: true
+            logout: ~
+            provider: clients
+            guard:
+                authenticators:
+                    - App\Security\Guard\Authenticator\RepositoryAuthenticator
 
         main:
-            pattern:             .*
-            context:             user
-            form_login:
-                provider:       fos_userbundle
-                login_path:     /login
-                use_forward:    false
-                check_path:     /login_check
-                failure_path:   null
-            logout:             true
-            anonymous:          true
+            user_checker: App\Security\Checker\UserChecker
+            pattern: ^/
+            context: user
+            anonymous: true
+            provider: users
+            guard:
+                authenticators:
+                    - App\Security\Guard\Authenticator\LoginFormAuthenticator
+            logout:
+                path: /logout
+                target: /
+                invalidate_session: true
 
     access_control:
         - { path: ^/packages.json, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/track-downloads, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
-        - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-
+        - { path: ^/setup, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/logout$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
         - { path: ^/repo/, role: ROLE_REPO }
 
-        - { path: ^/admin/, role: [ROLE_ADMIN, ROLE_SONATA_ADMIN] }
-        - { path: ^/.*, role: ROLE_MANAGER }
+        - { path: ^/.*, role: ROLE_USER }

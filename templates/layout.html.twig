@@ -8,84 +8,65 @@
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
-
-        {#<link rel="stylesheet" href="{{ asset('bundles/devliver/css/dashboard.css') }}">#}
-        {#<link rel="stylesheet" href="{{ asset('bundles/devliver/css/style.css') }}">#}
-        {#<link rel="stylesheet" href="{{ asset('bundles/devliver/css/sticky-footer-navbar.css') }}">#}
     {% endblock %}
 
     <title>{% block title %}Devliver{% endblock %}</title>
 </head>
-<body>
+<body class="layout-top-nav control-sidebar-slide-open">
 
-{% include '_partials/header.html.twig' %}
+<div class="wrapper">
+    {% include '_partials/header.html.twig' %}
 
-<div class="container-fluid">
-    <div class="row">
-        {% include '_partials/sidebar.html.twig' %}
-
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            {% block pageHeaderWrapper %}
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mt-3 mb-4 pb-2 border-bottom">
-
-                    {% block pageTitleWrapper %}
-                        <h1 class="h2">
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">
                             {% block pageTitle %}
                                 {{ pageTitle|default('') }}
                             {% endblock %}
                         </h1>
-                    {% endblock %}
-
-                    {% block pageActionsWrapper %}
-                        <div class="btn-toolbar mb-2 mb-md-0">
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        {% block pageActionsWrapper %}
                             {% block pageActionsGroup %}
                                 <div class="btn-group">
                                     {% block pageActions %}
                                     {% endblock %}
                                 </div>
                             {% endblock %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="content-area flash-messages">
+                            {% for type, flashMessages in app.flashes %}
+                                {% for flashMessage in flashMessages %}
+                                    <div class="alert alert-{{ type }}">{{ flashMessage|raw }}</div>
+                                {% endfor %}
+                            {% endfor %}
                         </div>
-                    {% endblock %}
+
+                        {% block content %}{% endblock %}
+                    </div>
                 </div>
-            {% endblock %}
-
-            {% spaceless %}
-                <div class="content-area flash-messages">
-                    {% for type, flashMessages in app.flashes %}
-                        {% for flashMessage in flashMessages %}
-                            <div class="alert alert-{{ type }}">{{ flashMessage|raw }}</div>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-            {% endspaceless %}
-
-            {% block content %}{% endblock %}
-
-        </main>
-
-        {% include '_partials/footer.html.twig' %}
+            </div>
+        </div>
     </div>
+
+    <footer class="main-footer text-sm">
+        {% include '_partials/footer.html.twig' %}
+    </footer>
 </div>
 
 {% block javascripts %}
-    <script type="text/javascript" src="{{ asset('assets/app.js') }}"></script>
-
-    <script type="text/javascript">
-        $(function () {
-            $('.bs-tooltip').tooltip({
-                container: 'body',
-                trigger: 'hover'
-            });
-            $('.bs-confirmation').confirmation({
-                rootSelector: '.bs-confirmation',
-                popout: true,
-                singleton: true,
-                title: function () {
-                    return $(this).data('confirmation');
-                }
-            });
-        });
-    </script>
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
 
 </body>

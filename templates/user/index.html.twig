@@ -1,0 +1,69 @@
+{% extends 'layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-cube fa-fw"></i> Users
+{% endblock %}
+
+{% block pageActions %}
+    <a class="btn btn-primary" href="{{ path('app_user_add') }}"><span class="fas fa-plus fa-fw"></span> Add user</a>
+{% endblock %}
+
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-md-8">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Users <span class="badge badge-primary">{{ pagination.getTotalItemCount }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0">
+                        <tr>
+                            <th>{{ knp_pagination_sortable(pagination, 'Mail address', ['p.email']) }}</th>
+                            <th></th>
+                        </tr>
+                        {% for user in pagination %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('app_user_edit', {user: user.id}) }}">
+                                        {{ user.email }}
+                                    </a>
+                                </td>
+                                <td style="white-space: nowrap; width: 1px;">
+                                    <div class="btn-group">
+                                        {% if user.equals(app.user) == false %}
+                                            {% if user.enable != true %}
+                                                <a href="{{ path('app_user_enable', { user: user.id }) }}" data-tooltip="{{ 'action.enable'|trans }}" class="btn btn-xs btn-danger"><span class="fas fa-circle fa-fw"></span></a>
+                                            {% else %}
+                                                <a href="{{ path('app_user_disable', { user: user.id }) }}" data-tooltip="{{ 'action.disable'|trans }}" class="btn btn-xs btn-success"><span class="fas fa-circle fa-fw"></span></a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <a href="{{ path('app_user_edit', { user: user.id }) }}" data-tooltip="{{ 'action.edit'|trans }}" class="btn btn-xs btn-primary"><span class="fas fa-edit fa-fw"></span></a>
+
+                                        {% if user.equals(app.user) == false %}
+                                            <a href="{{ path('app_user_remove', { user: user.id }) }}" data-confirmation="Remove?" data-tooltip="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation btn-danger"><span class="fas fa-trash fa-fw"></span></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <div class="col-md-6 text-right">
+            {{ block('pageActionsGroup') }}
+        </div>
+    </div>
+{% endblock %}

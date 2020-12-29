@@ -1,51 +1,71 @@
-<nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark flex-md-nowrap p-0 border-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ path('devliver_index') }}"><i class="fas fa-cubes fa-fw"></i> Devliver</a>
-    {% if is_granted('ROLE_MANAGER') %}
-        <form class="form-inline ml-3 mr-auto">
-            <div class="btn-toolbar">
-                <div class="btn-group">
-                    <a class="btn btn-info" target="_blank" href="{{ path('devliver_repository_index', { token: app.user.repositoryToken }) }}">
-                        <span class="fas fa-cubes fa-fw"></span>
-                        {{ 'repository.singular'|trans }}
-                    </a>
-                    {% if latest_release.name != current_release.name and is_granted('ROLE_USER') %}
-                        <a class="btn btn-warning bs-tooltip" data-title="{{ latest_release.name }}" href="https://github.com/shapecode/devliver/releases" target="_blank">
-                            <span class="fas fa-chevron-circle-up fa-fw"></span>
-                            Update Available
+<nav class="main-header navbar navbar-expand-md navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_index') }}">
+            <span class="brand-text font-weight-light"><i class="fas fa-cubes fa-fw"></i> Devliver</span>
+        </a>
+
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_package_index') }}">
+                            <i class="fas fa-cube fa-fw"></i>
+                            Packages
                         </a>
-                    {% endif %}
-                </div>
-            </div>
-        </form>
-        <ul class="navbar-nav mr-3">
-            <li class="nav-item dropdown">
-                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                    <i class="fas fa-user fa-fw"></i>
-                    {{ app.user.username }}
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a href="{{ path('devliver_profile_index') }}" class="dropdown-item">
-                        <i class="fas fa-user fa-fw"></i>
-                        Profile
-                    </a>
-                    <a href="{{ path('fos_user_change_password') }}" class="dropdown-item">
-                        <i class="fas fa-key fa-fw"></i>
-                        Passwort ändern
-                    </a>
+                    </li>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <div class="dropdown-divider"></div>
-                        <a href="{{ path('sonata_admin_dashboard') }}" class="dropdown-item">
-                            <i class="fas fa-lock fa-fw"></i>
-                            Admin
-                        </a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_user_index') }}">
+                                <i class="fas fa-cube fa-fw"></i>
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_client_index') }}">
+                                <i class="fas fa-cube fa-fw"></i>
+                                Clients
+                            </a>
+                        </li>
                     {% endif %}
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ path('fos_user_security_logout') }}" class="dropdown-item">
-                        <i class="fas fa-sign-out-alt fa-fw"></i>
-                        Abmelden
+                </ul>
+            </div>
+
+            <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_howto') }}">
+                        <i class="fas fa-question-circle fa-fw"></i>
+                        How-To
                     </a>
-                </div>
-            </li>
-        </ul>
-    {% endif %}
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                        <i class="fas fa-user fa-fw"></i>
+                        {{ app.user.username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="{{ path('app_profile_index') }}" class="dropdown-item">
+                            <i class="fas fa-user fa-fw"></i>
+                            Profile
+                        </a>
+                        {# <a href="{{ path('fos_user_change_password') }}" class="dropdown-item"> #}
+                        {# <i class="fas fa-key fa-fw"></i> #}
+                        {# Passwort ändern #}
+                        {# </a> #}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {# <div class="dropdown-divider"></div> #}
+                            {# <a href="{{ path('sonata_admin_dashboard') }}" class="dropdown-item"> #}
+                            {# <i class="fas fa-lock fa-fw"></i> #}
+                            {# Admin #}
+                            {# </a> #}
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ path('app_logout') }}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt fa-fw"></i>
+                            Abmelden
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
 </nav>

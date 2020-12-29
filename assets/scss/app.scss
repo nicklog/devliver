@@ -1,15 +1,5 @@
 // vars
 @import "./variables";
 
-// core ui
-@import "../../node_modules/bootstrap/scss/bootstrap";
-
-@import "../css/dashboard.scss";
-@import "../css/style.scss";
-@import "../css/sticky-footer-navbar.scss";
-
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/brands";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/regular";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/solid";
-@import "../../node_modules/@fortawesome/fontawesome-free/scss/v4-shims";
+@import "~admin-lte/build/scss/adminlte";
+@import "~@fortawesome/fontawesome-free/css/all.css";

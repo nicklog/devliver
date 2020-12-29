@@ -1,23 +1,10 @@
 framework:
-    #esi: ~
-    default_locale: '%locale%'
-    translator:
-        fallbacks: ['en']
     secret: '%env(APP_SECRET)%'
-    form: ~
-    templating:
-        engines: ['twig']
-    csrf_protection: ~
-    validation: { enable_annotations: true }
-    #serializer: { enable_annotations: true }
-    trusted_hosts: ~
+    csrf_protection: true
+    #http_method_override: true
     session:
         handler_id: session.handler.native_file
         save_path: '%kernel.project_dir%/var/sessions'
-    fragments: ~
-    http_method_override: true
-    assets: ~
-    php_errors:
-        log: true
-    cache:
-        prefix_seed: shapecode/devliver
+
+    router:
+        default_uri: '%env(string:HTTP_HOST)%'

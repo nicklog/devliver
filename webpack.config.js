@@ -1,55 +1,43 @@
-var Encore = require('@symfony/webpack-encore');
-var MergeIntoSingleFilePlugin = require('webpack-merge-and-include-globally');
+let Encore = require('@symfony/webpack-encore');
 
-var uglifyJS = require("uglify-js");
-
-var uglifyJSOptions = {
-    sourceMap: true,
-    mangle: false
-};
-
-const $ = require('jquery');
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+}
 
 Encore
-    .setOutputPath('public/assets/')
-    .setPublicPath('/assets')
-    .addStyleEntry('app', './assets/scss/app.scss')
+    .setOutputPath('public/build/')
+    .setPublicPath('/build')
 
-    .cleanupOutputBeforeBuild()
-    .enableSourceMaps(!Encore.isProduction())
+    .addEntry('app', './assets/js/app.js')
 
-    // enables Sass/SCSS support
-    .enableSassLoader()
-    .enableVersioning()
-
-    .enableSingleRuntimeChunk()
-    .autoProvidejQuery()
-    .autoProvideVariables({
-        $: 'jquery',
-        jQuery: 'jquery',
-        'window.jQuery': 'jquery',
+    .copyFiles({
+        from: './assets/images',
+        to: 'images/[path][name].[hash:8].[ext]',
+        pattern: /\.(png|jpg|jpeg|gif|ico|svg)$/
     })
 
-    .addPlugin(new MergeIntoSingleFilePlugin({
-        files: {
-            "app.js": [
-                'node_modules/jquery/dist/jquery.min.js',
-                'node_modules/popper.js/dist/umd/popper.min.js',
-                'node_modules/bootstrap/dist/js/bootstrap.min.js',
-                'node_modules/bootstrap-confirmation2/dist/bootstrap-confirmation.min.js',
-                'public/bundles/futlibrary/js/bootbox.min.js'
-            ],
-        },
-        ordered: true,
-        transform: {
-            'app.js': code => uglifyJS.minify(code, uglifyJSOptions).code,
-        }
-    }))
+    .cleanupOutputBeforeBuild()
+
+    .enableSourceMaps(!Encore.isProduction())
+    .enableIntegrityHashes(Encore.isProduction())
+    .enableVersioning()
+    .enableSassLoader()
+    .enableSingleRuntimeChunk()
+    .enableBuildNotifications()
+
+    // enables @babel/preset-env polyfills
+    .configureBabelPresetEnv((config) => {
+        config.useBuiltIns = 'usage';
+        config.corejs = 3;
+    })
+    .configureTerserPlugin((config) => {
+        config.terserOptions = {
+            format: {
+                comments: true
+            }
+        };
+        config.extractComments = true;
+    })
 ;
 
-var config = Encore.getWebpackConfig();
-
-config.watchOptions = {poll: true, ignored: /node_modules/};
-config.resolve.symlinks = false;
-
-module.exports = config;
+module.exports = Encore.getWebpackConfig();

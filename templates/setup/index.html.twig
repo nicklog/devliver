@@ -1,0 +1,27 @@
+{% set bodyClasses = 'page-login' %}
+
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="row align-items-center">
+        <div class="col-12 col-md-4 mt-5 mx-auto">
+
+            {{ form_start(form) }}
+                <h2 class="text-primary text-center">Setup</h2>
+
+                <div class="card bg-light card-outline card-primary mt-3">
+                    <div class="card-body">
+                        <div class="mt-4">
+                            {{ form(form) }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-block btn-primary">
+                            Create admin user
+                        </button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

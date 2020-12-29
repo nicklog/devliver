@@ -1,0 +1,125 @@
+{% extends 'layout.html.twig' %}
+
+{% block pageTitle %}
+    <i class="fas fa-cube fa-fw"></i> {{ 'package.list.page_header'|trans }}
+{% endblock %}
+
+{% block pageActions %}
+    <a class="btn btn-outline-primary bs-confirmation" href="{{ path('app_package_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time."><span class="fas fa-sync fa-fw"></span> {{ 'action.update_all'|trans }}</a>
+    <a class="btn btn-primary" href="{{ path('app_package_add') }}"><span class="fas fa-plus fa-fw"></span> {{ 'package.add_package'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-md-8">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <div class="col-md-4">
+            <form method="get">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupPrepend"><i class="fas fa-search"></i></span>
+                    </div>
+                    <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-fw"></i> Search</button>
+                        <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger"><i class="fas fa-undo fa-fw"></i> Reset</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    Packages <span class="badge badge-primary">{{ pagination.getTotalItemCount }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0">
+
+                        <tr>
+                            <th>{{ knp_pagination_sortable(pagination, 'Name', ['p.name']) }}</th>
+                            <th>Last Version</th>
+                            <th>Datum</th>
+                            <th>Last Update</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        {% set counter = (pagination.getCurrentPageNumber - 1) * pagination.getItemNumberPerPage %}
+                        {% for package in pagination %}
+                            {% set counter = counter + 1 %}
+                            <tr class="">
+                                <td>
+                                    <a href="{{ path('app_package_view', {package: package.id}) }}" style="font-weight: bold;">
+                                        {{ package.name }}
+                                    </a>
+
+                                    {% if package.enable == false %}
+                                        <span class="badge badge-danger">Disabled</span>
+                                    {% endif %}
+
+                                    {% if package.abandoned %}
+                                        <span class="badge badge-warning">Abandoned</span>
+                                    {% endif %}
+
+                                    <br>
+                                    <a href="{{ path('app_package_view', {package: package.id}) }}">
+                                        {{ package.url }}
+                                    </a><br>
+                                    {{ package.lastStablePackage.description }}
+                                </td>
+                                <td>
+                                    {{ package.lastStablePackage.prettyVersion }}
+                                </td>
+                                <td>
+                                    {{ package.lastStablePackage.releaseDate|date }}
+                                </td>
+                                <td>
+                                    {{ package.lastUpdate|date }}
+                                </td>
+                                <td>
+                                    <span class="badge badge-primary">Downloads: {{ package_downloads(package)|number_format }}</span><br>
+                                    {% if package.autoUpdate %}
+                                        <span class="badge badge-success">Auto Update</span><br>
+                                    {% else %}
+                                        <span class="badge badge-danger">No Auto Update</span><br>
+                                    {% endif %}
+                                </td>
+                                <td style="white-space: nowrap; width: 1px;">
+                                    <div class="btn-group">
+                                        {% if package.enable != true %}
+                                            <a href="{{ path('app_package_enable', { package: package.id }) }}" data-tooltip="{{ 'action.enable'|trans }}" class="btn btn-xs btn-danger"><span class="fas fa-circle fa-fw"></span></a>
+                                        {% else %}
+                                            <a href="{{ path('app_package_disable', { package: package.id }) }}" data-tooltip="{{ 'action.disable'|trans }}" class="btn btn-xs btn-success"><span class="fas fa-circle fa-fw"></span></a>
+                                        {% endif %}
+                                        <a href="{{ path('app_package_edit', { package: package.id }) }}" data-tooltip="{{ 'action.edit'|trans }}" class="btn btn-xs btn-primary"><span class="fas fa-edit fa-fw"></span></a>
+                                        <a href="{{ path('app_package_update', { package: package.id, referer: true }) }}" data-tooltip="{{ 'action.update'|trans }}" class="btn btn-xs btn-info"><span class="fas fa-sync fa-fw"></span></a>
+                                        <a href="{{ path('app_package_delete', { package: package.id }) }}" data-confirmation="Remove?" data-tooltip="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation btn-danger"><span class="fas fa-trash fa-fw"></span></a>
+
+                                        {% if package.abandoned != true %}
+                                            <a href="{{ path('app_package_abandon', { package: package.id }) }}" data-tooltip="{{ 'action.abandon'|trans }}" class="btn btn-xs btn-warning"><span class="fas fa-archive fa-fw"></span></a>
+                                        {% else %}
+                                            <a href="{{ path('app_package_unabandon', { package: package.id }) }}" data-tooltip="{{ 'action.unabandon'|trans }}" class="btn btn-xs btn-dark"><span class="fas fa-archive fa-fw"></span></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <div class="col-md-6 text-right">
+            {{ block('pageActionsGroup') }}
+        </div>
+    </div>
+{% endblock %}

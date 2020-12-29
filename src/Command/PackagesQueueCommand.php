@@ -1,88 +1,63 @@
 <?php
 
-namespace Shapecode\Devliver\Command;
+declare(strict_types=1);
 
-use Composer\IO\ConsoleIO;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Bundle\CronBundle\Annotation\CronJob;
-use Shapecode\Devliver\Entity\UpdateQueue;
-use Shapecode\Devliver\Service\PackageSynchronization;
+namespace App\Command;
+
+use App\Repository\UpdateQueueRepository;
+use App\Service\PackageSynchronization;
+use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Class PackagesUpdateCommand
- *
- * @package Shapecode\Devliver\Command
- * @author  Nikita Loges
- *
- * @CronJob("* * * * *", arguments="-q")
- */
-class PackagesQueueCommand extends Command
+final class PackagesQueueCommand extends Command
 {
+    protected ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    protected PackageSynchronization $packageSynchronization;
 
-    /** @var PackageSynchronization */
-    protected $packageSynchronization;
+    private UpdateQueueRepository $updateQueueRepository;
 
-    /**
-     * @param ManagerRegistry                 $registry
-     * @param PackageSynchronization $packageSynchronization
-     */
-    public function __construct(ManagerRegistry $registry, PackageSynchronization $packageSynchronization)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        PackageSynchronization $packageSynchronization,
+        UpdateQueueRepository $updateQueueRepository,
+    ) {
         parent::__construct();
 
-        $this->registry = $registry;
+        $this->registry               = $registry;
         $this->packageSynchronization = $packageSynchronization;
+        $this->updateQueueRepository  = $updateQueueRepository;
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setName('devliver:queue:execute');
+        $this
+            ->setName('app:queue:execute');
     }
 
-    /**
-     * @inheritdoc
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $em = $this->registry->getManager();
-        $queueRepo = $em->getRepository(UpdateQueue::class);
 
-        $queues = $queueRepo->findUnlocked();
+        $queues = $this->updateQueueRepository->findUnlocked();
 
         foreach ($queues as $queue) {
-            $queue->setLockedAt(new \DateTime());
+            $queue->setLockedAt(new DateTime());
             $em->persist($queue);
         }
 
         $em->flush();
 
-        $io = $this->createIO($input, $output);
-
         foreach ($queues as $queue) {
-            $this->packageSynchronization->sync($queue->getPackage(), $io);
+            $this->packageSynchronization->sync($queue->getPackage());
 
             $em->remove($queue);
             $em->flush();
         }
-    }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return ConsoleIO
-     */
-    protected function createIO(InputInterface $input, OutputInterface $output)
-    {
-        return new ConsoleIO($input, $output, $this->getHelperSet());
+        return 0;
     }
 }

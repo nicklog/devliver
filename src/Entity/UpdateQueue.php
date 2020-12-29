@@ -1,84 +1,66 @@
 <?php
 
-namespace Shapecode\Devliver\Entity;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Entity\Common\AbstractEntity;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class UpdateQueue
- *
- * @package Shapecode\Devliver\Entity
- * @author  Nikita Loges
- *
- * @ORM\Entity(repositoryClass="Shapecode\Devliver\Repository\UpdateQueueRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\UpdateQueueRepository")
  */
-class UpdateQueue extends BaseEntity
+class UpdateQueue extends AbstractEntity
 {
-
     /**
-     * @var Package
-     * @ORM\ManyToOne(targetEntity="Shapecode\Devliver\Entity\Package")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Package")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    protected $package;
+    protected Package $package;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(type="datetimeutc", nullable=true)
-     */
-    protected $lockedAt;
+    /** @ORM\Column(type="datetimeutc", nullable=true) */
+    protected ?DateTimeInterface $lockedAt = null;
 
-    /**
-     * @var \DateTime
-     * @ORM\Column(type="datetimeutc", nullable=false)
-     */
-    protected $lastCalledAt;
+    /** @ORM\Column(type="datetimeutc", nullable=false) */
+    protected DateTimeInterface $lastCalledAt;
 
-    /**
-     * @inheritdoc
-     */
+    public function __construct(
+        Package $package,
+        DateTimeInterface $lastCalledAt
+    ) {
+        parent::__construct();
+
+        $this->package      = $package;
+        $this->lastCalledAt = $lastCalledAt;
+    }
+
     public function getPackage(): Package
     {
         return $this->package;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setPackage(Package $package): void
-    {
-        $this->package = $package;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLockedAt(): ?\DateTime
+    public function getLockedAt(): ?DateTimeInterface
     {
         return $this->lockedAt;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setLockedAt(?\DateTime $lockedAt): void
+    public function setLockedAt(?DateTimeInterface $lockedAt): self
     {
         $this->lockedAt = $lockedAt;
+
+        return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getLastCalledAt(): \DateTime
+    public function getLastCalledAt(): DateTimeInterface
     {
         return $this->lastCalledAt;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setLastCalledAt(\DateTime $lastCalledAt): void
+    public function setLastCalledAt(DateTimeInterface $lastCalledAt): self
     {
         $this->lastCalledAt = $lastCalledAt;
+
+        return $this;
     }
 }

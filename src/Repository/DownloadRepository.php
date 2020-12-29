@@ -1,26 +1,29 @@
 <?php
 
-namespace Shapecode\Devliver\Repository;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\Version;
+namespace App\Repository;
+
+use App\Entity\Download;
+use App\Entity\Package;
+use App\Entity\Version;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class DownloadRepository
- *
- * @package Shapecode\Devliver\Repository
- * @author  Nikita Loges
+ * @method Download|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method Download[] findAll()
+ * @method Download|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Download[] findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null)
  */
-class DownloadRepository extends EntityRepository
+final class DownloadRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Download::class);
+    }
 
-    /**
-     * @param Package $package
-     *
-     * @return mixed
-     */
-    public function countPackageDownloads(Package $package)
+    public function countPackageDownloads(Package $package): int
     {
         $qb = $this->createQueryBuilder('p');
         $qb->select('count(p.id)');
@@ -28,15 +31,10 @@ class DownloadRepository extends EntityRepository
         $qb->where($qb->expr()->in('p.package', ':package'));
         $qb->setParameter('package', $package->getId());
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @param Version $version
-     *
-     * @return mixed
-     */
-    public function countVersionDownloads(Version $version)
+    public function countVersionDownloads(Version $version): int
     {
         $qb = $this->createQueryBuilder('p');
         $qb->select('count(p.id)');
@@ -44,6 +42,6 @@ class DownloadRepository extends EntityRepository
         $qb->where($qb->expr()->in('p.version', ':version'));
         $qb->setParameter('version', $version->getId());
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

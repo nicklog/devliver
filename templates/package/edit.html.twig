@@ -5,6 +5,6 @@
 {% endblock %}
 
 {% block pageActions %}
-    <a href="{{ path('devliver_package_add') }}" data-title="{{ 'action.add'|trans }}" class="btn btn-primary bs-tooltip"><span class="fas fa-plus fa-fw"></span> {{ 'action.add'|trans }}</a>
+    <a href="{{ path('app_package_add') }}" data-tooltip="{{ 'action.add'|trans }}" class="btn btn-primary"><span class="fas fa-plus fa-fw"></span> {{ 'action.add'|trans }}</a>
     {{ parent() }}
 {% endblock %}

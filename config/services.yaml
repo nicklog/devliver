@@ -1,13 +1,7 @@
 parameters:
     locale: "%env(LOCALE)%"
-    router.request_context.host: "%env(DEVLIVER_HOST)%"
-    router.request_context.scheme: "%env(DEVLIVER_SCHEME)%"
-    router.request_context.base_url: "%env(DEVLIVER_BASE_URL)%"
         
-    devliver_dir:           '%kernel.project_dir%/var/devliver'
-    version_file:           '%kernel.project_dir%/version'
-
-    devliver_package_dir:   '%devliver_dir%/package'
+    devliver_dir:           '%kernel.project_dir%/data'
     devliver_dist_dir:      '%devliver_dir%/dist'
     devliver_composer_dir:  '%devliver_dir%/composer'
 
@@ -20,75 +14,22 @@ services:
         bind:
             $composerDirectory: '%devliver_composer_dir%'
             $distDir: '%devliver_dist_dir%'
-            $versionFile: '%version_file%'
-            $projectDir: '%kernel.project_dir%'
             Symfony\Component\Cache\Adapter\TagAwareAdapterInterface: '@cache.tag.app'
 
     _instanceof:
         Doctrine\Common\EventSubscriber:
             tags: ['doctrine.event_subscriber']
 
-    Cocur\Slugify\Slugify: ~
-
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{Controller,Domain,DependencyInjection,Entity,Model,Infrastructure,Tests,Kernel.php,bootstrap.php}'
+        
     cache.tag.app:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
         decorates: cache.app
         arguments: ['@cache.tag.app.inner']
 
-    # controller
-    Shapecode\Devliver\Controller\:
+#    # controller
+    App\Controller\:
         resource: '../src/Controller/*'
         tags: ['controller.service_arguments']
-
-    # composer
-    Shapecode\Devliver\Composer\:
-        resource: '../src/Composer/*'
-
-    # event listener
-    Shapecode\Devliver\EventListener\:
-        resource: '../src/EventListener/*'
-
-    # twig
-    Shapecode\Devliver\Twig\:
-        resource: '../src/Twig/*'
-
-    # service
-    Shapecode\Devliver\Service\:
-        resource: '../src/Service/*'
-
-    # command
-    Shapecode\Devliver\Command\:
-        resource: '../src/Command/*'
-
-    # form
-    Shapecode\Devliver\Form\:
-        resource: '../src/Form/*'
-
-    # menu
-    Shapecode\Devliver\Menu\Builder: ~
-
-    devliver.main_menu_left:
-        class: Knp\Menu\MenuItem
-        factory: ['@Shapecode\Devliver\Menu\Builder', mainMenu]
-        tags:
-            - { name: knp_menu.menu, alias: main_left }
-
-    devliver.main_menu_right:
-        class: Knp\Menu\MenuItem
-        factory: ['@Shapecode\Devliver\Menu\Builder', rightNavbar]
-        tags:
-            - { name: knp_menu.menu, alias: main_right }
-
-    # security
-    Shapecode\Devliver\Security\:
-        resource: '../src/Security/*'
-
-    devliver.security.token_authenticator: '@Shapecode\Devliver\Security\TokenAuthenticator'
-    devliver.security.api_token_user_provider: '@Shapecode\Devliver\Security\ApiTokenUserProvider'
-    devliver.security.repository_token_user_provider: '@Shapecode\Devliver\Security\RepositoryTokenUserProvider'
-
-    # admin
-    Shapecode\Devliver\Admin\PackageAdmin:
-        arguments: [~, Shapecode\Devliver\Entity\Package, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Packages, group: Packages }

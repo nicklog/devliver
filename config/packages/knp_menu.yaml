@@ -1,3 +1,0 @@
-knp_menu:
-    twig:
-        template: DevliverBundle:_Partials:knp_bootstrap4.html.twig

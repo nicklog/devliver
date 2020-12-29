@@ -1,72 +1,39 @@
 <?php
 
-namespace Shapecode\Devliver\Twig\Extension;
+declare(strict_types=1);
 
+namespace App\Twig\Extension;
+
+use App\Entity\Download;
+use App\Entity\Package;
+use App\Entity\Version;
+use App\Model\PackageAdapter;
 use Composer\Package\CompletePackageInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Composer\ComposerManager;
-use Shapecode\Devliver\Entity\Download;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\Version;
-use Shapecode\Devliver\Model\PackageAdapter;
-use Shapecode\Devliver\Repository\DownloadRepository;
-use Shapecode\Devliver\Service\GitHubRelease;
-use Shapecode\Devliver\Service\RepositoryHelper;
+use Doctrine\Persistence\ManagerRegistry;
+use Gravatar\Gravatar;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
-use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-/**
- * Class DevliverExtension
- *
- * @package Shapecode\Devliver\Twig\Extension
- * @author  Nikita Loges
- */
-class DevliverExtension extends AbstractExtension implements GlobalsInterface
+final class DevliverExtension extends AbstractExtension
 {
+    private ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    private UrlGeneratorInterface $router;
 
-    /** @var UrlGeneratorInterface */
-    protected $router;
-
-    /** @var GitHubRelease */
-    protected $github;
-
-    /** @var ComposerManager */
-    protected $composerManager;
-
-    /** @var RepositoryHelper */
-    protected $repositoryHelper;
-
-    /**
-     * @param ManagerRegistry       $registry
-     * @param UrlGeneratorInterface $router
-     * @param GitHubRelease         $github
-     * @param ComposerManager       $composerManager
-     * @param RepositoryHelper      $repositoryHelper
-     */
     public function __construct(
         ManagerRegistry $registry,
         UrlGeneratorInterface $router,
-        GitHubRelease $github,
-        ComposerManager $composerManager,
-        RepositoryHelper $repositoryHelper
     ) {
         $this->registry = $registry;
-        $this->router = $router;
-        $this->github = $github;
-        $this->composerManager = $composerManager;
-        $this->repositoryHelper = $repositoryHelper;
+        $this->router   = $router;
     }
 
     /**
      * @inheritdoc
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('version_downloads', [$this, 'getVersionDownloadsCounter']),
@@ -74,63 +41,41 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('package_download_url', [$this, 'getPackageDownloadUrl']),
             new TwigFunction('package_url', [$this, 'getPackageUrl']),
             new TwigFunction('package_adapter', [$this, 'getPackageAdapter']),
-            new TwigFunction('package_readme', [$this, 'getPackageReadme'], ['is_safe' => ['html']]),
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('sha1', 'sha1'),
             new TwigFilter('package_adapter', [$this, 'getPackageAdapter']),
+            new TwigFilter('gravatar', [$this, 'getGravatarUrl']),
         ];
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return int
-     */
-    public function getPackageDownloadsCounter(Package $package)
+    public function getPackageDownloadsCounter(Package $package): int
     {
-        /** @var DownloadRepository $repo */
         $repo = $this->registry->getRepository(Download::class);
 
         return $repo->countPackageDownloads($package);
     }
 
-    /**
-     * @param Version $version
-     *
-     * @return int
-     */
-    public function getVersionDownloadsCounter(Version $version)
+    public function getVersionDownloadsCounter(Version $version): int
     {
-        /** @var DownloadRepository $repo */
         $repo = $this->registry->getRepository(Download::class);
 
         return $repo->countVersionDownloads($version);
     }
 
-    /**
-     * @param CompletePackageInterface $package
-     *
-     * @return PackageAdapter
-     */
-    public function getPackageAdapter(CompletePackageInterface $package)
+    public function getPackageAdapter(CompletePackageInterface $package): PackageAdapter
     {
         return new PackageAdapter($package);
     }
 
-    /**
-     * @param $name
-     *
-     * @return string
-     */
-    public function getPackageUrl($name)
+    public function getPackageUrl(string $name): string
     {
         $repo = $this->registry->getRepository(Package::class);
 
@@ -138,25 +83,20 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
             'name' => $name,
         ]);
 
-        if ($package) {
-            return $this->router->generate('devliver_package_view', [
+        if ($package !== null) {
+            return $this->router->generate('app_package_view', [
                 'package' => $package->getId(),
             ]);
         }
 
-        return 'https://packagist.org/packages/'.$name;
+        return 'https://packagist.org/packages/' . $name;
     }
 
-    /**
-     * @param CompletePackageInterface $package
-     *
-     * @return string
-     */
-    public function getPackageDownloadUrl(CompletePackageInterface $package)
+    public function getPackageDownloadUrl(CompletePackageInterface $package): string
     {
         $adapter = $this->getPackageAdapter($package);
 
-        return $this->router->generate('devliver_repository_dist_web', [
+        return $this->router->generate('app_repository_dist_web', [
             'vendor'  => $adapter->getVendorName(),
             'project' => $adapter->getProjectName(),
             'ref'     => $package->getSourceReference(),
@@ -164,27 +104,10 @@ class DevliverExtension extends AbstractExtension implements GlobalsInterface
         ]);
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return null|string
-     */
-    public function getPackageReadme(Package $package)
+    public function getGravatarUrl(string $email, int $size): string
     {
-        $repository = $this->composerManager->createRepoByPackage(null, $package);
+        $gravatar = new Gravatar([], true);
 
-        return $this->repositoryHelper->getReadme($repository);
+        return $gravatar->avatar($email, ['s' => $size]);
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getGlobals()
-    {
-        return [
-            'current_release' => $this->github->getCurrentTag(),
-            'latest_release'  => $this->github->getLastTag(),
-        ];
-    }
-
 }

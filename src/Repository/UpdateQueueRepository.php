@@ -1,44 +1,48 @@
 <?php
 
-namespace Shapecode\Devliver\Repository;
+declare(strict_types=1);
 
-use Doctrine\ORM\EntityRepository;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\UpdateQueue;
+namespace App\Repository;
+
+use App\Entity\Package;
+use App\Entity\UpdateQueue;
+use DateTime;
+use DateTimeZone;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * Class UpdateQueueRepository
- *
- * @package Shapecode\Devliver\Repository
- * @author  Nikita Loges
+ * @method UpdateQueue|null find($id, ?int $lockMode = null, ?int $lockVersion = null)
+ * @method UpdateQueue[] findAll()
+ * @method UpdateQueue|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UpdateQueue[] findBy(array $criteria, array $orderBy = null, ?int $limit = null, ?int $offset = null)
  */
-class UpdateQueueRepository extends EntityRepository
+final class UpdateQueueRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UpdateQueue::class);
+    }
 
-    /**
-     * @param Package $package
-     *
-     * @return null|object|UpdateQueue
-     */
     public function findOneByPackage(Package $package): ?UpdateQueue
     {
         return $this->findOneBy([
-            'package' => $package->getId()
+            'package' => $package->getId(),
         ]);
     }
 
     /**
-     * @return array|UpdateQueue[]
+     * @return UpdateQueue[]
      */
     public function findUnlocked(): array
     {
-        $qb = $this->createQueryBuilder('p');
+        $qb   = $this->createQueryBuilder('p');
         $expr = $qb->expr();
 
         $qb->where($expr->isNull('p.lockedAt'));
         $qb->orWhere($expr->lte('p.lockedAt', ':pastLockedAt'));
 
-        $past = new \DateTime('-10 minutes', new \DateTimeZone('UTC'));
+        $past = new DateTime('-10 minutes', new DateTimeZone('UTC'));
         $qb->setParameter('pastLockedAt', $past);
 
         return $qb->getQuery()->getResult();

@@ -1,140 +1,92 @@
 <?php
 
-namespace Shapecode\Devliver\Composer;
+declare(strict_types=1);
 
+namespace App\Composer;
+
+use App\Entity\Package;
+use Composer\Composer;
 use Composer\Config;
-use Composer\IO\BufferIO;
-use Composer\IO\IOInterface;
+use Composer\Factory;
+use Composer\IO\NullIO;
 use Composer\Repository\RepositoryFactory;
 use Composer\Repository\RepositoryInterface;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Entity\Package;
-use Symfony\Component\Console\Output\OutputInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * Class ComposerManager
- *
- * @package Shapecode\Devliver\Composer
- * @author  Nikita Loges
- */
-class ComposerManager
+use function array_map;
+
+final class ComposerManager
 {
+    private ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    private ConfigFactory $configFactory;
 
-    /** @var Config */
-    protected $config;
-
-    /** @var ConfigFactory */
-    protected $configFactory;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ConfigFactory   $configFactory
-     */
-    public function __construct(ManagerRegistry $registry, ConfigFactory $configFactory)
-    {
-        $this->registry = $registry;
+    public function __construct(
+        ManagerRegistry $registry,
+        ConfigFactory $configFactory,
+    ) {
+        $this->registry      = $registry;
         $this->configFactory = $configFactory;
     }
 
-    /**
-     * @return BufferIO
-     */
-    public function createIO()
+    public function createRepository(Package $package): RepositoryInterface
     {
-        $io = new BufferIO('', OutputInterface::VERBOSITY_VERBOSE);
-        $io->loadConfiguration($this->getConfig());
-
-        return $io;
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig()
-    {
-        if ($this->config === null) {
-            $packages = $this->registry->getRepository(Package::class)->findAll();
-            $this->config = $this->createRepositoriesConfig($packages);
-        }
-
-        return $this->config;
-    }
-
-    /**
-     * @return Config
-     * @deprecated
-     */
-    public function create()
-    {
-        return $this->getConfig();
-    }
-
-    /**
-     * @param Package $package
-     * @param IOInterface|null $io
-     *
-     * @return RepositoryInterface
-     */
-    public function createRepository(Package $package, IOInterface $io = null)
-    {
-        if ($io === null) {
-            $io = $this->createIO();
-        }
-
         $config = $this->createRepositoryConfig($package);
 
-        return RepositoryFactory::createRepo($io, $config, $package->getConfig());
+        return RepositoryFactory::createRepo(
+            new NullIO(),
+            $config,
+            $package->getConfig()
+        );
     }
 
-    /**
-     * @param string           $url
-     * @param string           $type
-     * @param IOInterface|null $io
-     *
-     * @return RepositoryInterface|mixed
-     */
-    public function createRepositoryByUrl(string $url, string $type = 'vcs', IOInterface $io = null)
+    public function createComposer(): Composer
     {
-        if ($io === null) {
-            $io = $this->createIO();
-        }
+        return Factory::create(
+            new NullIO(),
+            $this->getConfig()->all()
+        );
+    }
 
+    public function createRepositoryByUrl(string $url, string $type = 'vcs'): RepositoryInterface
+    {
         $config = $this->configFactory->create();
 
-        return RepositoryFactory::createRepo($io, $config, [
-            'type' => $type,
-            'url'  => $url
-        ]);
+        return RepositoryFactory::createRepo(
+            new NullIO(),
+            $config,
+            [
+                'type' => $type,
+                'url'  => $url,
+            ]
+        );
     }
 
-    /**
-     * @param Package $package
-     *
-     * @return Config
-     */
-    public function createRepositoryConfig(Package $package)
+    private function createRepositoryConfig(Package $package): Config
     {
         return $this->createRepositoriesConfig([$package]);
     }
 
     /**
      * @param Package[] $packages
-     *
-     * @return Config
      */
-    public function createRepositoriesConfig(array $packages)
+    private function createRepositoriesConfig(array $packages): Config
     {
         $config = $this->configFactory->create();
-        $config->merge(['repositories' => array_map(
-            function (Package $r) {
-                return $r->getConfig();
-            },
-            $packages
-        )]);
+        $config->merge([
+            'repositories' => array_map(
+                static fn (Package $r): array => $r->getConfig(),
+                $packages
+            ),
+        ]);
 
         return $config;
+    }
+
+    private function getConfig(): Config
+    {
+        $packages = $this->registry->getRepository(Package::class)->findAll();
+
+        return $this->createRepositoriesConfig($packages);
     }
 }

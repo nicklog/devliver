@@ -1,54 +1,44 @@
 <?php
 
-namespace Shapecode\Devliver\Controller;
+declare(strict_types=1);
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Form\Type\Forms\UserProfileType;
+namespace App\Controller;
+
+use App\Form\Type\Forms\UserProfileType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class ProfileController
- *
- * @package Shapecode\Devliver\Controller
- * @author  Nikita Loges
- *
- * @Route("/profile", name="devliver_profile_")
+ * @Route("/profile", name="app_profile_")
  */
-class ProfileController extends AbstractController
+final class ProfileController extends AbstractController
 {
+    private ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    private Security $security;
 
-    /** @var Security */
-    protected $security;
+    private FormFactoryInterface $formFactory;
 
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /**
-     * @param ManagerRegistry      $registry
-     * @param Security             $security
-     * @param FormFactoryInterface $formFactory
-     */
-    public function __construct(ManagerRegistry $registry, Security $security, FormFactoryInterface $formFactory)
-    {
-        $this->registry = $registry;
-        $this->security = $security;
+    public function __construct(
+        ManagerRegistry $registry,
+        Security $security,
+        FormFactoryInterface $formFactory
+    ) {
+        $this->registry    = $registry;
+        $this->security    = $security;
         $this->formFactory = $formFactory;
     }
 
     /**
      * @Route("", name="index")
-     *
-     * @return Response
      */
-    public function profileAction(): Response
+    public function profile(): Response
     {
         return $this->render('profile/profile.html.twig', [
             'user' => $this->security->getUser(),
@@ -57,15 +47,11 @@ class ProfileController extends AbstractController
 
     /**
      * @Route("/edit", name="edit")
-     *
-     * @param Request $request
-     *
-     * @return Response
      */
-    public function editAction(Request $request): Response
-    {
-        $user = $this->security->getUser();
-
+    public function edit(
+        UserInterface $user,
+        Request $request
+    ): Response {
         $form = $this->formFactory->create(UserProfileType::class, $user);
         $form->handleRequest($request);
 

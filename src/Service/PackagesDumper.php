@@ -1,77 +1,57 @@
 <?php
 
-namespace Shapecode\Devliver\Service;
+declare(strict_types=1);
 
+namespace App\Service;
+
+use App\Entity\Package;
+use App\Entity\Version;
 use Composer\Package\Dumper\ArrayDumper;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Shapecode\Devliver\Entity\Package;
-use Shapecode\Devliver\Entity\User;
-use Shapecode\Devliver\Entity\Version;
-use Shapecode\Devliver\Repository\PackageRepository;
-use Shapecode\Devliver\Repository\VersionRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Tenolo\Utilities\Utils\CryptUtil;
 
-/**
- * Class PackagesDumper
- *
- * @package Shapecode\Devliver\Service
- * @author  Nikita Loges
- */
-class PackagesDumper
+use function json_encode;
+use function sha1;
+
+use const JSON_THROW_ON_ERROR;
+
+final class PackagesDumper
 {
+    private ManagerRegistry $registry;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    private UrlGeneratorInterface $router;
 
-    /** @var UrlGeneratorInterface */
-    protected $router;
+    private RepositoryHelper $repositoryHelper;
 
-    /** @var RepositoryHelper */
-    protected $repositoryHelper;
+    private TagAwareAdapterInterface $cache;
 
-    /** @var TagAwareAdapterInterface */
-    protected $cache;
-
-    /**
-     * @param ManagerRegistry          $registry
-     * @param UrlGeneratorInterface    $router
-     * @param RepositoryHelper         $repositoryHelper
-     * @param TagAwareAdapterInterface $cache
-     */
     public function __construct(
         ManagerRegistry $registry,
         UrlGeneratorInterface $router,
         RepositoryHelper $repositoryHelper,
         TagAwareAdapterInterface $cache
     ) {
-        $this->registry = $registry;
-        $this->router = $router;
+        $this->registry         = $registry;
+        $this->router           = $router;
         $this->repositoryHelper = $repositoryHelper;
-        $this->cache = $cache;
+        $this->cache            = $cache;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function dumpPackageJson(User $user, Package $package): string
+    public function dumpPackageJson(Package $package): string
     {
-        $cacheKey = 'user-package-json-'.$package->getId();
-        $item = $this->cache->getItem($cacheKey);
+        $cacheKey = 'package-' . $package->getId();
+        $item     = $this->cache->getItem($cacheKey);
 
         if ($item->isHit()) {
             return $item->get();
         }
 
-        $item->tag('packages-package-'.$package->getId());
-
-        $data = [];
+        $data   = [];
         $dumper = new ArrayDumper();
 
-        /** @var VersionRepository $repo */
-        $repo = $this->registry->getRepository(Version::class);
-        $versions = $repo->findAccessibleForUser($user, $package);
+        $repo     = $this->registry->getRepository(Version::class);
+        $versions = $repo->findByPackage($package);
 
         foreach ($versions as $version) {
             $packageData = $dumper->dump($version->getPackageInformation());
@@ -79,7 +59,7 @@ class PackagesDumper
             $packageData['uid'] = $version->getId();
 
             if ($package->isAbandoned()) {
-                $replacement = $package->getReplacementPackage() ?? true;
+                $replacement              = $package->getReplacementPackage() ?? true;
                 $packageData['abandoned'] = $replacement;
             }
 
@@ -87,7 +67,7 @@ class PackagesDumper
         }
 
         $jsonData = ['packages' => [$package->getName() => $data]];
-        $json = json_encode($jsonData);
+        $json     = json_encode($jsonData, JSON_THROW_ON_ERROR);
 
         $item->set($json);
         $item->expiresAfter(96400);
@@ -97,52 +77,43 @@ class PackagesDumper
         return $json;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function dumpPackagesJson(User $user): string
+    public function dumpPackagesJson(): string
     {
-        $cacheKey = 'user-packages-json-'.$user->getId();
-        $item = $this->cache->getItem($cacheKey);
+        $cacheKey = 'packages';
+        $item     = $this->cache->getItem($cacheKey);
 
         if ($item->isHit()) {
             return $item->get();
         }
 
-        $item->tag('packages.json');
-        $item->tag('packages-user-'.$user->getId());
-
-        /** @var PackageRepository $repo */
-        $repo = $this->registry->getRepository(Package::class);
-        $packages = $repo->findAccessibleForUser($user);
+        $repo     = $this->registry->getRepository(Package::class);
+        $packages = $repo->findEnabled();
 
         $providers = [];
 
         foreach ($packages as $package) {
             $name = $package->getName();
 
-            $item->tag('packages-package-'.$package->getId());
-
             $providers[$name] = [
-                'sha256' => $this->hashPackageJson($user, $package),
+                'sha256' => $this->hashPackageJson($package),
             ];
         }
 
         $repo = [];
 
         $distUrl = $this->repositoryHelper->getComposerDistUrl('%package%', '%reference%', '%type%');
-        $mirror = [
+        $mirror  = [
             'dist-url'  => $distUrl,
             'preferred' => true,
         ];
 
-        $repo['packages'] = [];
-        $repo['notify-batch'] = $this->router->generate('devliver_download_track', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $repo['mirrors'] = [$mirror];
-        $repo['providers-url'] = $this->router->generate('devliver_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL).'/%package%.json';
-        $repo['providers'] = $providers;
+        $repo['packages']      = [];
+        $repo['notify-batch']  = $this->router->generate('app_download_track', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $repo['mirrors']       = [$mirror];
+        $repo['providers-url'] = $this->router->generate('app_repository_provider_base', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/%package%.json';
+        $repo['providers']     = $providers;
 
-        $json = json_encode($repo);
+        $json = json_encode($repo, JSON_THROW_ON_ERROR);
 
         $item->set($json);
         $item->expiresAfter(96400);
@@ -152,13 +123,10 @@ class PackagesDumper
         return $json;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function hashPackageJson(User $user, Package $package): string
+    public function hashPackageJson(Package $package): string
     {
-        $json = $this->dumpPackageJson($user, $package);
+        $json = $this->dumpPackageJson($package);
 
-        return CryptUtil::sha256($json);
+        return sha1($json);
     }
 }
