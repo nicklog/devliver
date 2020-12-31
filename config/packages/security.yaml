@@ -15,6 +15,8 @@ security:
             entity:
                 class: App\Entity\Client
                 property: token
+        api_provider:
+            id: App\Security\ApiProvider
                 
     firewalls:
         dev:
@@ -28,12 +30,22 @@ security:
 #                authenticator: devliver.security.token_authenticator
 #            provider: api_token_provider
 #
+        api:
+            pattern: ^/api/(.*)
+            context: api
+            anonymous: false
+            stateless: true
+            logout: ~
+            provider: api_provider
+            guard:
+                authenticators:
+                    - App\Security\Guard\Authenticator\ApiAuthenticator
+#
         repo:
             pattern: ^/repo/(.*)
             context: repo
-            anonymous: true
+            anonymous: false
             stateless: true
-            lazy: true
             logout: ~
             provider: clients
             guard:

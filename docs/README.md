@@ -104,6 +104,56 @@ This is your repository of private packages.
 }
 ```
 
+## Webhooks
+
+Creating a Webhook ensures that your package will always be updated instantly when you push to your repository.
+
+### GitHub
+
+- Go to your GitHub repository
+- Click the `Settings` button
+- Click `Webhooks` and click on `Add webhook`
+- Enter `https://devliver-domain.url/api/update-package?token=APP_API_TOKEN` in `Payload URL`
+- Select `application/json` in `Content type` and let `Secret` empty
+- `Which events would you like to trigger this webhook?` - `Just the push event.`
+- Finally click on the green button `Add webhook`
+
+### GitLab
+
+- Go to your Admin Area
+- Click the "System Hooks" button in den left panel
+- Enter `https://devliver-domain.url/api/update-package?token=APP_API_TOKEN` in url field
+- Let "Secret Token" empty
+- Enable "Push events" and "Tag push events"
+- Submit the form
+
+### Bitbucket
+
+- Go to your BitBucket repository
+- Open the settings and select "Webhooks" in the menu
+- Add a new hook. 
+- Enter `https://devliver-domain.url/api/update-package?token=APP_API_TOKEN` as URL
+- Save your changes and you're done.
+
+### Manual
+
+If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar.
+You have to do a `POST` request to `https://devliver-domain.url/api/update-package?token=APP_API_TOKEN` with a request body looking like this: 
+
+```json
+{
+  "repository": {
+    "git_url": "REPOSITORY_GIT_URL"
+  }
+}
+```
+
+For example with curl
+
+```bash
+curl -XPOST -H'content-type:application/json' 'https://devliver-domain.url/api/update-package?token=APP_API_TOKEN' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'
+```
+
 ##  Update
 
 Just update the docker image with...

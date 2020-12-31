@@ -30,7 +30,6 @@ phpunit.xml
 bin/*
 !bin/console
 .github/
-docs/
 var/
 node_modules/
 vendor/

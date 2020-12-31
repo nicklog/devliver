@@ -5,77 +5,10 @@
 {% endblock %}
 
 {% block content %}
-    <h2>
-        Authentication
-    </h2>
-    <div class="row">
-        <div class="col-md-12">
-            <p>
-                The repositories will usually be protected.
-                You have to store an SSH key in the ssh directory in the home directory for the corresponding web server user which have access to the git repositories.
-            </p>
+    <div class="card">
+        <div class="card-body">
+            {{ reamdme|markdown_to_html }}
         </div>
     </div>
-
-    <h2>
-        Add Repository
-    </h2>
-    <div class="row">
-        <div class="col-md-12">
-            <p>Use the token from clients</p>
-            <pre>
-    {
-        "repositories": [
-            {
-                "type": "composer",
-                "url": "{{ app.request.uriForPath('') }}",
-                "options":  {
-                    "http": {
-                        "header": [
-                            "token: REPOSITORY_TOKEN"
-                        ]
-                    }
-                }
-            }
-        ]
-    }
-            </pre>
-            <p>You can find the Repository-Tokens on <a href="{{ path('app_client_index') }}">client overview</a>.</p>
-        </div>
-    </div>
-
-    <h3>System/Web Hooks <small>to update repository infos.</small></h3>
-    <h4>GitHub Web-Hook</h4>
-    <p>Enabling the Packagist service hook ensures that your package will always be updated instantly when you push to GitHub.</p>
-    <p>To do so you can:</p>
-    <ul>
-        <li>Go to your GitHub repository</li>
-        <li>Click the "Settings" button</li>
-        <li>Click "Integrations &amp; services"</li>
-        <li>Add a "Packagist" service, and configure it with your username and token</li>
-        <li>Enter "{{ app.request.schemeAndHttpHost }}" in the domain field</li>
-        <li>Check the "Active" box and submit the form</li>
-    </ul>
-
-    <h4>GitLab System Hooks</h4>
-    <p>Creating a System Hook ensures that your package will always be updated instantly when you push to your GitLab.</p>
-    <p>To do so you can:</p>
-    <ul>
-        <li>Go to your Admin Area</li>
-        <li>Click the "System Hooks" button in den left panel</li>
-        <li>Enter <code>{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> in url field</li>
-        <li>Let "Secret Token" empty</li>
-        <li>Enable "Push events" and "Tag push events"</li>
-        <li>Submit the form</li>
-    </ul>
-
-    <h4>Bitbucket Webhooks</h4>
-    <p>To enable the Bitbucket web hook, go to your BitBucket repository, open the settings and select "Webhooks" in the menu. Add a new hook. You have to enter the Devliver endpoint, containing both your username and API token. Enter <code>{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> as URL. Save your changes and you're done.</p>
-
-    <h4>Manual hook setup</h4>
-    <p>If you do not use Bitbucket or GitHub there is a generic endpoint you can call manually from a git post-receive hook or similar. You have to do a <code>POST</code> request to <code>{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}</code> with a request body looking like this: <code>{"repository":{"git_url":"REPOSITORY_GIT_URL"}}</code></p>
-    <p>You can do this using curl for example:</p>
-    <pre>curl -XPOST -H'content-type:application/json' '{{ url('app_api_package_update', { username: app.user.username, token: 'API_TOKEN' }) }}' -d'{"repository":{"git_url":"REPOSITORY_GIT_URL"}}'</pre>
-
 {% endblock %}
 

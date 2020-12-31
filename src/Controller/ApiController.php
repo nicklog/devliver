@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Package;
 use App\Entity\UpdateQueue;
+use App\Repository\PackageRepository;
 use App\Repository\UpdateQueueRepository;
 use Carbon\Carbon;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use TypeError;
 
+use function array_merge;
+use function array_unique;
 use function count;
+use function is_array;
+use function is_string;
 use function json_decode;
 use function Symfony\Component\String\u;
 
@@ -26,16 +31,20 @@ use const JSON_THROW_ON_ERROR;
  */
 final class ApiController extends AbstractController
 {
-    private ManagerRegistry $registry;
+    private EntityManagerInterface $entityManager;
 
     private UpdateQueueRepository $updateQueueRepository;
 
+    private PackageRepository $packageRepository;
+
     public function __construct(
-        ManagerRegistry $registry,
+        EntityManagerInterface $entityManager,
         UpdateQueueRepository $updateQueueRepository,
+        PackageRepository $packageRepository
     ) {
-        $this->registry              = $registry;
+        $this->entityManager         = $entityManager;
         $this->updateQueueRepository = $updateQueueRepository;
+        $this->packageRepository     = $packageRepository;
     }
 
     /**
@@ -44,35 +53,43 @@ final class ApiController extends AbstractController
     public function updatePackage(Request $request): Response
     {
         // parse the payload
-        $payload = json_decode($request->request->get('payload'), true, 512, JSON_THROW_ON_ERROR);
+        try {
+            $payload = json_decode($request->request->get('payload'), true, 512, JSON_THROW_ON_ERROR);
+        } catch (TypeError $exception) {
+            $payload = null;
+        }
 
         if ($payload === null && $request->headers->get('Content-Type') === 'application/json') {
-            $payload = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            try {
+                $payload = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            } catch (TypeError $exception) {
+                $payload = null;
+            }
         }
 
         if ($payload === null) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Missing payload parameter'], 406);
+            return new JsonResponse([
+                'status'  => 'error',
+                'message' => 'Missing payload parameter',
+            ], 406);
         }
 
-        $urls = [];
+        $places = [
+            'project'    => [
+                'git_ssh_url', // gitlab
+                'git_http_url', // gitlab
+                'ssh_url', // gitlab
+                'http_url', // gitlab
+            ],
+            'repository' => [
+                'url', // gogs
+                'git_url', // github / gitea
+                'clone_url', // github / gitea
+                'ssh_url', // github
+            ],
+        ];
 
-        // gitlab
-        if (isset($payload['project']['git_ssh_url'])) {
-            $urls[] = $payload['project']['git_ssh_url'];
-        }
-
-        if (isset($payload['project']['git_http_url'])) {
-            $urls[] = $payload['project']['git_http_url'];
-        }
-
-        // github
-        if (isset($payload['repository']['git_url'])) {
-            $urls[] = $payload['repository']['git_url'];
-        }
-
-        if (isset($payload['repository']['clone_url'])) {
-            $urls[] = $payload['repository']['clone_url'];
-        }
+        $urls = $this->findUrls($payload, $places);
 
         // bitbucket
         if (isset($payload['repository']['links']['html']['href'])) {
@@ -85,26 +102,40 @@ final class ApiController extends AbstractController
             $urls[] = $gitSshUrl;
         }
 
-        // gogs
-        if (isset($payload['repository']['url'])) {
-            $urls[] = $payload['repository']['url'];
-        }
-
-        // github/gitea
-        if (isset($payload['repository']['ssh_url'])) {
-            $urls[] = $payload['repository']['ssh_url'];
-        }
-
-        // gitea
-        if (isset($payload['repository']['clone_url'])) {
-            $urls[] = $payload['repository']['clone_url'];
-        }
-
         if (count($urls) === 0) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Missing or invalid payload'], 406);
+            return new JsonResponse([
+                'status'  => 'error',
+                'message' => 'Missing or invalid payload',
+            ], 406);
         }
 
         return $this->receiveWebhook($urls);
+    }
+
+    /**
+     * @param mixed[] $payload
+     * @param mixed[] $places
+     *
+     * @return string[]
+     */
+    private function findUrls(array $payload, array $places): array
+    {
+        $urls = [];
+
+        foreach ($places as $key => $value) {
+            if (is_string($key) && is_array($value)) {
+                if (isset($payload[$key]) && is_array($payload[$key])) {
+                    $urls[] = $this->findUrls(
+                        $payload[$key],
+                        $value
+                    );
+                }
+            } elseif (is_string($value) && isset($payload[$value])) {
+                $urls[] = [$payload[$value]];
+            }
+        }
+
+        return array_unique(array_merge(...$urls));
     }
 
     /**
@@ -112,13 +143,16 @@ final class ApiController extends AbstractController
      */
     private function receiveWebhook(array $urls): Response
     {
-        $packages = $this->findPackages($urls);
+        $packages = $this->packageRepository->findBy([
+            'url' => $urls,
+        ]);
 
         if (count($packages) === 0) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Could not find a package that matches this request'], 404);
+            return new JsonResponse([
+                'status'  => 'error',
+                'message' => 'Could not find a package that matches this request',
+            ], 404);
         }
-
-        $em = $this->registry->getManager();
 
         foreach ($packages as $package) {
             $updateQueue = $this->updateQueueRepository->findOneByPackage($package);
@@ -133,26 +167,12 @@ final class ApiController extends AbstractController
             $updateQueue->setLastCalledAt(Carbon::now());
             $package->setAutoUpdate(true);
 
-            $em->persist($package);
-            $em->persist($updateQueue);
+            $this->entityManager->persist($package);
+            $this->entityManager->persist($updateQueue);
         }
 
-        $em->flush();
+        $this->entityManager->flush();
 
         return new JsonResponse(['status' => 'success'], 202);
-    }
-
-    /**
-     * @param string[] $urls
-     *
-     * @return Package[]
-     */
-    private function findPackages(array $urls): array
-    {
-        $repo = $this->registry->getRepository(Package::class);
-
-        return $repo->findBy([
-            'url' => $urls,
-        ]);
     }
 }

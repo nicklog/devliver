@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use function file_get_contents;
+
 /**
  * @Route("", name="app_")
  */
@@ -37,6 +39,10 @@ final class DefaultController extends AbstractController
      */
     public function howto(): Response
     {
-        return $this->render('default/howto.html.twig');
+        $reamdme = file_get_contents(__DIR__ . '/../../docs/README.md');
+
+        return $this->render('default/howto.html.twig', [
+            'reamdme' => $reamdme,
+        ]);
     }
 }

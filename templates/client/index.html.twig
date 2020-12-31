@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block pageTitle %}
-    <i class="fas fa-cube fa-fw"></i> Clients
+    <i class="fas fa-user-shield fa-fw"></i> Clients
 {% endblock %}
 
 {% block pageActions %}
@@ -17,7 +17,7 @@
 
     <div class="row mb-3">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card card-primary card-outline">
                 <div class="card-header">
                     Clients <span class="badge badge-primary">{{ pagination.getTotalItemCount }}</span>
                 </div>

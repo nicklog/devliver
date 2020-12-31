@@ -23,4 +23,4 @@ RUN sudo chown -R docker:docker /var/www/html/
 RUN composer install --no-dev --no-interaction --no-progress --classmap-authoritative && \
     yarn install && \
     yarn prod && \
-    sudo rm -rf assets docker docs node_modules tests
+    sudo rm -rf assets docker node_modules tests

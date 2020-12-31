@@ -1,31 +1,28 @@
 {% extends 'layout.html.twig' %}
 
-{% trans_default_domain 'FOSUserBundle' %}
-
 {% block pageTitle %}
     <i class="fas fa-user fa-fw"></i> {{ app.user.username }}
 {% endblock %}
 
 {% block content %}
-
-    <div class="row">
-        <div class="col-md-3">
-            <div class="nav flex-column nav-pills">
-                <a class="nav-link{% if app.request.get('_route') == 'app_profile_index' %} active{% endif %}" href="{{ path('app_profile_index') }}">
-                    <in class="fas fa-user fa-fw"></in>
-                    Profile
-                </a>
-                <a class="nav-link{% if app.request.get('_route') == 'app_profile_edit' %} active{% endif %}" href="{{ path('app_profile_edit') }}">
-                    <in class="fas fa-wrench fa-fw"></in>
-                    Settings
-                </a>
-{#                <a class="nav-link{% if app.request.get('_route') == 'app_change_password' %} active{% endif %}" href="{{ path('app_change_password') }}">#}
-{#                    <in class="fas fa-key fa-fw"></in>#}
-{#                    Change password#}
-{#                </a>#}
-            </div>
+    <div class="card card-outline card-primary">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.get('_route') == 'app_profile_index' %} active{% endif %}" href="{{ path('app_profile_index') }}">
+                        <in class="fas fa-wrench fa-fw"></in>
+                        Settings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if app.request.get('_route') == 'app_profile_password' %} active{% endif %}" href="{{ path('app_profile_password') }}">
+                        <in class="fas fa-key fa-fw"></in>
+                        Change password
+                    </a>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-9">
+        <div class="card-body">
             {% block profile %}
             {% endblock %}
         </div>

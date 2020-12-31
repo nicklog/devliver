@@ -12,6 +12,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - APP_ENV=dev
+      - APP_API_KEY=abc
       - DATABASE_NAME=devliver
       - DATABASE_USER=devliver
       - DATABASE_PASSWORD=devliver
