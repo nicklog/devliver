@@ -64,7 +64,7 @@
         "erusev/parsedown": "^1.7",
         "knplabs/knp-paginator-bundle": "^5.4",
         "knplabs/knp-components": "^3.0",
-        "austinsmorris/doctrine-dbal-datetimeutc": "^2.0",
+        "shapecode/doctrine-dbal-datetimeutc": "^3.0",
         "sensiolabs-de/rich-model-forms-bundle": "^0.7.0",
         "twig/markdown-extra": "^3.1",
         "sensio/framework-extra-bundle": "^5.6",

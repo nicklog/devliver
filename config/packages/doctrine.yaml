@@ -13,8 +13,8 @@ doctrine:
         url: '%env(resolve:DATABASE_URL)%'
 
         types:
-            datetime: ASM\Doctrine\DBAL\Types\DateTimeUTCType
-            datetimeutc: ASM\Doctrine\DBAL\Types\DateTimeUTCType
+            datetime: Shapecode\Doctrine\DBAL\Types\DateTimeUTCType
+            datetimeutc: Shapecode\Doctrine\DBAL\Types\DateTimeUTCType
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore

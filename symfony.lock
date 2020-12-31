@@ -1,7 +1,4 @@
 {
-    "austinsmorris/doctrine-dbal-datetimeutc": {
-        "version": "2.0.0"
-    },
     "avris/dotenv": {
         "version": "v1.0.0"
     },
@@ -423,6 +420,9 @@
     },
     "shapecode/cron-bundle": {
         "version": "3.0.4"
+    },
+    "shapecode/doctrine-dbal-datetimeutc": {
+        "version": "3.0.0"
     },
     "slevomat/coding-standard": {
         "version": "6.4.1"
