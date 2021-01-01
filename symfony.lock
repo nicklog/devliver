@@ -607,6 +607,9 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/mime": {
+        "version": "v5.2.1"
+    },
     "symfony/monolog-bridge": {
         "version": "v3.4.6"
     },
@@ -640,11 +643,17 @@
     "symfony/polyfill-intl-icu": {
         "version": "v1.7.0"
     },
+    "symfony/polyfill-intl-idn": {
+        "version": "v1.20.0"
+    },
     "symfony/polyfill-intl-normalizer": {
         "version": "v1.20.0"
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.7.0"
+    },
+    "symfony/polyfill-php72": {
+        "version": "v1.20.0"
     },
     "symfony/polyfill-php73": {
         "version": "v1.11.0"

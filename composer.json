@@ -49,6 +49,7 @@
         "symfony/string": "^5.0",
         "symfony/cache": "^5.0",
         "symfony/property-access": "^5.0",
+        "symfony/mime": "^5.0",
 
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/doctrine-bundle": "^2.2",

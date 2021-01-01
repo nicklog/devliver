@@ -23,3 +23,6 @@ RUN composer install --no-dev --no-interaction --no-progress --classmap-authorit
     yarn install && \
     yarn prod && \
     sudo rm -rf assets docker node_modules tests
+
+VOLUME /var/www/html/
+EXPOSE 80

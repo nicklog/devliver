@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use App\Entity\Package;
+use App\Entity\Version;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-
-use function sprintf;
 
 final class PackageListener implements EventSubscriber
 {
@@ -37,39 +36,41 @@ final class PackageListener implements EventSubscriber
     {
         $entity = $event->getObject();
 
-        if (! ($entity instanceof Package)) {
+        if (
+            ! ($entity instanceof Package) &&
+            ! ($entity instanceof Version)
+        ) {
             return;
         }
 
-        $this->cache->invalidateTags(['packages.json']);
+        $this->cache->clear();
     }
 
     public function postUpdate(LifecycleEventArgs $event): void
     {
         $entity = $event->getObject();
 
-        if (! ($entity instanceof Package)) {
+        if (
+            ! ($entity instanceof Package) &&
+            ! ($entity instanceof Version)
+        ) {
             return;
         }
 
-        $this->deleteTags($entity);
+        $this->cache->clear();
     }
 
     public function preRemove(LifecycleEventArgs $event): void
     {
         $entity = $event->getObject();
 
-        if (! ($entity instanceof Package)) {
+        if (
+            ! ($entity instanceof Package) &&
+            ! ($entity instanceof Version)
+        ) {
             return;
         }
 
-        $this->deleteTags($entity);
-    }
-
-    private function deleteTags(Package $package): void
-    {
-        $this->cache->invalidateTags([
-            sprintf('packages-%d', $package->getId()),
-        ]);
+        $this->cache->clear();
     }
 }
