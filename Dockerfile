@@ -6,9 +6,8 @@ ENV CRON_USER_1="docker" \
     CRON_SCHEDULE_1="* * * * *" \
     CRON_COMMAND_1="bin/console app:queue:execute"
     
-ENV STARTUP_COMMAND_1="composer dump-env prod" \
-    STARTUP_COMMAND_2="bin/console cache:clear" \
-    STARTUP_COMMAND_3="bin/console doctrine:migrations:migrate --no-interaction" 
+ENV STARTUP_COMMAND_1="bin/console cache:clear" \
+    STARTUP_COMMAND_2="bin/console doctrine:migrations:migrate --no-interaction" 
 
 ENV APACHE_DOCUMENT_ROOT="public/"
 

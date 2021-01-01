@@ -9,10 +9,6 @@ Your private self-hosted composer repository.
 
 [comment]: <> ([![License]&#40;https://img.shields.io/docker/build/nicklog/devliver.svg&#41;]&#40;https://hub.docker.com/r/nicklog/devliver&#41;)
 
-## Info
-
-> This repo is under development!  
-
 ##  Requirements
 
 * **Docker**
@@ -35,6 +31,7 @@ services:
       - ${HOME}/.composer/:/home/docker/.composer/
     environment:
       - TZ=Europe/Berlin
+      - APP_API_KEY=A-TOP-SECRET-KEY
       - DATABASE_NAME=devliver
       - DATABASE_USER=devliver
       - DATABASE_PASSWORD=devliver
