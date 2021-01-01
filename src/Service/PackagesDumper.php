@@ -11,8 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use function hash;
 use function json_encode;
-use function sha1;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -127,6 +127,6 @@ final class PackagesDumper
     {
         $json = $this->dumpPackageJson($package);
 
-        return sha1($json);
+        return hash('sha256', $json);
     }
 }
