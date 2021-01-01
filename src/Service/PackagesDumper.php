@@ -43,9 +43,9 @@ final class PackagesDumper
         $cacheKey = 'package-' . $package->getId();
         $item     = $this->cache->getItem($cacheKey);
 
-        if ($item->isHit()) {
-            return $item->get();
-        }
+//        if ($item->isHit()) {
+//            return $item->get();
+//        }
 
         $data   = [];
         $dumper = new ArrayDumper();
@@ -82,9 +82,9 @@ final class PackagesDumper
         $cacheKey = 'packages';
         $item     = $this->cache->getItem($cacheKey);
 
-        if ($item->isHit()) {
-            return $item->get();
-        }
+//        if ($item->isHit()) {
+//            return $item->get();
+//        }
 
         $repo     = $this->registry->getRepository(Package::class);
         $packages = $repo->findEnabled();

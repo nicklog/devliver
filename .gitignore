@@ -1,6 +1,7 @@
 .web-server-pid
 .idea/
 .phpcs.cache
+docker-compose.override.yml
 build/
 phpunit.xml
 parameters.yml
