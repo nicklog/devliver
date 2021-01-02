@@ -19,8 +19,13 @@ final class Version20201226154212 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD roles LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\'');
+        $this->addSql(
+            <<<'SQL'
+                ALTER TABLE user 
+                    ADD roles LONGTEXT NOT NULL COMMENT '(DC2Type:json)',
+                    ALGORITHM=INPLACE, LOCK=NONE;
+            SQL
+        );
     }
 
     public function isTransactional(): bool

@@ -48,11 +48,6 @@
                                         <a href="{{ path('app_client_edit', { client: client.id }) }}" data-tooltip="{{ 'action.edit'|trans }}" class="btn btn-xs btn-primary"><span class="fas fa-edit fa-fw"></span></a>
                                         <a href="{{ path('app_client_reset_token', { client: client.id }) }}" data-tooltip="Reset token" class="btn btn-xs btn-info"><span class="fas fa-sync fa-fw"></span></a>
                                         <a href="{{ path('app_client_remove', { client: client.id }) }}" data-confirmation="Remove?" data-tooltip="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation btn-danger"><span class="fas fa-trash fa-fw"></span></a>
-
-                                        <a class="btn btn-info btn-xs" target="_blank" href="{{ path('app_packages', { token: client.token }) }}">
-                                            <span class="fas fa-cubes fa-fw"></span>
-                                            Repository
-                                        </a>
                                     </div>
                                 </td>
                             </tr>

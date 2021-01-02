@@ -10,11 +10,11 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210101213326 extends AbstractMigration
+final class Version20210102150832 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Make name of client unique';
+        return 'Add password field to client';
     }
 
     public function up(Schema $schema): void
@@ -22,13 +22,8 @@ final class Version20210101213326 extends AbstractMigration
         $this->addSql(
             <<<'SQL'
                 ALTER TABLE client 
-                    MODIFY token VARCHAR(255) NOT NULL,
+                    ADD password VARCHAR(255) NOT NULL AFTER token,
                     ALGORITHM=INPLACE, LOCK=NONE;
-            SQL
-        );
-        $this->addSql(
-            <<<'SQL'
-                CREATE UNIQUE INDEX UNIQ_C74404555E237E06 ON client (name);
             SQL
         );
     }

@@ -16,6 +16,13 @@ use function file_get_contents;
  */
 final class DefaultController extends AbstractController
 {
+    private string $projectDir;
+
+    public function __construct(string $projectDir)
+    {
+        $this->projectDir = $projectDir;
+    }
+
     /**
      * @Route("", name="index")
      */
@@ -39,10 +46,10 @@ final class DefaultController extends AbstractController
      */
     public function howto(): Response
     {
-        $reamdme = file_get_contents(__DIR__ . '/../../docs/README.md');
+        $readme = file_get_contents($this->projectDir . '/docs/README.md');
 
         return $this->render('default/howto.html.twig', [
-            'reamdme' => $reamdme,
+            'readme' => $readme,
         ]);
     }
 }

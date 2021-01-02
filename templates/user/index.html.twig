@@ -42,10 +42,7 @@
                                             {% else %}
                                                 <a href="{{ path('app_user_disable', { user: user.id }) }}" data-tooltip="{{ 'action.disable'|trans }}" class="btn btn-xs btn-success"><span class="fas fa-circle fa-fw"></span></a>
                                             {% endif %}
-                                        {% endif %}
-                                        <a href="{{ path('app_user_edit', { user: user.id }) }}" data-tooltip="{{ 'action.edit'|trans }}" class="btn btn-xs btn-primary"><span class="fas fa-edit fa-fw"></span></a>
-
-                                        {% if user.equals(app.user) == false %}
+                                            <a href="{{ path('app_user_edit', { user: user.id }) }}" data-tooltip="{{ 'action.edit'|trans }}" class="btn btn-xs btn-primary"><span class="fas fa-edit fa-fw"></span></a>
                                             <a href="{{ path('app_user_remove', { user: user.id }) }}" data-confirmation="Remove?" data-tooltip="{{ 'action.remove'|trans }}" class="btn btn-xs bs-confirmation btn-danger"><span class="fas fa-trash fa-fw"></span></a>
                                         {% endif %}
                                     </div>

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form\Type\Forms;
 
+use App\Domain\Role;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,6 +34,14 @@ final class UserType extends AbstractType
             'required' => false,
             'mapped'   => false,
             'label'    => 'Password',
+        ]);
+
+        $builder->add('roles', ChoiceType::class, [
+            'required' => false,
+            'multiple' => true,
+            'choices'  => [
+                'Admin' => Role::ADMIN,
+            ],
         ]);
 
         $builder->add('enable', CheckboxType::class, [

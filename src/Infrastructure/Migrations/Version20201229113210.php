@@ -31,17 +31,22 @@ final class Version20201229113210 extends AbstractMigration
                     updated DATETIME DEFAULT NULL COMMENT '(DC2Type:datetimeutc)', 
                     UNIQUE INDEX UNIQ_C74404555F37A13B (token), 
                     PRIMARY KEY(id)
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
-        $this->addSql('DROP INDEX UNIQ_8D93D649F155E556 ON user');
+        $this->addSql(
+            <<<'SQL'
+                DROP INDEX UNIQ_8D93D649F155E556 ON user;
+            SQL
+        );
         $this->addSql(
             <<<'SQL'
                 ALTER TABLE user 
                     ADD enable TINYINT(1) DEFAULT 1 NOT NULL, 
                     DROP password_reset_token, 
                     DROP password_reset_token_expire_at, 
-                    DROP repository_token
+                    DROP repository_token,
+                    ALGORITHM=INPLACE, LOCK=NONE;
             SQL
         );
     }

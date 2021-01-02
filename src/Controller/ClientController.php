@@ -16,6 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+use function assert;
 
 /**
  * @Route("/clients", name="app_client_")
@@ -31,16 +34,20 @@ final class ClientController extends AbstractController
 
     private PaginatorInterface $paginator;
 
+    private UserPasswordEncoderInterface $userPasswordEncoder;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         ClientRepository $clientRepository,
         FlashBagHelper $flashBagHelper,
-        PaginatorInterface $paginator
+        PaginatorInterface $paginator,
+        UserPasswordEncoderInterface $userPasswordEncoder,
     ) {
-        $this->entityManager    = $entityManager;
-        $this->clientRepository = $clientRepository;
-        $this->flashBagHelper   = $flashBagHelper;
-        $this->paginator        = $paginator;
+        $this->entityManager       = $entityManager;
+        $this->clientRepository    = $clientRepository;
+        $this->flashBagHelper      = $flashBagHelper;
+        $this->paginator           = $paginator;
+        $this->userPasswordEncoder = $userPasswordEncoder;
     }
 
     /**
@@ -75,6 +82,11 @@ final class ClientController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $client = $form->getData();
+            assert($client instanceof Client);
+
+            $client->setPassword(
+                $this->userPasswordEncoder->encodePassword($client, $client->getToken())
+            );
 
             $this->entityManager->persist($client);
             $this->entityManager->flush();
@@ -98,6 +110,10 @@ final class ClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $client->setPassword(
+                $this->userPasswordEncoder->encodePassword($client, $client->getToken())
+            );
+
             $this->entityManager->persist($client);
             $this->entityManager->flush();
 
@@ -159,7 +175,11 @@ final class ClientController extends AbstractController
      */
     public function resetToken(Request $request, Client $client): Response
     {
-        $client->setToken(Uuid::uuid4()->toString());
+        $client
+            ->setToken(Uuid::uuid4()->toString())
+            ->setPassword(
+                $this->userPasswordEncoder->encodePassword($client, $client->getToken())
+            );
 
         $this->entityManager->persist($client);
         $this->entityManager->flush();

@@ -81,7 +81,9 @@ No matter, it must be ensured in any case that the SSH keys are available in the
 ## How to use in composer.json 
 
 To use your Devliver installation in Composer, there is a package repository you have to add to the composer.json in your projects.  
-This is your repository of private packages.
+This is your repository of private packages. Composer will ask you for credentials.  
+Use a client `name` as `username` and the `token` as `password`. If you want store these credentials in auth.json.
+Otherwise Composer will aks you always again.
 
 ```json
 {
@@ -89,13 +91,6 @@ This is your repository of private packages.
     {
       "type": "composer",
       "url": "https://devliver-domain.url",
-      "options": {
-        "http": {
-          "header": [
-            "token: CLIENT_TOKEN"
-          ]
-        }
-      }
     }
   ]
 }

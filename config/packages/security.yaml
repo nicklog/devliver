@@ -6,6 +6,7 @@ security:
 
     encoders:
         App\Entity\User: 'auto'
+        App\Entity\Client: 'auto'
 
     providers:
         users:
@@ -14,7 +15,7 @@ security:
         clients:
             entity:
                 class: App\Entity\Client
-                property: token
+                property: name
         api_provider:
             id: App\Security\ApiProvider
                 
@@ -22,13 +23,6 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-#
-#        api:
-#            pattern: ^/api
-#            stateless: true
-#            simple_preauth:
-#                authenticator: devliver.security.token_authenticator
-#            provider: api_token_provider
 #
         api:
             pattern: ^/api/(.*)
@@ -48,9 +42,8 @@ security:
             stateless: true
             logout: ~
             provider: clients
-            guard:
-                authenticators:
-                    - App\Security\Guard\Authenticator\RepositoryAuthenticator
+            http_basic:
+                realm: Secured Area
 
         main:
             user_checker: App\Security\Checker\UserChecker

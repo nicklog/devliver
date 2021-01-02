@@ -36,7 +36,7 @@ final class Version20201225173740 extends AbstractMigration
                     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '(DC2Type:datetimeutc)', 
                     updated DATETIME DEFAULT NULL COMMENT '(DC2Type:datetimeutc)', 
                     PRIMARY KEY(id)
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
 
@@ -53,7 +53,7 @@ final class Version20201225173740 extends AbstractMigration
                     INDEX IDX_1F999DE1F44CABFF (package_id),
                     PRIMARY KEY(id),
                     CONSTRAINT FK_1F999DE1F44CABFF FOREIGN KEY (package_id) REFERENCES package (id) ON DELETE CASCADE
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
 
@@ -71,7 +71,7 @@ final class Version20201225173740 extends AbstractMigration
                     updated DATETIME DEFAULT NULL COMMENT '(DC2Type:datetimeutc)', 
                     UNIQUE INDEX UNIQ_8D93D649F155E556 (repository_token), 
                     PRIMARY KEY(id)
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
 
@@ -89,7 +89,7 @@ final class Version20201225173740 extends AbstractMigration
                     INDEX IDX_BF1CD3C3F44CABFF5E237E06 (package_id, name), 
                     PRIMARY KEY(id),
                     CONSTRAINT FK_BF1CD3C3F44CABFF FOREIGN KEY (package_id) REFERENCES package (id) ON DELETE CASCADE
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
 
@@ -108,7 +108,7 @@ final class Version20201225173740 extends AbstractMigration
                     PRIMARY KEY(id),
                     CONSTRAINT FK_781A8270F44CABFF FOREIGN KEY (package_id) REFERENCES package (id) ON DELETE CASCADE,
                     CONSTRAINT FK_781A82704BBC2705 FOREIGN KEY (version_id) REFERENCES version (id) ON DELETE SET NULL
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
 
@@ -127,7 +127,7 @@ final class Version20201225173740 extends AbstractMigration
                     INDEX IDX_75EA56E0E3BD61CE (available_at), 
                     INDEX IDX_75EA56E016BA31DB (delivered_at), 
                     PRIMARY KEY(id)
-                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
             SQL
         );
     }

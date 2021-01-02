@@ -17,6 +17,9 @@ class Client extends AbstractEntity implements UserInterface
     /** @ORM\Column(type="string", unique=true) */
     private string $name;
 
+    /** @ORM\Column(type="string") */
+    private string $password;
+
     /** @ORM\Column(type="string", unique=true) */
     private string $token;
 
@@ -28,8 +31,9 @@ class Client extends AbstractEntity implements UserInterface
     ) {
         parent::__construct();
 
-        $this->name  = $name;
-        $this->token = Uuid::uuid4()->toString();
+        $this->name     = $name;
+        $this->token    = Uuid::uuid4()->toString();
+        $this->password = $this->token;
     }
 
     public function getName(): string
@@ -44,7 +48,7 @@ class Client extends AbstractEntity implements UserInterface
         return $this;
     }
 
-    public function getToken(): ?string
+    public function getToken(): string
     {
         return $this->token;
     }
@@ -79,9 +83,16 @@ class Client extends AbstractEntity implements UserInterface
         ];
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
-        return null;
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
     }
 
     public function getSalt(): ?string

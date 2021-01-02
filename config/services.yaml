@@ -13,6 +13,7 @@ services:
         public: true
         bind:
             $composerDirectory: '%devliver_composer_dir%'
+            $projectDir: '%kernel.project_dir%'
             $distDir: '%devliver_dist_dir%'
             $apiKey: '%env(APP_API_KEY)%'
             Symfony\Component\Cache\Adapter\TagAwareAdapterInterface: '@cache.tag.app'
