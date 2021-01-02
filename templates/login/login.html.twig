@@ -3,32 +3,35 @@
 {% extends 'layout.html.twig' %}
 
 {% block content %}
-    <div class="row align-items-center">
+    <div class="flex-fill d-flex flex-column justify-content-center py-4">
         <div class="col-12 col-md-4 mt-5 mx-auto">
-
-            <form method="post">
-                <h2 class="text-primary text-center">Login</h2>
-
-                <div class="card bg-light card-outline card-primary mt-3">
-                    <div class="card-body">
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                        <div class="mt-4">
-                            {% if error %}
-                                <div class="alert alert-default-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                            {% endif %}
-                            <div class="form-group">
-                                <input type="text" class="form-control{% if error %} is-invalid{% endif %}" name="username" required="required" autofocus placeholder="Email address" value="{{ last_username }}">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" name="password" required="required" placeholder="Password">
-                            </div>
+            <div class="text-center mb-4">
+                Login
+            </div>
+            
+            <form class="card card-md" method="post" autocomplete="off">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Login to your account</h2>
+                    
+                    {% if error %}
+                        <div class="alert alert-default-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email address</label>
+                        <input type="email" name="username" class="form-control" placeholder="Enter email" value="{{ last_username }}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">
+                            Password
+                        </label>
+                        <div class="input-group input-group-flat">
+                            <input type="password" name="password" class="form-control" placeholder="Password" autocomplete="off">
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-block btn-primary">
-                            <span class="iconify" data-icon="mdi:login"></span>
-                            Sign In
-                        </button>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-primary w-100">Sign in</button>
                     </div>
                 </div>
             </form>

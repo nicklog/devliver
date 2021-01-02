@@ -3,22 +3,19 @@
 {% extends 'layout.html.twig' %}
 
 {% block content %}
-    <div class="row align-items-center">
+    <div class="flex-fill d-flex flex-column justify-content-center py-4">
         <div class="col-12 col-md-4 mt-5 mx-auto">
 
             {{ form_start(form) }}
                 <h2 class="text-primary text-center">Setup</h2>
 
-                <div class="card bg-light card-outline card-primary mt-3">
+                <div class="card card-md">
                     <div class="card-body">
-                        <div class="mt-4">
-                            {{ form(form) }}
+                        <h2 class="card-title text-center mb-4">Create an admin user</h2> 
+                        {{ form_widget(form) }}
+                        <div class="form-footer">
+                            <button type="submit" class="btn btn-primary w-100">Sing up</button>
                         </div>
-                    </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-block btn-primary">
-                            Create admin user
-                        </button>
                     </div>
                 </div>
             {{ form_end(form) }}

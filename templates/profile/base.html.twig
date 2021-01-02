@@ -5,27 +5,35 @@
 {% endblock %}
 
 {% block content %}
+    {{ form_start(form) }}
+    
     <div class="card card-outline card-primary">
-        <div class="card-header">
-            <ul class="nav nav-tabs card-header-tabs">
-                <li class="nav-item">
-                    <a class="nav-link{% if app.request.get('_route') == 'app_profile_index' %} active{% endif %}" href="{{ path('app_profile_index') }}">
-                        <in class="fas fa-wrench fa-fw"></in>
-                        Settings
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link{% if app.request.get('_route') == 'app_profile_password' %} active{% endif %}" href="{{ path('app_profile_password') }}">
-                        <in class="fas fa-key fa-fw"></in>
-                        Change password
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link{% if app.request.get('_route') == 'app_profile_index' %} active{% endif %}" href="{{ path('app_profile_index') }}">
+                    <in class="fas fa-wrench fa-fw"></in>
+                    Settings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if app.request.get('_route') == 'app_profile_password' %} active{% endif %}" href="{{ path('app_profile_password') }}">
+                    <in class="fas fa-key fa-fw"></in>
+                    Change password
+                </a>
+            </li>
+        </ul>
         <div class="card-body">
             {% block profile %}
+                {{ form_widget(form) }}
             {% endblock %}
         </div>
+        <div class="card-footer text-end">
+            <div class="d-flex">
+                <button type="submit" class="btn btn-primary ms-auto">Submit</button>
+            </div>
+        </div>
     </div>
+
+    {{ form_end(form) }}
 
 {% endblock %}

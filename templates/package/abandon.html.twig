@@ -1,11 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block pageTitle %}
-    <i class="fas fa-archive fa-fw"></i> {{ 'package.abandon.page_header'|trans }}
-{% endblock %}
-
-{% block pageActions %}
-    <a href="{{ path('app_package_index') }}" data-tooltip="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger"><span class="fas fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
+    {{ 'package.abandon.page_header'|trans }}
 {% endblock %}
 
 {% block content %}
@@ -16,6 +12,19 @@
     </div>
 
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            Repository
+        </div>
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
+        <div class="card-footer text-end">
+            <div class="d-flex">
+                <a href="{{ path('app_package_index') }}" class="btn btn-link">Cancel</a>
+                <button type="submit" class="btn btn-primary ms-auto">Submit</button>
+            </div>
+        </div>
+    </div>
     {{ form_end(form) }}
 {% endblock %}

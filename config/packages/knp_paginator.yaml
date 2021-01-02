@@ -9,6 +9,6 @@ knp_paginator:
         distinct: true
 
     template:
-        pagination: '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig'
+        pagination: '_partials/pagination.html.twig'
         sortable:   '@KnpPaginator/Pagination/sortable_link.html.twig'
         filtration: '@KnpPaginator/Pagination/filtration.html.twig'

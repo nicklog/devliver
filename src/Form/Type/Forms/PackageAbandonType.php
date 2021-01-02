@@ -6,7 +6,6 @@ namespace App\Form\Type\Forms;
 
 use App\Entity\Package;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,10 +23,6 @@ final class PackageAbandonType extends AbstractType
             'attr'     => [
                 'placeholder' => 'optional package name',
             ],
-        ]);
-
-        $builder->add('submit', SubmitType::class, [
-            'label' => 'Save',
         ]);
     }
 

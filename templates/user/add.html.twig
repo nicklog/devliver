@@ -1,25 +1,24 @@
 {% extends 'layout.html.twig' %}
 
 {% block pageTitle %}
-    <i class="fas fa-plus fa-fw"></i> Add user
-{% endblock %}
-
-{% block pageActions %}
-    <a href="{{ path('app_user_index') }}" data-tooltip="{{ 'action.cancel'|trans }}" class="btn btn-outline-danger"><span class="fas fa-ban fa-fw"></span> {{ 'action.cancel'|trans }}</a>
+    Add user
 {% endblock %}
 
 {% block content %}
     {{ form_start(form) }}
     <div class="card card-primary card-outline">
         <div class="card-header">
-            Add user
+            User
         </div>
         <div class="card-body">
             {{ form_widget(form) }}
         </div>
-    </div>
-    <div class="text-right">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="card-footer text-end">
+            <div class="d-flex">
+                <a href="{{ path('app_user_index') }}" class="btn btn-link">Cancel</a>
+                <button type="submit" class="btn btn-primary ms-auto">Submit</button>
+            </div>
+        </div>
     </div>
     {{ form_end(form) }}
 {% endblock %}

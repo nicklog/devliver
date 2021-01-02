@@ -1,29 +1,34 @@
 {% extends 'layout.html.twig' %}
 
 {% block pageTitle %}
-    <i class="fas fa-cube fa-fw"></i> {{ package.name }}
+    {{ package.name }}
+{% endblock %}
+{% block pagePreTitle %}
+    {% if info.description is defined and info.description is not null %}
+        {{ info.description }}
+    {% endif %}
 {% endblock %}
 
-{% block pageActionsGroup %}
+{% block pageActions %}
     <div class="btn-group mr-2">
-        <a href="{{ path('app_package_delete', { package: package.id }) }}" data-confirmation="Remove?" data-tooltip="{{ 'action.remove'|trans }}" class="btn bs-confirmation btn-danger"><span class="fas fa-trash fa-fw"></span></a>
+        <a href="{{ path('app_package_delete', { package: package.id }) }}" data-confirmation="Remove?" data-bs-toggle="tooltip" title="{{ 'action.remove'|trans }}" class="btn bs-confirmation btn-danger"><span class="fas fa-trash fa-fw"></span></a>
 
         {% if package.abandoned != true %}
-            <a href="{{ path('app_package_abandon', { package: package.id }) }}" data-tooltip="{{ 'action.abandon'|trans }}" class="btn btn-warning"><span class="fas fa-archive fa-fw"></span></a>
+            <a href="{{ path('app_package_abandon', { package: package.id }) }}" data-bs-toggle="tooltip" title="{{ 'action.abandon'|trans }}" class="btn btn-warning"><span class="fas fa-archive fa-fw"></span></a>
         {% else %}
-            <a href="{{ path('app_package_unabandon', { package: package.id }) }}" data-tooltip="{{ 'action.unabandon'|trans }}" class="btn btn-dark"><span class="fas fa-archive fa-fw"></span></a>
+            <a href="{{ path('app_package_unabandon', { package: package.id }) }}" data-bs-toggle="tooltip" title="{{ 'action.unabandon'|trans }}" class="btn btn-dark"><span class="fas fa-archive fa-fw"></span></a>
         {% endif %}
     </div>
     <div class="btn-group mr-2">
         {% if package.enable != true %}
-            <a href="{{ path('app_package_enable', { package: package.id }) }}" data-tooltip="{{ 'action.enable'|trans }}" class="btn btn-danger"><span class="fas fa-circle fa-fw"></span></a>
+            <a href="{{ path('app_package_enable', { package: package.id }) }}" data-bs-toggle="tooltip" title="{{ 'action.enable'|trans }}" class="btn btn-danger"><span class="fas fa-circle fa-fw"></span></a>
         {% else %}
-            <a href="{{ path('app_package_disable', { package: package.id }) }}" data-tooltip="{{ 'action.disable'|trans }}" class="btn btn-success"><span class="fas fa-circle fa-fw"></span></a>
+            <a href="{{ path('app_package_disable', { package: package.id }) }}" data-bs-toggle="tooltip" title="{{ 'action.disable'|trans }}" class="btn btn-success"><span class="fas fa-circle fa-fw"></span></a>
         {% endif %}
-        <a href="{{ path('app_package_edit', { package: package.id }) }}" data-tooltip="{{ 'action.edit'|trans }}" class="btn btn-primary"><span class="fas fa-edit fa-fw"></span></a>
+        <a href="{{ path('app_package_edit', { package: package.id }) }}" data-bs-toggle="tooltip" title="{{ 'action.edit'|trans }}" class="btn btn-primary"><span class="fas fa-edit fa-fw"></span></a>
     </div>
     <div class="btn-group">
-        <a href="{{ path('app_package_update', { package: package.id }) }}" data-tooltip="{{ 'action.update'|trans }}" class="btn btn-info"><i class="fas fa-sync fa-fw"></i></a>
+        <a href="{{ path('app_package_update', { package: package.id }) }}" data-bs-toggle="tooltip" title="{{ 'action.update'|trans }}" class="btn btn-info"><i class="fas fa-sync fa-fw"></i></a>
     </div>
 {% endblock %}
 
@@ -49,12 +54,15 @@
                 </div>
             {% endif %}
 
-            <div class="mb-1">
-                <i class="fas fa-download"></i> <span class="pl-2">composer require {{ package.name }}</span>
-            </div>
-
-            <div class="mb-3">
-                <i class="fab fa-git"></i> <span class="pl-2">{{ info.sourceUrl }}</span>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div>
+                        <i class="fas fa-download"></i> <span class="pl-2">composer require {{ package.name }}</span>
+                    </div>
+                    <div>
+                        <i class="fab fa-git"></i> <span class="pl-2">{{ info.sourceUrl }}</span>
+                    </div>
+                </div>
             </div>
 
             {% for version in versions %}
@@ -125,7 +133,7 @@
                     {% endif %}
                     <a href="#" class="list-group-item list-group-item-action py-1 px-2">
                         <i class="fas fa-download fa-fw"></i>
-                        <span class="badge badge-primary badge-pill">{{ package_downloads(package)|number_format }}</span>
+                        <span class="badge bg-primary rounded-pill">{{ package_downloads(package)|number_format }}</span>
                     </a>
                 </div>
             </div>
@@ -137,7 +145,7 @@
                         {% set pi = version.packageInformation %}
                         {% set adapter = package_adapter(pi) %}
                         <li class="list-group-item py-1 px-2 clearfix">
-                            <div class="float-left">
+                            <div class="float-start">
                                 <a href="#" class="package-link" data-package="details_{{ (pi.prettyVersion ~ pi.sourceReference)|sha1 }}">
                                     {{ pi.prettyVersion|u.truncate(40, '...') }}
 
@@ -146,9 +154,9 @@
                                     {% endif %}
                                 </a>
                             </div>
-                            <div class="float-right">
-                                <span class="badge badge-primary badge-pill" data-title="Downloads">{{ version_downloads(version)|number_format }}</span>
-                                <a href="{{ package_download_url(pi) }}" data-tooltip="Download"><i class="fas fa-download"></i></a>
+                            <div class="float-end">
+                                <span class="badge bg-primary rounded-pill" data-title="Downloads">{{ version_downloads(version)|number_format }}</span>
+                                <a href="{{ package_download_url(pi) }}" data-bs-toggle="tooltip" title="Download"><i class="fas fa-download"></i></a>
                             </div>
                         </li>
                     {% endfor %}

@@ -56,15 +56,14 @@ final class UserController extends AbstractController
     {
         $qb = $this->userRepository->createQueryBuilder('p');
 
-        $page  = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 10);
+        $page = $request->query->getInt('page', 1);
 
         $sort      = $request->query->get('sort', 'p.id');
         $direction = $request->query->get('direction', 'asc');
 
         $qb->orderBy($sort, $direction);
 
-        $pagination = $this->paginator->paginate($qb, $page, $limit);
+        $pagination = $this->paginator->paginate($qb, $page);
 
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,

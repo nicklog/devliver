@@ -1,10 +1,5 @@
 {% extends 'package/add.html.twig' %}
 
 {% block pageTitle %}
-    <i class="fas fa-edit fa-fw"></i> {{ 'package.edit.page_header'|trans }}
-{% endblock %}
-
-{% block pageActions %}
-    <a href="{{ path('app_package_add') }}" data-tooltip="{{ 'action.add'|trans }}" class="btn btn-primary"><span class="fas fa-plus fa-fw"></span> {{ 'action.add'|trans }}</a>
-    {{ parent() }}
+    {{ 'package.edit.page_header'|trans }}
 {% endblock %}

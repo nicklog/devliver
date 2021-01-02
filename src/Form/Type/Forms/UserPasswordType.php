@@ -19,12 +19,17 @@ final class UserPasswordType extends AbstractType
     {
         $builder->add('password', PasswordType::class, [
             'label'       => 'Current password',
+            'attr'        => ['placeholder' => 'Current password'],
             'constraints' => [
                 new UserPassword(),
             ],
         ]);
         $builder->add('passwordNew', NewPasswordType::class, [
-            'mapped' => false,
+            'first_options' => [
+                'label' => 'New password',
+                'attr'  => ['placeholder' => 'New password'],
+            ],
+            'mapped'        => false,
         ]);
     }
 }

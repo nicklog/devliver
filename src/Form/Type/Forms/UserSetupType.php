@@ -23,13 +23,23 @@ final class UserSetupType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
+                'label'       => 'Mail',
+                'attr'        => ['placeholder' => 'Mail address'],
                 'constraints' => [
                     new NotBlank(),
                     new Email(),
                 ],
             ])
             ->add('password', NewPasswordType::class, [
-                'mapped' => false,
+                'first_options'  => [
+                    'label' => 'Password',
+                    'attr'  => ['placeholder' => 'Your password'],
+                ],
+                'second_options' => [
+                    'label' => false,
+                    'attr'  => ['placeholder' => 'Repeat your password'],
+                ],
+                'mapped'         => false,
             ]);
     }
 

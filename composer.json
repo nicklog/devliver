@@ -138,7 +138,7 @@
             "symfony/messenger",
             "symfony/http-client",
             "twig/string-extra",
-            "austinsmorris/doctrine-dbal-datetimeutc",
+            "shapecode/doctrine-dbal-datetimeutc",
             "erusev/parsedown"
         ]
     },
