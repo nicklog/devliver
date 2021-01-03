@@ -2,10 +2,10 @@
 
 Your private self-hosted composer repository.
 
-[![paypal](https://img.shields.io/badge/Donate-Paypal-blue.svg)](http://paypal.me/nloges)
-[![liberapay](https://img.shields.io/badge/Donate-Liberapay-yellow.svg)](https://liberapay.com/nicklog/donate)
-[![License](https://img.shields.io/docker/cloud/build/nicklog/devliver.svg)](https://hub.docker.com/r/nicklog/devliver)
-[![License](https://img.shields.io/github/license/nicklog/devliver.svg)](https://github.com/nicklog/devliver)
+[![buymeacoffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/nicklog)
+
+[![License](https://img.shields.io/docker/cloud/build/nicklog/devliver.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/nicklog/devliver)
+[![License](https://img.shields.io/github/license/nicklog/devliver.svg?style=flat-square&logo=license)](https://github.com/nicklog/devliver)
 
 [comment]: <> ([![License]&#40;https://img.shields.io/docker/build/nicklog/devliver.svg&#41;]&#40;https://hub.docker.com/r/nicklog/devliver&#41;)
 
