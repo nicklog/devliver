@@ -15,9 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-
-use function assert;
 
 /**
  * @Route("/profile", name="app_profile_")
@@ -47,7 +44,7 @@ final class ProfileController extends AbstractController
     /**
      * @Route("", name="index")
      */
-    public function profile(Request $request, UserInterface $user): Response
+    public function profile(Request $request, User $user): Response
     {
         $form = $this->formFactory->create(UserProfileType::class, $user);
         $form->handleRequest($request);
@@ -70,10 +67,8 @@ final class ProfileController extends AbstractController
     /**
      * @Route("/password", name="password")
      */
-    public function password(Request $request, UserInterface $user): Response
+    public function password(Request $request, User $user): Response
     {
-        assert($user instanceof User);
-
         $form = $this->formFactory->create(UserPasswordType::class);
         $form->handleRequest($request);
 

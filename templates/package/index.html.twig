@@ -8,12 +8,12 @@
     <form method="get">
         <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter" />
+            <input type="text" name="filter" value="{{ app.request.query.get('filter') }}" class="form-control" placeholder="Filter"/>
             <button class="btn btn-outline-primary" type="submit">Search</button>
             <a href="{{ path(app.request.get('_route')) }}" class="btn btn-outline-danger">Reset</a>
         </div>
     </form>
-    
+
     <a class="btn btn-white bs-confirmation" href="{{ path('app_package_update_all') }}" data-confirmation="Do you really want to update all repositories? This can take a long time.">{{ 'action.update_all'|trans }}</a>
     <a class="btn btn-primary" href="{{ path('app_package_add') }}">{{ 'package.add_package'|trans }}</a>
 {% endblock %}
@@ -57,13 +57,23 @@
                                     <a href="{{ path('app_package_view', {package: package.id}) }}">
                                         {{ package.url }}
                                     </a><br>
-                                    {{ package.lastStablePackage.description }}
+                                    {% if package.lastStablePackage is not null %}
+                                        {{ package.lastStablePackage.description }}
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    {{ package.lastStablePackage.prettyVersion }}
+                                    {% if package.lastStablePackage is not null %}
+                                        {{ package.lastStablePackage.prettyVersion }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    {{ package.lastStablePackage.releaseDate|date }}
+                                    {% if package.lastStablePackage is not null %}
+                                        {{ package.lastStablePackage.releaseDate|date }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {{ package.lastUpdate|date }}

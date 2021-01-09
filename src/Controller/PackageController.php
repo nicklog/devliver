@@ -9,18 +9,20 @@ use App\Entity\Package;
 use App\Form\Type\Forms\PackageAbandonType;
 use App\Form\Type\Forms\PackageType;
 use App\Form\Validator\PackageValidator;
+use App\Service\FlashBagHelper;
 use App\Service\PackageSynchronization;
 use App\Service\RepositoryHelper;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Callback;
+use Throwable;
 
 use function assert;
 
@@ -37,7 +39,7 @@ final class PackageController extends AbstractController
 
     private FormFactoryInterface $formFactory;
 
-    private FlashBagInterface $flashBag;
+    private FlashBagHelper $flashBag;
 
     private ComposerManager $composerManager;
 
@@ -45,15 +47,18 @@ final class PackageController extends AbstractController
 
     private PackageSynchronization $packageSynchronization;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         PackageValidator $packageValidator,
         ManagerRegistry $registry,
         PaginatorInterface $paginator,
         FormFactoryInterface $formFactory,
-        FlashBagInterface $flashBag,
+        FlashBagHelper $flashBag,
         ComposerManager $composerManager,
         RepositoryHelper $repositoryHelper,
-        PackageSynchronization $packageSynchronization
+        PackageSynchronization $packageSynchronization,
+        LoggerInterface $logger,
     ) {
         $this->packageValidator       = $packageValidator;
         $this->registry               = $registry;
@@ -63,6 +68,7 @@ final class PackageController extends AbstractController
         $this->composerManager        = $composerManager;
         $this->repositoryHelper       = $repositoryHelper;
         $this->packageSynchronization = $packageSynchronization;
+        $this->logger                 = $logger;
     }
 
     /**
@@ -111,7 +117,7 @@ final class PackageController extends AbstractController
             $em->persist($package);
             $em->flush();
 
-            $this->flashBag->add('success', 'Package abandoned');
+            $this->flashBag->success('Package abandoned');
 
             return $this->redirectToRoute('app_package_index');
         }
@@ -134,7 +140,7 @@ final class PackageController extends AbstractController
         $em->persist($package);
         $em->flush();
 
-        $this->flashBag->add('success', 'Package unabandoned');
+        $this->flashBag->success('Package unabandoned');
 
         if ($request->headers->get('referer') !== null) {
             $referer = $request->headers->get('referer');
@@ -194,33 +200,46 @@ final class PackageController extends AbstractController
     {
         $form = $this->createForm(PackageType::class, null, [
             'constraints' => [
-                new Callback([$this->packageValidator, 'validateRepository']),
-                new Callback([$this->packageValidator, 'validateAddName']),
+                new Callback([
+                    $this->packageValidator,
+                    'validateRepository',
+                ]),
+                new Callback([
+                    $this->packageValidator,
+                    'validateAddName',
+                ]),
             ],
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->registry->getManager();
-
             $package = $form->getData();
             assert($package instanceof Package);
 
-            $repository = $this->composerManager->createRepository($package);
-            $info       = $this->repositoryHelper->getComposerInformation($repository);
+            try {
+                $repository = $this->composerManager->createRepository($package);
+                $info       = $this->repositoryHelper->getComposerInformation($repository);
 
-            if (! isset($info['name'])) {
-                throw new RuntimeException('name is missing', 1608916971650);
+                if (! isset($info['name'])) {
+                    throw new RuntimeException('name is missing', 1608916971650);
+                }
+
+                $package->setName($info['name']);
+
+                $this->packageSynchronization->sync($package);
+
+                $this->flashBag->success('Package added');
+            } catch (Throwable $exception) {
+                $this->flashBag->alert('Could not add package. Please try it again');
+
+                $this->logger->error('Could not add package', [
+                    'exception' => $exception,
+                ]);
+
+                return $this->render('package/add.html.twig', [
+                    'form' => $form->createView(),
+                ]);
             }
-
-            $package->setName($info['name']);
-
-            $em->persist($package);
-            $em->flush();
-
-            $this->packageSynchronization->sync($package);
-
-            $this->flashBag->add('success', 'Package added');
 
             return $this->redirectToRoute('app_package_index');
         }
@@ -237,9 +256,15 @@ final class PackageController extends AbstractController
     {
         $form = $this->createForm(PackageType::class, $package, [
             'constraints' => [
-                new Callback([$this->packageValidator, 'validateRepository']),
                 new Callback([
-                    'callback' => [$this->packageValidator, 'validateEditName'],
+                    $this->packageValidator,
+                    'validateRepository',
+                ]),
+                new Callback([
+                    'callback' => [
+                        $this->packageValidator,
+                        'validateEditName',
+                    ],
                     'payload'  => $package,
                 ]),
             ],
@@ -247,16 +272,24 @@ final class PackageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->registry->getManager();
+            try {
+                $package->setAutoUpdate(false);
 
-            $package->setAutoUpdate(false);
+                $this->packageSynchronization->sync($package);
 
-            $em->persist($package);
-            $em->flush();
+                $this->flashBag->add('success', 'Package updated');
+            } catch (Throwable $exception) {
+                $this->flashBag->alert('Could not update package. Please try it again');
 
-            $this->packageSynchronization->sync($package);
+                $this->logger->error('Could not update package', [
+                    'exception' => $exception,
+                ]);
 
-            $this->flashBag->add('success', 'Package updated');
+                return $this->render('package/edit.html.twig', [
+                    'form'    => $form->createView(),
+                    'package' => $package,
+                ]);
+            }
 
             return $this->redirectToRoute('app_package_edit', [
                 'package' => $package->getId(),
@@ -289,9 +322,17 @@ final class PackageController extends AbstractController
      */
     public function update(Request $request, Package $package): Response
     {
-        $this->packageSynchronization->sync($package);
+        try {
+            $this->packageSynchronization->sync($package);
 
-        $this->flashBag->add('success', 'Package updated');
+            $this->flashBag->add('success', 'Package updated');
+        } catch (Throwable $exception) {
+            $this->flashBag->alert('Could not update package. Please try it again');
+
+            $this->logger->error('Could not update package', [
+                'exception' => $exception,
+            ]);
+        }
 
         if ($request->headers->get('referer') !== null) {
             $referer = $request->headers->get('referer');
@@ -319,7 +360,7 @@ final class PackageController extends AbstractController
     /**
      * @Route("/{package}", name="view", requirements={"package"="\d+"})
      */
-    public function view(Request $request, Package $package): Response
+    public function view(Package $package): Response
     {
         if ($package->getVersions()->count() === 0) {
             return $this->redirectToRoute('app_package_update', [

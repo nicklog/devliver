@@ -10,6 +10,7 @@ use App\Entity\Version;
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\Dumper\ArrayDumper;
+use Composer\Package\PackageInterface;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -54,13 +55,10 @@ final class PackageSynchronization
 
         $package->setReadme($this->repositoryHelper->getReadme($repository));
 
-        $this->save($package, $packages);
+        $this->save($package, ...$packages);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function save(Package $package, array $packages): void
+    public function save(Package $package, PackageInterface ...$packages): void
     {
         if (count($packages) === 0) {
             return;
@@ -72,13 +70,10 @@ final class PackageSynchronization
         $em->persist($package);
         $em->flush();
 
-        $this->updateVersions($packages, $package);
+        $this->updateVersions($package, ...$packages);
     }
 
-    /**
-     * @param mixed[] $packages
-     */
-    private function updateVersions(array $packages, Package $dbPackage): void
+    private function updateVersions(Package $dbPackage, PackageInterface ...$packages): void
     {
         $versionRepository = $this->registry->getRepository(Version::class);
         $em                = $this->registry->getManager();
@@ -104,10 +99,8 @@ final class PackageSynchronization
                 'name'    => $package->getPrettyVersion(),
             ]);
 
-            $new = false;
             if ($dbVersion === null) {
                 $dbVersion = new Version($dbPackage, $package);
-                $new       = true;
             }
 
             $distUrl = $this->repositoryHelper->getComposerDistUrl($package->getPrettyName(), $package->getSourceReference());
@@ -121,17 +114,12 @@ final class PackageSynchronization
             $dbVersion->setData($packageData);
 
             $version = $package->getPrettyVersion();
+
             if (isset($toRemove[$version])) {
                 unset($toRemove[$version]);
             }
 
             $em->persist($dbVersion);
-
-            if (! $new) {
-                continue;
-            }
-
-            $em->flush();
         }
 
         foreach ($toRemove as $item) {

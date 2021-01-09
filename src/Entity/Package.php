@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Collection\PackageCollection;
+use App\Collection\VersionCollection;
 use App\Entity\Common\AbstractEntity;
-use App\Util\ComposerUtil;
 use Carbon\Carbon;
-use Composer\Package\CompletePackage;
 use Composer\Package\PackageInterface;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,13 +60,11 @@ class Package extends AbstractEntity
      */
     private Collection $downloads;
 
-    /** @var ArrayCollection<int, Version>|null */
-    private ?ArrayCollection $versionsSorted = null;
+    private ?VersionCollection $versionsSorted = null;
 
-    /** @var PackageInterface[]|null */
-    private ?array $packages = null;
+    private ?PackageCollection $packages = null;
 
-    private ?CompletePackage $lastStable = null;
+    private ?PackageInterface $lastStable = null;
 
     public function __construct(
         string $type,
@@ -191,55 +189,33 @@ class Package extends AbstractEntity
         return $this->downloads;
     }
 
-    /**
-     * @return Collection<int, Version>
-     */
-    public function getVersions(): Collection
+    public function getVersions(): VersionCollection
     {
-        return $this->versions;
+        return VersionCollection::create(...$this->versions->toArray());
     }
 
-    /**
-     * @return ArrayCollection<int, Version>
-     */
-    public function getVersionsSorted(): ArrayCollection
+    public function getVersionsSorted(): VersionCollection
     {
         if ($this->versionsSorted === null) {
-            $sorted = $this->getVersions()->toArray();
-            $sorted = ComposerUtil::sortPackagesByVersion($sorted);
-
-            $this->versionsSorted = new ArrayCollection($sorted);
+            $this->versionsSorted = $this->getVersions()->sortByReleaseDate();
         }
 
         return $this->versionsSorted;
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function getPackages(): array
+    public function getPackages(): PackageCollection
     {
-        if ($this->packages !== null) {
-            return $this->packages;
+        if ($this->packages === null) {
+            $this->packages = $this->getVersionsSorted()->toPackageCollection();
         }
-
-        $versions = $this->getVersionsSorted();
-
-        $packages = [];
-
-        foreach ($versions as $version) {
-            $packages[] = $version->getPackageInformation();
-        }
-
-        $this->packages = $packages;
 
         return $this->packages;
     }
 
-    public function getLastStablePackage(): CompletePackage
+    public function getLastStablePackage(): ?PackageInterface
     {
         if ($this->lastStable === null) {
-            $this->lastStable = ComposerUtil::getLastStableVersion($this->getPackages());
+            $this->lastStable = $this->getPackages()->getLastStablePackage();
         }
 
         return $this->lastStable;
