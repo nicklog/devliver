@@ -2,12 +2,11 @@
 
 Your private self-hosted composer repository.
 
-[![buymeacoffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/nicklog)
+[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/nicklog)
 
-[![License](https://img.shields.io/docker/cloud/build/nicklog/devliver.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/nicklog/devliver)
+[![Docker Build](https://img.shields.io/docker/cloud/build/nicklog/devliver.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/nicklog/devliver)
 [![License](https://img.shields.io/github/license/nicklog/devliver.svg?style=flat-square&logo=license)](https://github.com/nicklog/devliver)
 
-[comment]: <> ([![License]&#40;https://img.shields.io/docker/build/nicklog/devliver.svg&#41;]&#40;https://hub.docker.com/r/nicklog/devliver&#41;)
 
 ##  Requirements
 
@@ -63,7 +62,7 @@ When you want to secure it I suggest to use a reverse proxy.
 ## User
 
 On first call of the website you can create a user. Create one and then login.  
-The first user becomes an admin and can create more user im necessary.
+The first user becomes an admin and can create more user if necessary.
 
 ## Clients
 

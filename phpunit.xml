@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="./tests/bootstrap.php"
+         beStrictAboutChangesToGlobalState="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutResourceUsageDuringSmallTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         beStrictAboutCoversAnnotation="false"
+         forceCoversAnnotation="true"
+         enforceTimeLimit="true"
+         cacheResultFile="./var/cache/phpunit.unit.result.cache"
+         failOnRisky="true"
+         failOnWarning="true"
+         timeoutForSmallTests="2"
+         colors="true"
+         verbose="true"
+         printerClass="NunoMaduro\Collision\Adapters\Phpunit\Printer"
+>
+    <php>
+        <server name="KERNEL_CLASS" value="App\Kernel" />
+        <server name="APP_ENV" value="test" />
+    </php>
+    
+
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

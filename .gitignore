@@ -3,7 +3,6 @@
 .phpcs.cache
 docker-compose.override.yml
 build/
-phpunit.xml
 parameters.yml
 version
 composer/
@@ -24,13 +23,3 @@ var/
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
-
-###> squizlabs/php_codesniffer ###
-/.phpcs-cache
-/phpcs.xml
-###< squizlabs/php_codesniffer ###
-
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
