@@ -91,7 +91,8 @@
         "phpstan/phpstan-doctrine": "~0.12",
         "phpstan/phpstan-symfony": "~0.12",
         "icanhazstring/composer-unused": "~0.7",
-        "symfony/maker-bundle": "^1.26"
+        "symfony/maker-bundle": "^1.26",
+        "jetbrains/phpstorm-attributes": "^1.0"
     },
     "conflict": {
         "symfony/symfony": "*"

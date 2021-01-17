@@ -1,6 +1,6 @@
 {
     "devDependencies": {
-        "@fortawesome/fontawesome-free": "^5.15.1",
+        "@fortawesome/fontawesome-free": "^5.15.2",
         "@popperjs/core": "^2.6",
         "@symfony/webpack-encore": "^0.33.0",
         "@tabler/core": "^1.0.0-alpha.21",
@@ -9,7 +9,7 @@
         "core-js": "^3.8.2",
         "highlight.js": "^10.5.0",
         "node-sass": "^5.0.0",
-        "sass-loader": "^10.1.0",
+        "sass-loader": "^10.1.1",
         "webpack-notifier": "^1.6"
     },
     "license": "UNLICENSED",

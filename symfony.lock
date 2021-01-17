@@ -137,6 +137,9 @@
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
+    "jetbrains/phpstorm-attributes": {
+        "version": "1.0"
+    },
     "justinrainbow/json-schema": {
         "version": "5.2.7"
     },
