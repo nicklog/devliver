@@ -7,7 +7,7 @@ require('@tabler/core');
 const hljs = require('highlight.js');
 
 (function() {
-    hljs.initHighlighting();
+    hljs.highlightAll();
 
     let packageDetails = Object.values(document.getElementsByClassName('package-details'));
     let packageLinks = Object.values(document.getElementsByClassName('package-link'));
